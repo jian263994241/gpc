@@ -9,7 +9,8 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , user_login = require('./routes/login')
-  , user_register = require('./routes/register');
+  , user_register = require('./routes/register')
+  , main = require('./routes/director');
 
 
 var app = express();
@@ -44,6 +45,9 @@ app.get('/register', user_register.init);
 app.post('/register', user_register.register);
 
 app.get('/users', user.list);
+
+app.get('/director', main.director);
+app.get('/director#/project/:project', main.director);
 
 app.get('/vote', routes.vote);
 

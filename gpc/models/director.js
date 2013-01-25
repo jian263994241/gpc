@@ -38,7 +38,10 @@ Director.setStatusKeeper = function(statusKeeper){
  * @api private
  */
 Director.changeStatus = function(config, fn){
-  if (Director.lock) return if('Function' == typeof fn) fn(new Error());
+  if (Director.lock) 
+    if('Function' == typeof fn) 
+      return fn(new Error());
+    else return;
 
   Director.lock = true;
   Director.status = config.status;
@@ -46,7 +49,7 @@ Director.changeStatus = function(config, fn){
   Director.notify();
   Director.lock = false;
 
-  return if('Function' == typeof fn) fn(null);
+  if('Function' == typeof fn) return fn(null);
 }
 
 /**
