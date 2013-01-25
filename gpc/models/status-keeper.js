@@ -14,6 +14,10 @@ StatusKeeper.bufferStatus = {
 
 StatusKeeper.lock = false;
 
+StatusKeeper.setBufferStatus = function(status){
+  StatusKeeper.bufferStatus = status;
+}
+
 StatusKeeper.update = function(){
   StatusKeeper.lock = true;
   StatusKeeper.status = StatusKeeper.bufferStatus;
@@ -21,8 +25,8 @@ StatusKeeper.update = function(){
 }
 
 StatusKeeper.query = function(fn){
-  if (StatusKeeper.lock) fn(false);
-  else fn(true, StatusKeeper.status);
+  if (StatusKeeper.lock) return fn(false);
+  else return fn(true, StatusKeeper.status);
 }
 
 exports.update = StatusKeeper.update;

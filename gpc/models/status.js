@@ -1,8 +1,8 @@
 var Status = {
   init: 'init',
-  start: 'start',
+  show: 'show',
   process: 'process',
-  end: 'end',
+  prepare: 'prepare',
   unknown: 'unknown'
 }
 
