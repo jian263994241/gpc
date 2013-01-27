@@ -1,33 +1,32 @@
-var status = require('./status');
+var Status = require('./status');
 
-var StatusKeeper = StatusKeeper || {};
+function StatusKeeper () {
+  this.status = {
+    status: Status.unknown,
+    data: null
+  };
 
-StatusKeeper.status = {
-  status: status.unknown,
-  data: null
+  this.bufferStatus = {
+    status: Status.unknown,
+    data: null
+  }
+
+  this.lock = false;
+}
+
+StatusKeeper.prototype.setBufferStatus = function(status) {
+  this.bufferStatus = status;
 };
 
-StatusKeeper.bufferStatus = {
-  status: status.unknown,
-  data: null
+StatusKeeper.prototype.query = function(fn) {
+  if (this.lock) return fn(false);
+  else return fn(true, this.status);
 };
 
-StatusKeeper.lock = false;
+StatusKeeper.prototype.update = function() {
+  this.lock = true;
+  this.status = this.bufferStatus;
+  this.lock = false
+};
 
-StatusKeeper.setBufferStatus = function(status){
-  StatusKeeper.bufferStatus = status;
-}
-
-StatusKeeper.update = function(){
-  StatusKeeper.lock = true;
-  StatusKeeper.status = StatusKeeper.bufferStatus;
-  StatusKeeper.lock = false
-}
-
-StatusKeeper.query = function(fn){
-  if (StatusKeeper.lock) return fn(false);
-  else return fn(true, StatusKeeper.status);
-}
-
-exports.update = StatusKeeper.update;
-exports.query = StatusKeeper.query;
+module.exports = StatusKeeper;

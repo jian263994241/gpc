@@ -10,7 +10,7 @@ var express = require('express')
   , path = require('path')
   , user_login = require('./routes/login')
   , user_register = require('./routes/register')
-  , main = require('./routes/director');
+  , director = require('./routes/director');
 
 
 var app = express();
@@ -46,8 +46,10 @@ app.post('/register', user_register.register);
 
 app.get('/users', user.list);
 
-app.get('/director', main.director);
-app.get('/director#/project/:project', main.director);
+app.get('/project-login', director.init);
+app.post('/project-login', director.login);
+app.get('/director', director.expo);
+app.post('/candidate', director.candidate);
 
 app.get('/vote', routes.vote);
 

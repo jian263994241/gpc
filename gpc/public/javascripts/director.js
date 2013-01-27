@@ -1,7 +1,22 @@
-function DirectorCtl($scope){
-  $scope.i = 0;
+function DirectorCtrl ($scope, $http) {
+  $scope.candidate = null;
 
-  $scope.check = function(project){
-    console.log(project);
+  $scope.init = function(){
+    if (!$scope.candidate) {
+      $scope.request('init');
+    };
   }
+
+  $scope.request = function(action){
+    $http.post('candidate', {action: action}).
+    success(function(data, status, headers, config){
+      console.log(data);
+    }).
+    error(function(data, status, headers, config){
+
+    });
+  }
+
+  $scope.init();
+
 }

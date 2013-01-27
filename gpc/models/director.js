@@ -1,107 +1,140 @@
-var candidateDataMgr = require('./user-data-manager');
+var candidateDataMgr = require('./candidate-data-manager');
 var projectMgr = require('./project-manager');
-var status = require('./status');
 var _ = require('underscore');
 
-var Director = Director || {};
+var Status = require('./status');
 
-Director.source = new Array();
-Director.curCandidate = {
-  index: -1,
-  data: null
-};
-Director.projectId = -1;
-Director.statusKeeper = null;
-Director.status = status.init;
-Director.lock = false;
+function Director (keeper) {
+  this.source = new Array();
+  this.candidate = {
+    index: -1,
+    data: null
+  };
+  this.project = {
+    id: null,
+    key: null
+  }
+  this.keeper = keeper;
+  this.lock = false;
+  this.status = null;
+}
 
 /**
+ * Query and save the candidate data
+ *
+ * @param {JSON} {id, key} project info
  * @api private
  */
-Director.getData = function(projectId){
-  candidateDataMgr.queryCandidate(projectId, function(err, data){
+Director.prototype.getData = function(project) {
+  var that = this;
+  candidateDataMgr.queryCandidate(project, function(err, data){
     _.each(data, function(el, key, list){
-      Director.source.push(el);
-    });
-  });
-}
+      that.source.push(el);
+    })
+  })
+};
 
-
-/**
+/*
+ * Change the status and notify statuskeeper to update
+ *
+ * @param {JSON} {status, data}
+ * @param {Function} callback
  * @api private
  */
-Director.setStatusKeeper = function(statusKeeper){
-  Director.statusKeeper = statusKeeper;
-}
-
-/**
- * @api private
- */
-Director.changeStatus = function(config, fn){
-  if (Director.lock) 
-    if('Function' == typeof fn) 
+Director.prototype.changeStatus = function(config, fn) {
+  console.log('changeStatus');
+  if (this.lock)
+    if ('function' === typeof fn) 
       return fn(new Error());
     else return;
 
-  Director.lock = true;
-  Director.status = config.status;
-  Director.statusKeeper.setBufferStatus(config);
-  Director.notify();
-  Director.lock = false;
+  console.log('changeStatus>notify');
+  this.lock = true;
+  this.status = config.status;
+  this.keeper.setBufferStatus(config);
+  this.notify();
+  this.lock = false;
 
-  if('Function' == typeof fn) return fn(null);
-}
+  if('function' === typeof fn) return fn(null);
+};
 
-/**
+/*
+ * notify observer to update
+ * 
  * @api private
  */
-Director.notify = function(){
-  Director.statusKeeper.update();
+Director.prototype.notify = function(){
+  this.keeper.update();
 }
 
-/**
+/*
+ * Set candidate data
+ *
+ * @param {int} index of candidate
  * @api private
  */
-Director.setCurCandidate = function(index){
-  Director.curCandidate.index = index;
-  Director.curCandidate.data = Director.source[index];
-}
+Director.prototype.setCandidate = function(index) {
+  this.candidate.index = index;
+  this.candidate.data = this.source[index];
+};
 
-/**
+/*
+ * Define the status event
+ *
+ * @param {Status} Director status
+ * @param {Function} callback
  * @api private
  */
-Director.statusEvent = function(status, fn){
+Director.prototype.statusEvent = function(status, fn) {
+  console.log('statusEvent');
+  console.log(status);
   switch(status){
-    case status.prepare:
-      return Director.changeStatus({status: status.prepare}, fn);
-    case status.show:
-    case status.process:
-    case status.end:
-      if (curCandidate) return Director.changeStatus({status: status, data: Director.curCandidate}, fn);
+    case Status.prepare:
+      return this.changeStatus({status: Status.prepare}, fn);
+    case Status.show:
+    case Status.process:
+    case Status.end:
+      if (this.candidate) return this.changeStatus({status: status, data: this.candidate}, fn);
       else return fn(new Error());
     default:
       fn(new Error());
   }
-}
+};
 
-/**
+/*
+ * Director init
+ *
+ * @param {Function} callback
  * @api private
  */
-Director.init = function(){
-  Director.statusEvent(status.prepare, function(err){
+Director.prototype.init = function(fn) {
+  var that = this;
+  console.log('init');
+  this.statusEvent(Status.prepare, function(err){
     if (err) return fn(err);
-    Director.getData(Director.projectId);
-    Director.setCurCandidate(0);
-    Director.statusEvent(status.show);
-  });
-}
+    that.getData(this.project);
+    that.setCandidate(0);
+    that.statusEvent(Status.show);
+    fn(null);
+  })
+};
+
 
 /**
+ * register project to projectMgr.
+ * if success, save project id in access project queue
+ *
+ * @param {JSON} {id, key}
+ * @param {Function} callback
+ *
  * @api public
  */
-Director.register = function(projectId, fn) {
-  projectMgr.register(projectId, function(err, success){
-    if(!err && success) Director.init(fn);
+Director.prototype.register = function(project, fn) {
+  var that = this;
+  projectMgr.register(project, function(err, projectInfo){
+    console.log(projectInfo)
+    this.project = projectInfo;
+    if(!err && projectInfo) that.init(fn);
     else fn(new Error());
   });
 }
@@ -109,9 +142,10 @@ Director.register = function(projectId, fn) {
 /**
  * @api public
  */
-Director.unregister = function(projectId, fn){
-  projectMgr.unregister(projectId, function(err, success){
-    if(!err && success) Director.end(fn);
+Director.prototype.unregister = function(project, fn){
+  var that = this;
+  projectMgr.unregister(project.id, function(err, success){
+    if(!err && success) that.end(fn);
     else fn(new Error());
   });
 }
@@ -119,26 +153,26 @@ Director.unregister = function(projectId, fn){
 /**
  * @api public
  */
-Director.previous = function(fn){
-  if (Director.curCandidate.index > 0 && (Director.status == status.show || Director.status == status.end)) {
-    Director.setCurCandidate(Director.curCandidate.index -1);
-    Director.statusEvent(status.show, fn);
+Director.prototype.previous = function(fn){
+  if (this.candidate.index > 0 && (this.status == Status.show || this.status == Status.end)) {
+    this.setCandidate(this.candidate.index -1);
+    this.statusEvent(Status.show, fn);
   }else{
     fn(new Error());
   }
 }
 
-Director.end = function(fn){
+Director.prototype.end = function(fn){
   // end of the project
 }
 
 /**
  * @api public
  */
-Director.next = function(fn){
-  if (Director.curCandidate.index < Director.source.length && (Director.status == status.show || Director.status == status.end)) {
-    Director.setCurCandidate(Director.curCandidate.index +1);
-    Director.statusEvent(status.show, fn);
+Director.prototype.next = function(fn){
+  if (this.candidate.index < this.source.length && (this.status == Status.show || this.status == Status.end)) {
+    this.setCandidate(this.candidate.index +1);
+    this.statusEvent(Status.show, fn);
   }else{
     fn(new Error());
   }
@@ -147,9 +181,9 @@ Director.next = function(fn){
 /**
  * @api private
  */
-Director.startVote = function(fn){
-  if (Director.status == status.show && Director.curCandidate.index > -1) {
-    Director.statusEvent(status.process, fn);
+Director.prototype.startVote = function(fn){
+  if (this.status == Status.show && this.candidate.index > -1) {
+    this.statusEvent(Status.process, fn);
   }else{
     fn(new Error());
   }
@@ -158,9 +192,9 @@ Director.startVote = function(fn){
 /**
  * @api private
  */
-Director.endVote = function(fn){
-  if (Director.status == status.process) {
-    Director.statusEvent(status.end, fn);
+Director.prototype.endVote = function(fn){
+  if (this.status == Status.process) {
+    this.statusEvent(Status.end, fn);
   }else{
     fn(new Error());
   }
@@ -169,16 +203,13 @@ Director.endVote = function(fn){
 /**
  * @api public
  */
-Director.vote = function(fn){
-  Director.startVote(function(err){
+Director.prototype.vote = function(fn){
+  var that = this;
+  this.startVote(function(err){
     if(!err) setTimeout(function() {
-      Director.endVote(fn);
+      that.endVote(fn);
     }, 10000);
   })
 }
 
-exports.vote = Director.vote;
-exports.register = Director.register;
-exports.next = Director.next;
-exports.previous = Director.previous;
-exports.unregister = Director.unregister;
+module.exports = Director;
