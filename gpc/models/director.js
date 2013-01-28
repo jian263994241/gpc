@@ -133,7 +133,7 @@ Director.prototype.register = function(project, fn) {
   var that = this;
   projectMgr.register(project, function(err, projectInfo){
     console.log(projectInfo)
-    this.project = projectInfo;
+    that.project = projectInfo;
     if(!err && projectInfo) that.init(fn);
     else fn(new Error());
   });
@@ -208,7 +208,7 @@ Director.prototype.vote = function(fn){
   this.startVote(function(err){
     if(!err) setTimeout(function() {
       that.endVote(fn);
-    }, 10000);
+    }, 30000);
   })
 }
 

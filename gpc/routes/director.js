@@ -1,7 +1,13 @@
 var Director = require('../models/director');
 var StatusKeeper = require('../models/status-keeper.js');
 
-var keeper = new StatusKeeper();
+var waitQueue = new Array();
+
+var keeper = new StatusKeeper(function(){
+  while(res = waitQueue.shift()){
+    res.json({status: director.status, candidate: director.candidate});
+  }
+});
 var director = new Director(keeper);
 
 exports.init = function(req, res){
@@ -27,7 +33,12 @@ exports.login = function(req, res){
 }
 
 exports.expo = function(req, res){
-  res.render('project-expo');
+  if (req.session.project) {
+    res.render('project-expo');
+  }else{
+    res.redirect('/project-login');
+  }
+  
 }
 
 exports.candidate = function(req, res){
@@ -36,10 +47,45 @@ exports.candidate = function(req, res){
     case 'init':
       return res.json({candidate: director.candidate, project: director.project});
     case 'prev':
-      return;
+      return director.previous(function(err){
+        if (err) return res.json({error: true});
+        res.json({candidate: director.candidate, project: director.project});
+      });
     case 'next':
-      return;
+      return director.next(function(err){
+        if (err) return res.json({error: true});
+        res.json({candidate: director.candidate, project: director.project});
+      });
     default:
       return res.json({error: 'Authentication Failed'});
+  }
+}
+
+exports.start = function(req, res){
+  director.vote(function () {
+    console.log('end voting');
+  })
+}
+
+
+/*************************************************************/
+/*********************Client Event****************************/
+exports.vote = function(req, res){
+  res.render('vote');
+}
+
+exports.status = function(req, res){
+
+  var status = req.body['status'];
+  var candidate = req.body['candidate'];
+
+  // init status
+  if (!candidate && !status) return res.json({status: director.status, candidate: director.candidate});
+
+  if (director.status == status && director.candidate.index == candidate.index) {
+    // add into wait queue
+    waitQueue.push(res);
+  }else{
+    res.json({status: director.status, candidate: director.candidate});
   }
 }

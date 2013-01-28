@@ -18,7 +18,7 @@
 
   </head>
   <body>
-    <article class="container" ng-controller="DirectorCtrl" >
+    <article class="container" ng-controller="DirectorCtrl" ng-init="init()">
       <section class="row">
         <nav class="span3">
           <div class="logo logo-brand">
@@ -27,11 +27,11 @@
           </div>
           
           <ul class="nav nav-tabs nav-stacked">
-            <li><a href="#">Previous</a></li>
-            <li><a href="#">Next</a></li>
+            <li><a href="#" ng-click="prev()">Previous</a></li>
+            <li><a href="#" ng-click="next()">Next</a></li>
           </ul>
           <div>
-            <a href="#" class="btn">Vote</a>
+            <a href="#" class="btn" ng-click="start()">Vote</a>
           </div>
         </nav>
         <div class="span9">
@@ -45,6 +45,11 @@
             <strong>Author - </strong>
             <span>{{candidate.author}}</span>
           </p>
+          <div>
+            <strong>Product</strong>
+            <img src="{{candidate.source}}" alt="" ng-show="isImage">
+            <video src="{{candidate.source}}" alt="" ng-show="isVideo">
+          </div>
           <p><strong>Introduction</strong></p>
 <pre>{{candidate.intro}}</pre>
         </div>

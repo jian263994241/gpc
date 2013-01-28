@@ -1,4 +1,5 @@
 var userCenter = require('../models/user-center');
+var projectMgr = require('../models/project-manager');
 
 exports.init = function(req, res){
   if (userCenter.isLogin(req.session.user)) res.redirect('/home');
@@ -34,9 +35,9 @@ exports.logout = function(req, res){
 
 exports.check = function(req, res){
   if (userCenter.isLogin(req.session.user)) {
-    res.render('home', {username: req.session.user.username, logout_url: 'logout'});
+    console.log(projectMgr.accessQueue);
+    res.render('home', {username: req.session.user.username, logout_url: 'logout', projects: projectMgr.accessQueue});
   }else{
     res.redirect('/login');
   }
-  
 }

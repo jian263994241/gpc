@@ -50,8 +50,10 @@ app.get('/project-login', director.init);
 app.post('/project-login', director.login);
 app.get('/director', director.expo);
 app.post('/candidate', director.candidate);
+app.get('/start', director.start);
 
-app.get('/vote', routes.vote);
+app.get('/vote', director.vote);
+app.post('/status', director.status);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

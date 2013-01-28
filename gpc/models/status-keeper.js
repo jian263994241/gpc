@@ -1,6 +1,6 @@
 var Status = require('./status');
 
-function StatusKeeper () {
+function StatusKeeper (fn) {
   this.status = {
     status: Status.unknown,
     data: null
@@ -12,6 +12,7 @@ function StatusKeeper () {
   }
 
   this.lock = false;
+  this.action = fn;
 }
 
 StatusKeeper.prototype.setBufferStatus = function(status) {
@@ -27,6 +28,8 @@ StatusKeeper.prototype.update = function() {
   this.lock = true;
   this.status = this.bufferStatus;
   this.lock = false
+  if ('function' == typeof this.action) this.action();
 };
+
 
 module.exports = StatusKeeper;

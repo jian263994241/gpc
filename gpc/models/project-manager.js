@@ -10,11 +10,14 @@ ProjectMgr.accessQueue = new Array();
 
 ProjectMgr.register = function(project, fn){
   var find = _.where(ProjectMgr.data, project);
-  console.log(find[0]);
   if (find.length == 0) return fn(new Error());
 
-  if(_.contains(ProjectMgr.accessQueue, project.id)) return fn(new Error());
-  else return fn(null, find[0]);
+  var check = _.where(ProjectMgr.accessQueue, project)
+  if(check.length > 0) return fn(new Error());
+  else {
+    ProjectMgr.accessQueue.push(find[0]);
+    return fn(null, find[0]);
+  }
 }
 
 ProjectMgr.unregister = function(projectId, fn){
@@ -28,3 +31,4 @@ ProjectMgr.unregister = function(projectId, fn){
 
 exports.register = ProjectMgr.register;
 exports.unregister = ProjectMgr.unregister;
+exports.accessQueue = ProjectMgr.accessQueue;
