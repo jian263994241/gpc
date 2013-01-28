@@ -31,7 +31,12 @@
             <li><a href="#" ng-click="next()">Next</a></li>
           </ul>
           <div>
-            <a href="#" class="btn" ng-click="start()">Vote</a>
+            <a href="#" class="btn" ng-click="start()" ng-show="!isStart">Start Voting</a>
+            <a href="#" class="btn" ng-click="end()" ng-show="isStart">End Voting</a>
+          </div>
+          <div ng-show="isStart">
+            <h4>Timmer</h4>
+            <h6 class="timer">{{time}}s</h6>
           </div>
         </nav>
         <div class="span9">

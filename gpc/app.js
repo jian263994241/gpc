@@ -50,7 +50,9 @@ app.get('/project-login', director.init);
 app.post('/project-login', director.login);
 app.get('/director', director.expo);
 app.post('/candidate', director.candidate);
+
 app.get('/start', director.start);
+app.get('/end', director.end);
 
 app.get('/vote', director.vote);
 app.post('/status', director.status);

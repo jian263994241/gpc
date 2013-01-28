@@ -1,7 +1,7 @@
 function VoteCtrl($scope, $http, $timeout){
   $scope.status = null;
   $scope.candidate = null;
-  $scope.isVote = false;
+  // $scope.isVote = false;
 
   $scope.request = function(){
     $http.post('status', {status: $scope.status, candidate: $scope.candidate}, {timeout: 9999999999}).
@@ -17,9 +17,9 @@ function VoteCtrl($scope, $http, $timeout){
           $scope.candidate = res.candidate;
           break;
         case 'process':
-          $scope.time = 30;
-          $scope.isVote = true;
-          $timeout($scope.timer, 1000);
+          // $scope.time = 30;
+          // $scope.isVote = true;
+          // $timeout($scope.timer, 1000);
           break;
         default:
           break;
@@ -32,13 +32,13 @@ function VoteCtrl($scope, $http, $timeout){
     });
   }
 
-  $scope.timer = function(){
-    if ($scope.time < 1) {
-      $scope.isVote = false;
-      return;
-    };
+  // $scope.timer = function(){
+  //   if ($scope.time < 1) {
+  //     $scope.isVote = false;
+  //     return;
+  //   };
 
-    $scope.time = $scope.time - 1;
-    $timeout($scope.timer, 1000);
-  }
+  //   $scope.time = $scope.time - 1;
+  //   $timeout($scope.timer, 1000);
+  // }
 }

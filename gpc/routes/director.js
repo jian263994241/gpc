@@ -62,9 +62,15 @@ exports.candidate = function(req, res){
 }
 
 exports.start = function(req, res){
-  director.vote(function () {
-    console.log('end voting');
-  })
+  director.startVote(function () {
+    res.send('start');
+  });
+}
+
+exports.end = function(req, res){
+  director.endVote(function () {
+    res.send('end');
+  });
 }
 
 
