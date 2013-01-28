@@ -56,6 +56,7 @@ app.get('/end', director.end);
 
 app.get('/vote', director.vote);
 app.post('/status', director.status);
+app.post('/collect', director.collect);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

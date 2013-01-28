@@ -35,10 +35,10 @@
           </p>
           <form action="" >
             <label for="inputScore">Score:</label>
-            <input type="number" name="inputScore" val="0" max="10" min="0">
+            <input type="number" name="inputScore" val="0" max="10" min="0" ng-disabled="isForbidden" ng-model="mark.score">
             <label for="inputComment">Comment:</label>
-            <label for=""><textarea name="inputComment" id="" cols="30" rows="5" class="vote-comment"></textarea></label>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <label for=""><textarea name="inputComment" id="" cols="30" rows="5" class="vote-comment" ng-disabled="isForbidden" ng-model="mark.comment"></textarea></label>
+            <button type="submit" class="btn btn-primary" ng-disabled="!isStart" ng-click="submit()">Submit</button>
             <!-- <span class="timer alert alert-success" ng-show="isVote">Left:<span>{{time}}</span>s</span> -->
           </form>
         </div>

@@ -23,10 +23,10 @@ function DirectorCtrl ($scope, $http, $timeout) {
       $scope.project = data.project;
       $scope.candidate = data.candidate.data;
       
-      if ($scope.candidate.type == 'image') $scope.isImage = true;
+      if ($scope.candidate && $scope.candidate.type == 'image') $scope.isImage = true;
       else $scope.isImage = false;
 
-      if($scope.candidate.type == 'video') $scope.isVideo = true;
+      if($scope.candidate && $scope.candidate.type == 'video') $scope.isVideo = true;
       else $scope.isVideo = false;
     }).
     error(function(data, status, headers, config){

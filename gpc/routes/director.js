@@ -63,12 +63,18 @@ exports.candidate = function(req, res){
 
 exports.start = function(req, res){
   director.startVote(function () {
+    if(director.marker) director.marker.unlock();
     res.send('start');
   });
 }
 
 exports.end = function(req, res){
   director.endVote(function () {
+    if(director.marker) {
+      director.marker.lock();
+      console.log(director.marker.getMarks());
+    }
+    
     res.send('end');
   });
 }
@@ -86,7 +92,7 @@ exports.status = function(req, res){
   var candidate = req.body['candidate'];
 
   // init status
-  if (!candidate && !status) return res.json({status: director.status, candidate: director.candidate});
+  if (!candidate || !status) return res.json({status: director.status, candidate: director.candidate});
 
   if (director.status == status && director.candidate.index == candidate.index) {
     // add into wait queue
@@ -94,4 +100,17 @@ exports.status = function(req, res){
   }else{
     res.json({status: director.status, candidate: director.candidate});
   }
+}
+
+exports.collect = function(req, res){
+  var candidate = req.body['candidate'];
+  var mark = req.body['mark'];
+
+  if (candidate && mark && director.marker) {
+    director.marker.collect({candidate: candidate, mark: mark}, function(err){
+      if (!err) res.json({success: true});
+      else res.json({error: 'Push Error'});
+    });
+  }else
+    res.json({error: 'Param Error'});
 }

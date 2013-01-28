@@ -1,7 +1,8 @@
 function VoteCtrl($scope, $http, $timeout){
   $scope.status = null;
   $scope.candidate = null;
-  // $scope.isVote = false;
+  $scope.isStart = false;
+  $scope.isForbidden = false;
 
   $scope.request = function(){
     $http.post('status', {status: $scope.status, candidate: $scope.candidate}, {timeout: 9999999999}).
@@ -15,12 +16,16 @@ function VoteCtrl($scope, $http, $timeout){
       switch(res.status){
         case 'show':
           $scope.candidate = res.candidate;
+          $scope.isStart = false;
+          $scope.isForbidden = false;
           break;
         case 'process':
-          // $scope.time = 30;
-          // $scope.isVote = true;
-          // $timeout($scope.timer, 1000);
+          $scope.isStart = true;
+          $scope.isForbidden = false;
           break;
+        case 'end':
+          $scope.isStart = false;
+          $scope.isForbidden = true;
         default:
           break;
       }
@@ -32,13 +37,18 @@ function VoteCtrl($scope, $http, $timeout){
     });
   }
 
-  // $scope.timer = function(){
-  //   if ($scope.time < 1) {
-  //     $scope.isVote = false;
-  //     return;
-  //   };
+  $scope.submit = function(){
+    $http.post('collect', {candidate: $scope.candidate, mark: $scope.mark}).
+    success(function(data, status, headers, config){
+      console.log(data);
+      if (data.success) {
+        $scope.isStart = false;
+        $scope.isForbidden = true;
+      };
+    }).
+    error(function(data, status, headers, config){
 
-  //   $scope.time = $scope.time - 1;
-  //   $timeout($scope.timer, 1000);
-  // }
+    });
+  }
+
 }

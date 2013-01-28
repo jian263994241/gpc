@@ -3,6 +3,7 @@ var projectMgr = require('./project-manager');
 var _ = require('underscore');
 
 var Status = require('./status');
+var Marker = require('./marker');
 
 function Director (keeper) {
   this.source = new Array();
@@ -17,6 +18,7 @@ function Director (keeper) {
   this.keeper = keeper;
   this.lock = false;
   this.status = null;
+  this.marker = null;
 }
 
 /**
@@ -155,6 +157,7 @@ Director.prototype.unregister = function(project, fn){
  */
 Director.prototype.previous = function(fn){
   if (this.candidate.index > 0 && (this.status == Status.show || this.status == Status.end)) {
+    this.marker = null;
     this.setCandidate(this.candidate.index -1);
     this.statusEvent(Status.show, fn);
   }else{
@@ -171,6 +174,7 @@ Director.prototype.end = function(fn){
  */
 Director.prototype.next = function(fn){
   if (this.candidate.index < this.source.length && (this.status == Status.show || this.status == Status.end)) {
+    this.marker = null;
     this.setCandidate(this.candidate.index +1);
     this.statusEvent(Status.show, fn);
   }else{
@@ -182,7 +186,8 @@ Director.prototype.next = function(fn){
  * @api private
  */
 Director.prototype.startVote = function(fn){
-  if (this.status == Status.show && this.candidate.index > -1) {
+  if (this.candidate && this.candidate.index > -1) {
+    this.marker = new Marker({candidate: this.candidate, project: this.project});
     this.statusEvent(Status.process, fn);
   }else{
     fn(new Error());
