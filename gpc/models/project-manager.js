@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var Director = require('../models/director');
 
 var ProjectMgr = ProjectMgr || {};
 
@@ -12,12 +13,22 @@ ProjectMgr.register = function(project, fn){
   var find = _.where(ProjectMgr.data, project);
   if (find.length == 0) return fn(new Error());
 
-  var check = _.where(ProjectMgr.accessQueue, project)
-  if(check.length > 0) return fn(new Error());
+  var projectInfo = find[0];
+
+  // code need to be checked --> try example
+  var check = _.where(ProjectMgr.accessQueue, project);
+  if(check.length > 0) return fn(new Error('Exist'));
   else {
-    ProjectMgr.accessQueue.push(find[0]);
-    return fn(null, find[0]);
+    var director = new Director(projectInfo);
+    ProjectMgr.accessQueue.push(director);
+    return fn(null, director);
   }
+}
+
+ProjectMgr.getDirecotr = function(project){
+  var check = _.where(ProjectMgr.accessQueue, project);
+  if(check.length > 0) return check[0];
+  else return null;
 }
 
 ProjectMgr.unregister = function(projectId, fn){
@@ -31,4 +42,4 @@ ProjectMgr.unregister = function(projectId, fn){
 
 exports.register = ProjectMgr.register;
 exports.unregister = ProjectMgr.unregister;
-exports.accessQueue = ProjectMgr.accessQueue;
+exports.getDirecotr = ProjectMgr.getDirecotr;
