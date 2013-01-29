@@ -1,12 +1,14 @@
 var userCenter = require('../models/user-center');
 var customError = require('../models/custom-error');
 
-exports.init = function(req, res){
+var RegisterOperation = RegisterOperation || {};
+
+RegisterOperation.register = function(req, res){
   if (userCenter.isLogin(req.session.user)) res.redirect('/home');
   else  res.render('register', {link_login: '/login'});
 }
 
-exports.register = function(req, res){
+RegisterOperation.registerSubmit = function(req, res){
 
   var username = req.body['username'];
   var password = req.body['password'];
@@ -25,3 +27,6 @@ exports.register = function(req, res){
     }
   });
 }
+
+exports.userRegister = RegisterOperation.register;
+exports.userRegisterSubmit = RegisterOperation.registerSubmit;

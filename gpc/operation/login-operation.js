@@ -1,12 +1,14 @@
 var userCenter = require('../models/user-center');
 var projectMgr = require('../models/project-manager');
 
-exports.init = function(req, res){
+var LoginOperation = LoginOperation || {};
+
+LoginOperation.login = function(req, res){
   if (userCenter.isLogin(req.session.user)) res.redirect('/home');
   else  res.render('login', {link_register: '/register'});
 }
 
-exports.login = function(req, res){
+LoginOperation.loginSubmit = function(req, res){
 
   var username = req.body['username'];
   var password = req.body['password'];
@@ -27,17 +29,21 @@ exports.login = function(req, res){
   });
 }
 
-exports.logout = function(req, res){
+LoginOperation.logoutSubmit = function(req, res){
   req.session.destroy(function(){
     res.redirect('/login');
   });
 }
 
-exports.check = function(req, res){
+LoginOperation.search = function(req, res){
   if (userCenter.isLogin(req.session.user)) {
-    console.log(projectMgr.accessQueue);
-    res.render('home', {username: req.session.user.username, logout_url: 'logout', projects: projectMgr.accessQueue});
+    res.render('home', {username: req.session.user.username, logout_url: 'logout', directors: projectMgr.accessQueue});
   }else{
     res.redirect('/login');
   }
 }
+
+exports.userLogin = LoginOperation.login;
+exports.userLoginSubmit = LoginOperation.loginSubmit;
+exports.userLogoutSubmit = LoginOperation.logoutSubmit;
+exports.searchProject = LoginOperation.search; 

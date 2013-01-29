@@ -4,13 +4,9 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
-  , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , user_login = require('./routes/login')
-  , user_register = require('./routes/register')
-  , director = require('./routes/director');
+  , routes = require('./routes');
 
 
 var app = express();
@@ -33,30 +29,23 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.index);
+app.get('/', routes.userLogin);
+app.get('/home', routes.searchProject);
+app.get('/login', routes.userLogin);
+app.post('/login', routes.userLoginSubmit);
+app.get('/logout', routes.userLogoutSubmit);
 
-app.get('/home', user_login.check);
+app.get('/register', routes.userRegister);
+app.post('/register', routes.userRegisterSubmit);
 
-app.get('/login', user_login.init);
-app.post('/login', user_login.login);
-app.get('/logout', user_login.logout);
-
-app.get('/register', user_register.init);
-app.post('/register', user_register.register);
-
-app.get('/users', user.list);
-
-app.get('/project-login', director.init);
-app.post('/project-login', director.login);
-app.get('/director', director.expo);
-app.post('/candidate', director.candidate);
-
-app.get('/start', director.start);
-app.get('/end', director.end);
-
-app.get('/vote', director.vote);
-app.post('/status', director.status);
-app.post('/collect', director.collect);
+app.get('/director', routes.directorVisit);
+app.get('/director/login', routes.directorLogin);
+app.post('/director/login', routes.directorLoginSubmit);
+app.post('/director/exec', routes.directorExec);
+app.post('/director/status', routes.queryStatus);
+app.post('/director/vote', routes.collectMarker);
+app.get('/director/vote/:project', routes.selectProject);
+app.get('/director/vote', routes.voteForm)
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

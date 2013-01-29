@@ -27,8 +27,8 @@
             <h4>Welcome! <%= username %></h4><a href="<%= logout_url %>">Logout</a>
           </div>
           <ul>
-            <% for(var i=0; i<projects.length; i++){%>
-              <li><a href="/vote#/project/<%= projects[i].id %>" class="btn" data-project-id="<%= projects[i].id %>"><%= projects[i].name %></a></li>
+            <% for(var i=0; i<directors.length; i++){%>
+              <li><a href="/director/vote/<%= directors[i].project.id %>" class="btn"><%= directors[i].project.name %></a></li>
             <% } %>
           </ul>
         </div>

@@ -5,7 +5,7 @@ function VoteCtrl($scope, $http, $timeout){
   $scope.isForbidden = false;
 
   $scope.request = function(){
-    $http.post('status', {status: $scope.status, candidate: $scope.candidate}, {timeout: 9999999999}).
+    $http.post('/director/status', {status: $scope.status, candidate: $scope.candidate}, {timeout: 9999999999}).
     success(function(data, status, headers, config){
       console.log(data);
 
@@ -38,7 +38,7 @@ function VoteCtrl($scope, $http, $timeout){
   }
 
   $scope.submit = function(){
-    $http.post('collect', {candidate: $scope.candidate, mark: $scope.mark}).
+    $http.post('/director/vote', {candidate: $scope.candidate, mark: $scope.mark}).
     success(function(data, status, headers, config){
       console.log(data);
       if (data.success) {

@@ -4,6 +4,7 @@ var Director = require('../models/director');
 var StatusKeeper = require('../models/status-keeper.js');
 
 var projectMgr = require('../models/project-manager');
+var userCenter = require('../models/user-center');
 
 var DirectorAction = {
   init: 'init',
@@ -38,9 +39,12 @@ VoteOperation.login = function(req, res) {
 
 VoteOperation.exec = function(req, res){
   var action = req.body['action'];
+
   var director = VoteOperation.getDirector(req.session.project);
 
-  if (!director) return req.session.destroy(function(){res.redirect('/director/login');});
+  if (!director) return req.session.destroy(function(){
+    res.json({error:true, redirect: '/director/login'});
+  });
 
   switch(action){
     case DirectorAction.init:
@@ -74,20 +78,32 @@ VoteOperation.exec = function(req, res){
 }
 
 VoteOperation.getDirector = function(project){
-  var project = req.session.project;
   var director = null;
 
   if (project) director = projectMgr.getDirector(project);
   return director;
 }
 
+VoteOperation.search = function(req, res){
+  var projectId = req.params.project;
+  var director = projectMgr.getDirector({id: projectId});
+  if (director && director.project) {
+    req.session.project = director.project;
+    res.redirect('/director/vote');
+  }else{
+    res.redirect('/home');
+  }
+}
+
 VoteOperation.query = function(req, res){
   var status = req.body['status'];
   var candidate = req.body['candidate'];
-  var project = req.body['project'];
+  var project = req.session.project;
 
   var director = VoteOperation.getDirector(project);
-  if (!director) return req.session.destroy(function(){res.redirect('/director/login');});
+  if (!director) return req.session.destroy(function(){
+    res.json({redirect: '/director/login'});
+  });
 
   if (!candidate || !status) return res.json({status: director.status, candidate: director.candidate});
 
@@ -98,10 +114,12 @@ VoteOperation.query = function(req, res){
 VoteOperation.collect = function(req, res){
   var candidate = req.body['candidate'];
   var mark = req.body['mark'];
-  var project = req.body['project'];
+  var project = req.session.project;
 
   var director = VoteOperation.getDirector(project);
-  if (!director) return req.session.destroy(function(){res.redirect('/director/login');});
+  if (!director) return req.session.destroy(function(){
+    res.json({redirect: '/director/login'});
+  });
 
   if (candidate && mark && director.marker) {
     director.marker.collect({candidate: candidate, mark: mark}, function(err){
@@ -112,7 +130,8 @@ VoteOperation.collect = function(req, res){
     res.json({error: 'Param Error'});
 }
 
-exports.directorLogin = VoteOperation.login;
+exports.directorLoginSubmit = VoteOperation.login;
 exports.directorExec = VoteOperation.exec;
 exports.queryStatus = VoteOperation.query;
 exports.collectMarker = VoteOperation.collect;
+exports.selectProject = VoteOperation.search;

@@ -5,7 +5,7 @@ function ProjectLoginCtrl($scope, $http, $window){
   $scope.submit = function(project){
     if (project && project.id && project.key) {
 
-      $http.post('project-login', project).
+      $http.post('/director/login', project).
       success(function(data, status, headers, config){
         if (data.error) {
           $scope.error = data.error;
