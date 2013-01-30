@@ -1,6 +1,7 @@
 function DirectorCtrl ($scope, $http, $timeout) {
   $scope.candidate = null;
   $scope.isStart = false;
+  $scope.isEnd = false;
 
   $scope.setCandidate = function(data){
     $scope.project = data.project;
@@ -29,14 +30,18 @@ function DirectorCtrl ($scope, $http, $timeout) {
         case 'init':
         case 'prev':
         case 'next':
+        case 'save':
+          $scope.isEnd = false;
           return $scope.setCandidate(data);
         case 'start_vote':
           $scope.isStart = true;
           $scope.time = 0;
           $timeout($scope.timer, 1000);
+          $scope.isEnd = false;
           return;
         case 'end_vote':
           $scope.isStart = false;
+          $scope.isEnd = true;
           return;
         default:
           return;
@@ -67,6 +72,10 @@ function DirectorCtrl ($scope, $http, $timeout) {
 
   $scope.end = function(){
     $scope.request('end_vote');
+  }
+
+  $scope.save = function(){
+    $scope.request('save');
   }
 
 }

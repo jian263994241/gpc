@@ -45,8 +45,6 @@ VoteOperation.exec = function(req, res){
     res.json({error:true, redirect: '/director/login'});
   });
 
-  console.log(director);
-  console.log(director.candidate);
   switch(action){
     case DirectorAction.init:
       return res.json({candidate: director.candidate, project: director.project});
@@ -71,8 +69,12 @@ VoteOperation.exec = function(req, res){
         res.send('end');
       });
     case DirectorAction.save:
-      // director ask marker to save data
-      return;
+      return director.save(function(err){
+        if(!err){
+          console.log('save');
+          res.send('save');
+        } 
+      });
     default:
       return res.json({error: 'Authentication Failed'});
   }

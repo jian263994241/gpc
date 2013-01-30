@@ -7,7 +7,6 @@ function Marker(params){
 }
 
 Marker.prototype.collect = function(params, fn) {
-  // project = params.project;
   candidate = params.candidate;
   mark = params.mark;
 
@@ -17,10 +16,6 @@ Marker.prototype.collect = function(params, fn) {
   }else{
     fn(new Error('Auth Error'));
   }
-};
-
-Marker.prototype.save = function() {
-  // save the marks to database
 };
 
 Marker.prototype.getMarks = function() {

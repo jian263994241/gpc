@@ -40,7 +40,7 @@ Director.prototype.getData = function(project, fn) {
       that.source.push(el.data);
     });
     fn(err);
-  })
+  });
 };
 
 /*
@@ -51,13 +51,11 @@ Director.prototype.getData = function(project, fn) {
  * @api private
  */
 Director.prototype.changeStatus = function(config, fn) {
-  console.log('changeStatus');
   if (this.lock)
     if ('function' === typeof fn) 
       return fn(new Error());
     else return;
 
-  console.log('changeStatus>notify');
   this.lock = true;
   this.status = config.status;
   this.keeper.setBufferStatus(config);
@@ -85,8 +83,6 @@ Director.prototype.notify = function(){
 Director.prototype.setCandidate = function(index) {
   this.candidate.index = index;
   this.candidate.data = this.source[index];
-  console.log('********************************************');
-  console.log(this.candidate);
 };
 
 /*
@@ -97,8 +93,6 @@ Director.prototype.setCandidate = function(index) {
  * @api private
  */
 Director.prototype.statusEvent = function(status, fn) {
-  console.log('statusEvent');
-  console.log(status);
   switch(status){
     case Status.prepare:
       return this.changeStatus({status: Status.prepare}, fn);
@@ -147,7 +141,6 @@ Director.prototype.init = function(fn) {
 Director.prototype.register = function(project, fn) {
   var that = this;
   projectMgr.register(project, function(err, projectInfo){
-    console.log(projectInfo)
     that.project = projectInfo;
     if(!err && projectInfo) that.init(fn);
     else fn(new Error());
@@ -155,6 +148,8 @@ Director.prototype.register = function(project, fn) {
 }
 
 /**
+ *
+ *
  * @api public
  */
 Director.prototype.unregister = function(project, fn){
@@ -177,6 +172,15 @@ Director.prototype.previous = function(fn){
     fn(new Error());
   }
 }
+
+Director.prototype.save = function(fn) {
+  var that = this;
+  candidateDataMgr.queryCandidate({data: this.candidate.data}, function(err, data){
+    var el = data;
+    if (el.length > 0) candidateDataMgr.updateCandidate({data:el[0].data}, that.marker.getMarks(), fn);
+    else fn(new Error());
+  });
+};
 
 Director.prototype.end = function(fn){
   // end of the project
