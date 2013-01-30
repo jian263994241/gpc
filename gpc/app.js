@@ -45,7 +45,17 @@ app.post('/director/exec', routes.directorExec);
 app.post('/director/status', routes.queryStatus);
 app.post('/director/vote', routes.collectMarker);
 app.get('/director/vote/:project', routes.selectProject);
-app.get('/director/vote', routes.voteForm)
+app.get('/director/vote', routes.voteForm);
+
+app.get('/management/project', routes.projectManagement);
+app.post('/management/project/add', routes.addProject);
+app.post('/management/project/remove', routes.removeProject);
+app.post('/management/project/all', routes.queryAllProjects);
+
+app.get('/management/candidate', routes.candidateManagement);
+app.post('/management/candidate/all', routes.queryProjectCandidate);
+app.post('/management/candidate/add', routes.addCandidate);
+app.post('/management/candidate/remove', routes.removeCandidate);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

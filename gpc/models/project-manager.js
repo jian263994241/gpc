@@ -1,34 +1,42 @@
 var _ = require('underscore');
-var Director = require('../models/director');
+var Director = require('./director');
+
+var projectDataMgr = require('./project-data-manager');
 
 var ProjectMgr = ProjectMgr || {};
 
-// data is fake here. In the next step, the data would
-// fetch from project database
-ProjectMgr.data = [
-  {id: '0231', key: 'leo', name: 'McDonalds Spring Promotion'}, 
-  {id: '0266', key: 'leo', name: 'P&G Promotion'}
-];
-
+ProjectMgr.data = new Array();
 ProjectMgr.accessQueue = new Array();
 
+ProjectMgr.query = function(fn){
+  projectDataMgr.queryAllProjects(fn);
+}
+
 ProjectMgr.register = function(project, fn){
-  var find = _.where(ProjectMgr.data, project);
-  if (find.length == 0) return fn(new Error());
+  ProjectMgr.query(function(err, docs){
 
-  var projectInfo = find[0];
+    if (err) return fn(new Error('Exist'));
 
-  var check = _.find(ProjectMgr.accessQueue, function(d){
-    return d.project.id == project.id;
+    ProjectMgr.data = docs;
+
+    var find = _.where(ProjectMgr.data, project);
+    if (find.length == 0) return fn(new Error());
+
+    var projectInfo = find[0];
+    
+
+    var check = _.find(ProjectMgr.accessQueue, function(d){
+      return d.project.id == project.id;
+    });
+    
+    if (check) {
+      return fn(new Error('Exist'));
+    }else{
+      var director = new Director(projectInfo);
+      ProjectMgr.accessQueue.push(director);
+      return fn(null, director);
+    }
   });
-  
-  if (check) {
-    return fn(new Error('Exist'));
-  }else{
-    var director = new Director(projectInfo);
-    ProjectMgr.accessQueue.push(director);
-    return fn(null, director);
-  }
 }
 
 ProjectMgr.getDirector = function(project){
@@ -47,7 +55,18 @@ ProjectMgr.unregister = function(projectId, fn){
   }
 }
 
+ProjectMgr.add = function(project, fn){
+  projectDataMgr.addProject(project, fn);
+}
+
+ProjectMgr.del = function(project, fn){
+  projectDataMgr.removeProject(project, fn);
+}
+
 exports.register = ProjectMgr.register;
 exports.unregister = ProjectMgr.unregister;
 exports.getDirector = ProjectMgr.getDirector;
 exports.accessQueue = ProjectMgr.accessQueue;
+exports.queryProject = ProjectMgr.query;
+exports.addProject = ProjectMgr.add;
+exports.removeProject = ProjectMgr.del;

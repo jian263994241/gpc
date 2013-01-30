@@ -1,6 +1,7 @@
 var VoteOperation = require('../operation/vote-operation');
 var LoginOperation = require('../operation/login-operation');
 var RegisterOperation = require('../operation/register-operation');
+var ManageOperation = require('../operation/manage-operation');
 
 // Director
 exports.directorVisit = function(req, res){
@@ -37,3 +38,13 @@ exports.searchProject = LoginOperation.searchProject;
 
 exports.userRegister = RegisterOperation.userRegister;
 exports.userRegisterSubmit = RegisterOperation.userRegisterSubmit;
+
+exports.projectManagement = ManageOperation.setProjectList;
+exports.addProject = ManageOperation.addProject;
+exports.removeProject = ManageOperation.removeProject;
+exports.queryAllProjects = ManageOperation.queryAllProjects;
+
+exports.candidateManagement = ManageOperation.setCandidates;
+exports.queryProjectCandidate = ManageOperation.queryProjectCandidate;
+exports.addCandidate = ManageOperation.addCandidate;
+exports.removeCandidate = ManageOperation.removeCandidate;

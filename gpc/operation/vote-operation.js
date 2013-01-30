@@ -1,6 +1,5 @@
 var _ = require('underscore');
 
-var Director = require('../models/director');
 var StatusKeeper = require('../models/status-keeper.js');
 
 var projectMgr = require('../models/project-manager');
@@ -46,6 +45,8 @@ VoteOperation.exec = function(req, res){
     res.json({error:true, redirect: '/director/login'});
   });
 
+  console.log(director);
+  console.log(director.candidate);
   switch(action){
     case DirectorAction.init:
       return res.json({candidate: director.candidate, project: director.project});

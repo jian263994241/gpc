@@ -33,12 +33,13 @@ function Director (project) {
  * @param {JSON} {id, key} project info
  * @api private
  */
-Director.prototype.getData = function(project) {
+Director.prototype.getData = function(project, fn) {
   var that = this;
-  candidateDataMgr.queryCandidate(project, function(err, data){
+  candidateDataMgr.queryCandidate({project:project.id}, function(err, data){
     _.each(data, function(el, key, list){
-      that.source.push(el);
-    })
+      that.source.push(el.data);
+    });
+    fn(err);
   })
 };
 
@@ -84,6 +85,8 @@ Director.prototype.notify = function(){
 Director.prototype.setCandidate = function(index) {
   this.candidate.index = index;
   this.candidate.data = this.source[index];
+  console.log('********************************************');
+  console.log(this.candidate);
 };
 
 /*
@@ -112,6 +115,8 @@ Director.prototype.statusEvent = function(status, fn) {
 /*
  * Director init
  *
+ * Not Good Enough
+ *
  * @param {Function} callback
  * @api private
  */
@@ -119,10 +124,11 @@ Director.prototype.init = function(fn) {
   var that = this;
   this.statusEvent(Status.prepare, function(err){
     if (err) return fn(err);
-    that.getData(this.project);
-    that.setCandidate(0);
-    that.statusEvent(Status.show);
-    fn(null);
+    that.getData(that.project, function(cerr){
+      that.setCandidate(0);
+      that.statusEvent(Status.show);
+      fn(cerr);
+    });
   })
 };
 
