@@ -20,6 +20,7 @@ exports.directorLogin = function(req, res){
 
 exports.directorLoginSubmit = VoteOperation.directorLoginSubmit;
 exports.directorExec = VoteOperation.directorExec;
+exports.closeProject = VoteOperation.closeProject;
 
 // Director for client
 exports.queryStatus = VoteOperation.queryStatus;

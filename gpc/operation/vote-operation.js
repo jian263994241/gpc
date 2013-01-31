@@ -133,8 +133,24 @@ VoteOperation.collect = function(req, res){
     res.json({error: 'Param Error'});
 }
 
+VoteOperation.close = function(req, res){
+  console.log('close project');
+  var director = VoteOperation.getDirector(req.session.project);
+  if (!director) return req.session.destroy(function(){
+    res.redirect('/director');
+  });
+
+  projectMgr.unregister(director, function(err){
+    if (!err) return req.session.destroy(function(){
+      res.redirect('/director/login');
+    });
+    else return res.redirect('/director/login');
+  });
+}
+
 exports.directorLoginSubmit = VoteOperation.login;
 exports.directorExec = VoteOperation.exec;
 exports.queryStatus = VoteOperation.query;
 exports.collectMarker = VoteOperation.collect;
 exports.selectProject = VoteOperation.search;
+exports.closeProject = VoteOperation.close;

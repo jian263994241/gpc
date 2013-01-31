@@ -46,6 +46,7 @@ app.post('/director/status', routes.queryStatus);
 app.post('/director/vote', routes.collectMarker);
 app.get('/director/vote/:project', routes.selectProject);
 app.get('/director/vote', routes.voteForm);
+app.get('/director/logout', routes.closeProject);
 
 app.get('/management/project', routes.projectManagement);
 app.post('/management/project/add', routes.addProject);

@@ -46,13 +46,20 @@ ProjectMgr.getDirector = function(project){
   return check;
 }
 
-ProjectMgr.unregister = function(projectId, fn){
-  if(_.contains(ProjectMgr.accessQueue, projectId)){
-    ProjectMgr.accessQueue = _.without(ProjectMgr.accessQueue, projectId);
-    return fn(null, true);
-  }else{
-    return fn(new Error());
-  }
+// ProjectMgr.unregister = function(projectId, fn){
+//   if(_.contains(ProjectMgr.accessQueue, projectId)){
+//     ProjectMgr.accessQueue = _.without(ProjectMgr.accessQueue, projectId);
+//     return fn(null, true);
+//   }else{
+//     return fn(new Error());
+//   }
+// }
+ProjectMgr.unregister = function(director, fn){
+  console.log('**************unregister**************');
+  console.log(ProjectMgr.accessQueue);
+  ProjectMgr.accessQueue = _.without(ProjectMgr.accessQueue, director);
+  console.log('**************unregister after**************');
+  return fn(null);
 }
 
 ProjectMgr.add = function(project, fn){

@@ -36,4 +36,8 @@ function ResultCtrl ($scope, $http, $location, $window) {
   $scope.goBack = function(){
     $window.location.href = '/director';
   }
+
+  $scope.logout = function(){
+    $window.location.href = '/director/logout';
+  }
 }
