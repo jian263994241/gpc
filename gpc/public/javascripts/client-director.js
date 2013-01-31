@@ -2,6 +2,7 @@ function DirectorCtrl ($scope, $http, $timeout, $window) {
   $scope.candidate = null;
   $scope.isStart = false;
   $scope.isEnd = false;
+  $scope.qrcode = 'http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl='+$window.location.host+'&choe=UTF-8&chld=Q|2'
 
   $scope.setCandidate = function(data){
     $scope.project = data.project;
