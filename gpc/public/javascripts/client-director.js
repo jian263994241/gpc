@@ -1,4 +1,4 @@
-function DirectorCtrl ($scope, $http, $timeout) {
+function DirectorCtrl ($scope, $http, $timeout, $window) {
   $scope.candidate = null;
   $scope.isStart = false;
   $scope.isEnd = false;
@@ -78,4 +78,10 @@ function DirectorCtrl ($scope, $http, $timeout) {
     $scope.request('save');
   }
 
+  $scope.showResult = function(){
+    console.log($scope.project);
+    if ($scope.project) {
+      $window.location.href = '/director/result?project='+$scope.project.id;
+    };
+  }
 }

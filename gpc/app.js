@@ -57,6 +57,8 @@ app.post('/management/candidate/all', routes.queryProjectCandidate);
 app.post('/management/candidate/add', routes.addCandidate);
 app.post('/management/candidate/remove', routes.removeCandidate);
 
+app.get('/director/result?:project', routes.showResult);
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });

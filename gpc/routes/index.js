@@ -48,3 +48,11 @@ exports.candidateManagement = ManageOperation.setCandidates;
 exports.queryProjectCandidate = ManageOperation.queryProjectCandidate;
 exports.addCandidate = ManageOperation.addCandidate;
 exports.removeCandidate = ManageOperation.removeCandidate;
+
+// GET: /director/result?project=projectId
+exports.showResult = function(req, res){
+  if(req.session.project) 
+    res.render('result');
+  else
+    res.redirect('/director/login');
+}

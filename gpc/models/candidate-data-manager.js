@@ -22,7 +22,7 @@ CandidateDataManager.removeProject = function(candidate, fn){
 
 CandidateDataManager.updateCandidate = function(condition, update, fn){
   console.log(condition);
-  CandidateDataManager.db.update(condition, {$set:{marks:update}}, {multi:true}, fn);
+  CandidateDataManager.db.update(condition, {$set:update}, {multi:true}, fn);
 }
 
 exports.queryCandidate  = CandidateDataManager.queryCandidate;

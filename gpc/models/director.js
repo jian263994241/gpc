@@ -37,6 +37,9 @@ Director.prototype.getData = function(project, fn) {
   var that = this;
   candidateDataMgr.queryCandidate({project:project.id}, function(err, data){
     _.each(data, function(el, key, list){
+      console.log('***************************');
+      console.log(el)
+
       that.source.push(el.data);
     });
     fn(err);
@@ -109,7 +112,7 @@ Director.prototype.statusEvent = function(status, fn) {
 /*
  * Director init
  *
- * Not Good Enough
+ * !!Not Good Enough!!
  *
  * @param {Function} callback
  * @api private
@@ -148,7 +151,7 @@ Director.prototype.register = function(project, fn) {
 }
 
 /**
- *
+ * @deprecated
  *
  * @api public
  */
@@ -177,7 +180,7 @@ Director.prototype.save = function(fn) {
   var that = this;
   candidateDataMgr.queryCandidate({data: this.candidate.data}, function(err, data){
     var el = data;
-    if (el.length > 0) candidateDataMgr.updateCandidate({data:el[0].data}, that.marker.getMarks(), fn);
+    if (el.length > 0) candidateDataMgr.updateCandidate({data:el[0].data}, {marks:that.marker.getMarks(), average:that.marker.average}, fn);
     else fn(new Error());
   });
 };

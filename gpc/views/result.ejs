@@ -1,0 +1,67 @@
+<!doctype html>
+<html ng-app="ngView">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Show Result</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap-responsive.min.css">
+    <link href='http://fonts.googleapis.com/css?family=Wendy+One' rel='stylesheet' type='text/css'>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js"></script>
+    <script type="text/javascript" src="/javascripts/client-result.js"></script>
+
+    <link rel="stylesheet/less" type="text/css" href="/less/login.less">
+    <link rel="stylesheet/less" type="text/css" href="/less/logo.less">
+    <script type="text/javascript" src="/javascripts/less-1.3.3.min.js"></script>
+
+    <script type="text/javascript" src="/javascripts/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="/javascripts/bootstrap.min.js"></script>
+
+  </head>
+  <body ng-controller="ResultCtrl" ng-init="init()">
+    <article class="container">
+      <section class="row">
+        <div class="page-header">
+          <h2>
+            <span>Review</span> 
+            <a href="#" class="btn" ng-click="goBack()">Back</a> 
+            <a href="#" class="btn" ng-click="close()">Close Project</a>
+          </h2>
+
+        </div>
+        <div id="result-list">
+          <div class="span3" ng-repeat="candidate in candidates">
+            <h4>{{candidate.data.title}}</h4>
+            <p>
+              <strong>Score:</strong>
+              <span class="label label-important">{{candidate.average}}</span>
+            </p>
+            <p>Author:{{candidate.data.author}}</p>
+            <a href="#candidateModal" role="button" class="btn" data-toggle="modal" ng-click="setCandidate(candidate)"><i class="icon icon-eye-open"></i>Details</a>
+          </div>
+        </div>
+      </section>
+    </article>
+    <div id="candidateModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="candidateModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="candidateModalLabel">Details</h3>
+      </div>
+      <div class="modal-body">
+        <div ng-repeat="mark in marks">
+          <h4>User:{{mark.username}}</h4>
+          <p>
+            <strong>Score:</strong>
+            <span class="label label-important">{{mark.score}}</span>
+          </p>
+          <p>Comment: <pre>{{mark.comment}}</pre></p>
+          <hr>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div>
+    </div>
+  </body>
+</html>

@@ -60,7 +60,7 @@ VoteOperation.exec = function(req, res){
       });
     case DirectorAction.startVote:
       return director.startVote(function() {
-        if(director.marker) director.marker.unlock();
+        if(director.marker) director.marker.reset();
         res.send('start');
       });
     case DirectorAction.endVote:
@@ -70,10 +70,7 @@ VoteOperation.exec = function(req, res){
       });
     case DirectorAction.save:
       return director.save(function(err){
-        if(!err){
-          console.log('save');
-          res.send('save');
-        } 
+        if(!err) res.send('save');
       });
     default:
       return res.json({error: 'Authentication Failed'});
@@ -117,14 +114,17 @@ VoteOperation.query = function(req, res){
 VoteOperation.collect = function(req, res){
   var candidate = req.body['candidate'];
   var mark = req.body['mark'];
+
   var project = req.session.project;
+  var user = req.session.user;
 
   var director = VoteOperation.getDirector(project);
   if (!director) return req.session.destroy(function(){
     res.json({redirect: '/director/login'});
   });
 
-  if (candidate && mark && director.marker) {
+  if (user && candidate && mark && director && director.marker) {
+    mark.username = user.username;
     director.marker.collect({candidate: candidate, mark: mark}, function(err){
       if (!err) res.json({success: true});
       else res.json({error: 'Push Error'});
