@@ -53,10 +53,10 @@ app.post('/management/project/add', routes.addProject);
 app.post('/management/project/remove', routes.removeProject);
 app.post('/management/project/all', routes.queryAllProjects);
 
-app.get('/management/candidate', routes.candidateManagement);
-app.post('/management/candidate/all', routes.queryProjectCandidate);
-app.post('/management/candidate/add', routes.addCandidate);
-app.post('/management/candidate/remove', routes.removeCandidate);
+// app.get('/management/candidate', routes.candidateManagement);
+// app.post('/management/candidate/all', routes.queryProjectCandidate);
+// app.post('/management/candidate/add', routes.addCandidate);
+// app.post('/management/candidate/remove', routes.removeCandidate);
 
 app.get('/director/result?:project', routes.showResult);
 
