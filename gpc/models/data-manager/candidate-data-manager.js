@@ -1,5 +1,6 @@
 /**
  * @author Michael.Lee(leewind19841209@gamil.com)
+ * @version Beta 1.1
  */
 
 var dataMgr = require('./data-manager');

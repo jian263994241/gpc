@@ -1,5 +1,6 @@
 /**
  * @author Michael.Lee(leewind19841209@gamil.com)
+ * @version Beta 1.1
  */
 
 var dataMgr = require('./data-manager');
@@ -112,6 +113,7 @@ ProjectDataManager.removeProject = function(project, fn){
  * @param{Function} callback function(err){}
  *
  * @api public
+ * @see http://docs.mongodb.org/manual/applications/update/
  */
 ProjectDataManager.insertCandidate = function(project, candidateId, fn){
   var mongoServer = dataMgr.createDbServer();
