@@ -4,7 +4,6 @@
  */
 
 var dataMgr = require('./data-manager');
-var _ = require('underscore');
 
 var ProjectDataManager = exports = module.exports = {};
 ProjectDataManager.key = dataMgr.COLLECTION_PROJECT;
