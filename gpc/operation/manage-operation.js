@@ -2,61 +2,92 @@ var projectDataMgr = require('../models/data-manager/project-data-manager');
 
 var ManageOperation = exports = module.exports = {};
 
+/**
+ * Process client submitted data
+ *
+ * @param{Request}
+ * @param{Response}
+ * @param{String} keyword for submitted data
+ * @param{Function} callback function(data){}
+ *
+ * @api private
+ */
 function process(req, res, key, fn){
   var data = req.body[key];
   if (data) {
-    fn();
+    fn(data);
   }else{
     res.json({error: 'Lost submitted data'});
   }
 }
 
+/**
+ * Render 'management-project' view
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.setProjectList = function(req, res){
   res.render('management-projects');
 }
 
+/**
+ * Query all projects data and response json data
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.queryAllProjects = function(req, res){
-  // process(req, res, 'project', function(){
-    projectDataMgr.queryAllProjects(function(err, data){
-      var list = data;
-      console.log('get');
-      if (list) res.json({projects: list});
-      else res.json({error: true});
-    });
-  // });
+  projectDataMgr.queryAllProjects(function(err, records){
+    if (!err && records) res.json({projects: records});
+    else res.json({error: true});
+  });
 }
 
+/**
+ * Add project and response operation status
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.addProject = function(req, res){
-  process(req, res, 'project', function(){
-    projectDataMgr.query({id: project.id}, function(err, docs){
-      if (!err && docs.length == 0) {
-        projectDataMgr.add(project, function(err){
-          if(err) res.json({error: 'Add project failed'});
-          else res.json({success:true});
-        });
-      }else{
-        res.json({error: 'Project Exist'});
-      }
+  process(req, res, 'project', function(project){
+    projectDataMgr.addProject(project, function(err){
+      if (err)  res.json({error: 'Add project failed'});
+      else  res.json({success: true});
     });
   });
 }
 
+/**
+ * Remove project and response operation status
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.removeProject = function(req, res){
-  process(req, res, 'project', function(){
-    projectDataMgr.remove(project, function(err){
+  process(req, res, 'project', function(project){
+    projectDataMgr.removeProject(project, function(err){
       if (err)  res.json({error: 'Remove project failed'});
       else  res.json({success: true});
     });
   });
 }
 
-ManageOperation.queryProject = function(req, res){
-  process(req, res, 'project', function(){
-    projectDataMgr.query(project, function(err, docs){
-      if (!err && docs.length > 0)  res.json(docs[0]);
-      else  res.json({error: 'No candidate found'});
-    });
-  });
+ManageOperation.setCandidates = function(req, res){
+  res.render('management-candidates');
+}
+
+ManageOperation.queryAllCandidates = function(req, res){
+  
 }
 
 ManageOperation.addCandidate = function(req, res) {
@@ -76,43 +107,6 @@ ManageOperation.addCandidate = function(req, res) {
 // var candidateDataMgr = require('../models/candidate-data-manager');
 
 /*
-
-var ManageOperation = ManageOperation || {};
-
-ManageOperation.setProjectList = function(req, res){
-  res.render('management-projects');
-}
-
-ManageOperation.setCandidates = function(req, res){
-  res.render('management-candidates');
-}
-
-ManageOperation.addProject = function(req, res){
-  var project = req.body['project'];
-  if (project) {
-    projectMgr.add(project, function(err){
-      if (err) res.json({error: true});
-      else res.json({success: true});
-    });
-  }else
-    res.json({error: true});
-}
-
-ManageOperation.removeProject = function(req, res){
-  var project = req.body['project'];
-  projectMgr.remove(project, function(err){
-    if (err) res.json({error: true});
-    else res.json({success: true});
-  });
-}
-
-ManageOperation.queryAllProjects = function(req, res){
-  projectMgr.queryAll(function(err, list){
-    if (list) res.json({projects: list});
-    else res.json({error: true});
-  });
-}
-
 ManageOperation.queryProjectCandidate = function(req, res){
   var project = req.body['project'];
   candidateDataMgr.queryCandidate({project: project}, function(err, docs){

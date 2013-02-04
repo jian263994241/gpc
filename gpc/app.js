@@ -49,11 +49,11 @@ app.configure('development', function(){
 // app.get('/director/logout', routes.closeProject);
 
 app.get('/management/project', routes.projectManagement);
-// app.post('/management/project/add', routes.addProject);
-// app.post('/management/project/remove', routes.removeProject);
+app.post('/management/project/add', routes.addProject);
+app.post('/management/project/remove', routes.removeProject);
 app.post('/management/project/all', routes.queryAllProjects);
 
-// app.get('/management/candidate', routes.candidateManagement);
+app.get('/management/candidate', routes.candidateManagement);
 // app.post('/management/candidate/all', routes.queryProjectCandidate);
 // app.post('/management/candidate/add', routes.addCandidate);
 // app.post('/management/candidate/remove', routes.removeCandidate);

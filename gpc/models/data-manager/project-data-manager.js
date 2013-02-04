@@ -1,45 +1,127 @@
+/**
+ * @author Michael.Lee(leewind19841209@gamil.com)
+ */
+
 var dataMgr = require('./data-manager');
+var _ = require('underscore');
 
 var ProjectDataManager = exports = module.exports = {};
-ProjectDataManager.key = dataMgr.COLLETION_PROJECT;
-
-ProjectDataManager.queryProject = function(project, fn){
-
-}
+ProjectDataManager.key = dataMgr.COLLECTION_PROJECT;
 
 /**
- * Get all projects from database
+ * Query specified projects from GPC_DB.projects
  *
- * @param{Function} callback function(collection, close){} (close is handler to close the server)
+ * @param{JSON} project data object
+ * @param{Function} callback function(err, data){}
  *
  * @api public
- *
  */
-ProjectDataManager.queryAllProjects = function(fn) {
-  dataMgr.openCollection(ProjectDataManager.key, function(collection, close){
-    collection.find().toArray(function(err, data){
-      fn(err, data.concat());
-      close();
+ProjectDataManager.queryProject = function(project, fn){
+  var mongoServer = dataMgr.createDbServer();
+  var dbConnector = dataMgr.createDbConnector(mongoServer);
+
+  dbConnector.open(function(err, db){
+    db.collection(ProjectDataManager.key, function(err, collection){
+      collection.find(project).toArray(function(err, data){
+        fn(err, data.concat());
+        mongoServer.close();
+      });
     });
   });
 }
 
-// ProjectDataManager.queryProject = function(project, fn){
-//   ProjectDataManager.db.find(project, fn);
-// }
+/**
+ * Query all projects from GPC_DB.projects
+ *
+ * @param{Function} callback function(err, data){}
+ *
+ * @api public
+ */
+ProjectDataManager.queryAllProjects = function(fn) {
+  var mongoServer = dataMgr.createDbServer();
+  var dbConnector = dataMgr.createDbConnector(mongoServer);
 
-// ProjectDataManager.queryAllProjects = function(fn) {
-//   ProjectDataManager.db.find(null, fn); 
-// }
+  dbConnector.open(function(err, db){
+    db.collection(ProjectDataManager.key, function(err, collection){
+      collection.find().toArray(function(err, data){
+        fn(err, data.concat());
+        mongoServer.close();
+      });
+    });
+  });
+}
 
-// ProjectDataManager.addProject = function(project, fn){
-//   ProjectDataManager.db.save(project, fn);
-// }
+/**
+ * Insert project into GPC_DB.projects
+ *
+ * @param{JSON} project data object
+ * @param{Function} callback function(err, records){}
+ *
+ * @api public
+ */
+ProjectDataManager.addProject = function(project, fn){
+  var mongoServer = dataMgr.createDbServer();
+  var dbConnector = dataMgr.createDbConnector(mongoServer);
 
-// ProjectDataManager.removeProject = function(project, fn){
-//   ProjectDataManager.db.remove(project, fn);
-// }
+  dbConnector.open(function(err, db){
+    db.collection(ProjectDataManager.key, function(err, collection){
+      collection.find(project).toArray(function(err, data){
+        if (err) {
+          fn(err);
+          mongoServer.close();
+        }else if(data){
+          fn(new Error('Data Exist'));
+          mongoServer.close();
+        }else{
+          collection.insert(project, {safe: true}, function(err, records){
+            fn(err, records);
+            mongoServer.close();
+          });
+        }
+      });
+    });
+  });
+}
 
-// ProjectDataManager.addCandidate = function(project, candidateId, fn){
-//   ProjectDataManager.db.update({id: project.id}, {$push: {candidates: candidateId}}, {upsert: true, multi: false}, fn);
-// }
+/**
+ * Remove project from GPC_DB.projects
+ *
+ * @param{JSON} project data object
+ * @param{Function} callback function(err){}
+ *
+ * @api public
+ */
+ProjectDataManager.removeProject = function(project, fn){
+  var mongoServer = dataMgr.createDbServer();
+  var dbConnector = dataMgr.createDbConnector(mongoServer);
+
+  dbConnector.open(function(err, db){
+    db.collection(ProjectDataManager.key, function(err, collection){
+      collection.remove(project, false, function(err){
+        fn(err);
+      });
+    });
+  });
+}
+
+/**
+ * Insert candidateId into specified project in GPC_DB.projects
+ *
+ * @param{JSON} project data object
+ * @paran{String} candidateId
+ * @param{Function} callback function(err){}
+ *
+ * @api public
+ */
+ProjectDataManager.insertCandidate = function(project, candidateId, fn){
+  var mongoServer = dataMgr.createDbServer();
+  var dbConnector = dataMgr.createDbConnector(mongoServer);
+
+  dbConnector.open(function(err, db){
+    db.collection(ProjectDataManager.key, function(err, collection){
+      collection.update({_id: project._id, candidates: candidateId}, {$push: {candidates: candidateId}}, {upsert: true}, function(err){
+        fn(err);
+      });
+    });
+  });
+}
