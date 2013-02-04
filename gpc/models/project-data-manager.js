@@ -19,10 +19,10 @@ ProjectDataManager.removeProject = function(project, fn){
   ProjectDataManager.db.remove(project, fn);
 }
 
-ProjectDataManager.addCandidate = function(project, candidate, fn){
-  ProjectDataManager.db.update({id: project.id}, {$push: {candidates: candidate}}, {upsert: true, multi: false}, fn);
+ProjectDataManager.addCandidate = function(project, candidateId, fn){
+  ProjectDataManager.db.update({id: project.id}, {$push: {candidates: candidateId}}, {upsert: true, multi: false}, fn);
 }
 
-ProjectDataManager.queryCandidate = function(project, candidate, fn){
+ProjectDataManager.queryCandidate = function(candidateId, fn){
   
 }
