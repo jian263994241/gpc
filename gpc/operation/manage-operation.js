@@ -1,4 +1,4 @@
-var projectDataMgr = require('../models/project-data-manager');
+var projectDataMgr = require('../models/data-manager/project-data-manager');
 
 var ManageOperation = exports = module.exports = {};
 
@@ -16,12 +16,14 @@ ManageOperation.setProjectList = function(req, res){
 }
 
 ManageOperation.queryAllProjects = function(req, res){
-  process(req, res, 'project', function(){
-    projectDataMgr.queryAll(function(err, list){
+  // process(req, res, 'project', function(){
+    projectDataMgr.queryAllProjects(function(err, data){
+      var list = data;
+      console.log('get');
       if (list) res.json({projects: list});
       else res.json({error: true});
     });
-  });
+  // });
 }
 
 ManageOperation.addProject = function(req, res){

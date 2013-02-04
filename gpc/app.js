@@ -29,28 +29,28 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.userLogin);
-app.get('/home', routes.searchProject);
-app.get('/login', routes.userLogin);
-app.post('/login', routes.userLoginSubmit);
-app.get('/logout', routes.userLogoutSubmit);
+// app.get('/', routes.userLogin);
+// app.get('/home', routes.searchProject);
+// app.get('/login', routes.userLogin);
+// app.post('/login', routes.userLoginSubmit);
+// app.get('/logout', routes.userLogoutSubmit);
 
-app.get('/register', routes.userRegister);
-app.post('/register', routes.userRegisterSubmit);
+// app.get('/register', routes.userRegister);
+// app.post('/register', routes.userRegisterSubmit);
 
-app.get('/director', routes.directorVisit);
-app.get('/director/login', routes.directorLogin);
-app.post('/director/login', routes.directorLoginSubmit);
-app.post('/director/exec', routes.directorExec);
-app.post('/director/status', routes.queryStatus);
-app.post('/director/vote', routes.collectMarker);
-app.get('/director/vote/:project', routes.selectProject);
-app.get('/director/vote', routes.voteForm);
-app.get('/director/logout', routes.closeProject);
+// app.get('/director', routes.directorVisit);
+// app.get('/director/login', routes.directorLogin);
+// app.post('/director/login', routes.directorLoginSubmit);
+// app.post('/director/exec', routes.directorExec);
+// app.post('/director/status', routes.queryStatus);
+// app.post('/director/vote', routes.collectMarker);
+// app.get('/director/vote/:project', routes.selectProject);
+// app.get('/director/vote', routes.voteForm);
+// app.get('/director/logout', routes.closeProject);
 
 app.get('/management/project', routes.projectManagement);
-app.post('/management/project/add', routes.addProject);
-app.post('/management/project/remove', routes.removeProject);
+// app.post('/management/project/add', routes.addProject);
+// app.post('/management/project/remove', routes.removeProject);
 app.post('/management/project/all', routes.queryAllProjects);
 
 // app.get('/management/candidate', routes.candidateManagement);
