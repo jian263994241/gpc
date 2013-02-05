@@ -46,7 +46,7 @@ exports.removeProject = ManageOperation.removeProject;
 exports.queryAllProjects = ManageOperation.queryAllProjects;
 
 exports.candidateManagement = ManageOperation.setCandidates;
-exports.queryProjectCandidate = ManageOperation.queryProjectCandidate;
+exports.queryAllCandidates = ManageOperation.queryAllCandidates;
 exports.addCandidate = ManageOperation.addCandidate;
 exports.removeCandidate = ManageOperation.removeCandidate;
 
@@ -57,3 +57,9 @@ exports.showResult = function(req, res){
   else
     res.redirect('/director/login');
 }
+
+// GET: /management
+exports.renderLoginManagementView = ManageOperation.renderLoginManagementView;
+
+exports.loginManagement = ManageOperation.loginManagement;
+exports.logoutManagement = ManageOperation.logoutManagement;

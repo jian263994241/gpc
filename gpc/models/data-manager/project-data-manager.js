@@ -69,7 +69,7 @@ ProjectDataManager.addProject = function(project, fn){
         if (err) {
           fn(err);
           mongoServer.close();
-        }else if(data){
+        }else if(data.length > 0){
           fn(new Error('Data Exist'));
           mongoServer.close();
         }else{
@@ -99,6 +99,7 @@ ProjectDataManager.removeProject = function(project, fn){
     db.collection(ProjectDataManager.key, function(err, collection){
       collection.remove(project, false, function(err){
         fn(err);
+        mongoServer.close();
       });
     });
   });

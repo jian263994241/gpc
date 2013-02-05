@@ -1,12 +1,11 @@
 function ProjectManageCtrl($scope, $http, $window) {
-  $scope.isCreate = false;
   $scope.projects = new Array();
 
   $scope.save = function(){
     $http.post('/management/project/add', {project:{id:$scope.project.id, name:$scope.project.name, key:$scope.project.key}}).
     success(function(data, status, headers, config){
       if (data.success) {
-        $scope.isCreate = false;
+        $('#project-modal').modal('hide')
         $scope.refresh();
       }else{
         alert('error');
@@ -39,14 +38,6 @@ function ProjectManageCtrl($scope, $http, $window) {
     error(function(data, status, headers, config){
 
     });
-  }
-
-  $scope.create = function(){
-    $scope.isCreate = true;
-  }
-
-  $scope.close = function(){
-    $scope.isCreate = false;
   }
 
   $scope.refresh = function(){

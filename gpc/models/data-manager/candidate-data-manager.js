@@ -69,7 +69,7 @@ CandidateDataManager.addCandidate = function(candidate, fn){
         if (err) {
           fn(err);
           mongoServer.close();
-        }else if(data){
+        }else if(data.length > 0){
           fn(new Error('Data Exist'));
           mongoServer.close();
         }else{
@@ -99,6 +99,7 @@ CandidateDataManager.removeCandidate = function(candidate, fn){
     db.collection(CandidateDataManager.key, function(err, collection){
       collection.remove(candidate, false, function(err){
         fn(err);
+        mongoServer.close();
       });
     });
   });
