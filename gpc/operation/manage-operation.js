@@ -19,6 +19,7 @@ var admin, passwd;
  * It operates on the initialization
  *
  * @api private
+ * @see http://nodejs.org/api/path.html#path_path_relative_from_to
  */
 function admin() {
   var filename = path.resolve(__dirname, '../conf.json');
@@ -150,7 +151,13 @@ ManageOperation.removeProject = function(req, res){
 ManageOperation.setCandidates = function(req, res){
   if(!isAuth(req)) return res.redirect('/management');
 
-  res.render('template/candidates');
+  res.render('template/candidates', {
+    candidate_ctrl: 'management/candidate-manager',
+    is_need: false,
+    project_id: '',
+    project_title: '',
+    modal_file: 'create-candidate-modal'
+  });
 }
 
 /**
@@ -226,12 +233,19 @@ ManageOperation.queryProjectCandidates = function(req, res){
         var candidateArr = records[0].candidates;
         var sen = new Array();
         _.each(candidateArr, function(el, index, list){
-          sen.push({_id: el});
+          console.log(el);
+          sen.push({_id: new ObjectID(el)});
         });
 
-        sen = sen.toString();
+        console.log(sen);
 
-        candidateDataMgr.queryCandiate({$or: sen}, function(err, records){
+        if(sen.length > 0) sen = {$or: sen.toString()}
+        else return res.json({candidates: []});
+
+        candidateDataMgr.queryCandidate(sen, function(err, records){
+          console.log(err);
+          console.log(records);
+
           if (!err && records) res.json({candidates: records});
           else res.json({error: true});
         });
@@ -246,6 +260,8 @@ ManageOperation.removeCandidateFromProject = function(req, res){
 
 ManageOperation.insertCandidateIntoProject = function(req, res){
   if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
+
+
 }
 
 /**
@@ -313,4 +329,22 @@ ManageOperation.logoutManagement = function(req, res){
     });
   else
     res.redirect('management');
+}
+
+
+ManageOperation.setProjectCandidates = function(req, res){
+  if(!isAuth(req)) return res.redirect('/management');
+
+  var projectId = req.params.projectId;
+  projectDataMgr.queryProject({id:projectId}, function(err, records){
+    if (!err && records) {
+      res.render('template/candidates', {
+        candidate_ctrl: 'management/project-candidates-manager',
+        is_need: true,
+        project_id: records[0].id,
+        project_title: records[0].name,
+        modal_file: 'create-candidate-modal'
+      });
+    };
+  });
 }

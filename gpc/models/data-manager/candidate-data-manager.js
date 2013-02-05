@@ -44,7 +44,8 @@ CandidateDataManager.queryCandidate = function(candidate, fn){
   dbConnector.open(function(err, db){
     db.collection(CandidateDataManager.key, function(err, collection){
       collection.find(candidate).toArray(function(err, data){
-        fn(err, data.concat());
+        if(!err)fn(err, data.concat());
+        else fn(err);
         mongoServer.close();
       });
     });

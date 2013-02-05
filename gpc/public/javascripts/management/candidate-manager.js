@@ -1,4 +1,4 @@
-function CandidateManageCtrl ($scope, $http, $location, $window) {
+function CandidateManageCtrl ($scope, $http, $window) {
   $scope.candidates = new Array();
 
   $scope.init = function(){

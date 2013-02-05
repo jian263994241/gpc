@@ -1,8 +1,12 @@
-function CandidateManageCtrl ($scope, $http, $location, $window) {
+function CandidateManageCtrl ($scope, $http, $window) {
   $scope.candidates = new Array();
 
   $scope.init = function(){
-    $http.post('/management/candidate/all').
+
+    var domProjectId = document.querySelector('#project-id');
+    var projectId = domProjectId.getAttribute('data-project-id');
+
+    $http.post('/management/project/candidates/all', {project: {id: projectId}}).
     success(function(data, status, headers, config){
       console.log(data);
       if (!data.error) $scope.candidates = data.candidates;
