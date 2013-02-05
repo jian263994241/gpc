@@ -72,7 +72,7 @@ function process(req, res, key, fn){
 }
 
 /**
- * Render 'management-projects' view
+ * Render 'projects' view
  *
  * @param{Request}
  * @param{Response}
@@ -82,7 +82,12 @@ function process(req, res, key, fn){
 ManageOperation.setProjectList = function(req, res){
   if(!isAuth(req)) return res.redirect('/management');
 
-  res.render('template/projects');
+  res.render('projects', {
+    project_status: 'active',
+    candidate_status: '',
+    modal_id: 'project-modal',
+    modal_type: 'New Project',
+  });
 }
 
 /**
@@ -114,6 +119,7 @@ ManageOperation.addProject = function(req, res){
   if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
 
   process(req, res, 'project', function(project){
+    project.candidates = new Array();
     projectDataMgr.addProject(project, function(err){
       if(err) res.json({error: 'Add project failed'});
       else  res.json({success: true});
@@ -141,7 +147,7 @@ ManageOperation.removeProject = function(req, res){
 }
 
 /**
- * Render 'management-candidates' view
+ * Render 'candidates' view
  *
  * @param{Request}
  * @param{Response}
@@ -151,12 +157,11 @@ ManageOperation.removeProject = function(req, res){
 ManageOperation.setCandidates = function(req, res){
   if(!isAuth(req)) return res.redirect('/management');
 
-  res.render('template/candidates', {
-    candidate_ctrl: 'management/candidate-manager',
-    is_need: false,
-    project_id: '',
-    project_title: '',
-    modal_file: 'create-candidate-modal'
+  res.render('candidates', {
+    project_status: '',
+    candidate_status: 'active',
+    modal_id: 'candidate-modal',
+    modal_type: 'New Candidate'
   });
 }
 
@@ -233,19 +238,12 @@ ManageOperation.queryProjectCandidates = function(req, res){
         var candidateArr = records[0].candidates;
         var sen = new Array();
         _.each(candidateArr, function(el, index, list){
-          console.log(el);
           sen.push({_id: new ObjectID(el)});
         });
 
-        console.log(sen);
+        if(sen.length == 0) return res.json({candidates: []});
 
-        if(sen.length > 0) sen = {$or: sen.toString()}
-        else return res.json({candidates: []});
-
-        candidateDataMgr.queryCandidate(sen, function(err, records){
-          console.log(err);
-          console.log(records);
-
+        candidateDataMgr.queryCandidate({$or: sen}, function(err, records){
           if (!err && records) res.json({candidates: records});
           else res.json({error: true});
         });
@@ -254,14 +252,53 @@ ManageOperation.queryProjectCandidates = function(req, res){
   });
 }
 
+/**
+ * Remove candidate from specified project
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.removeCandidateFromProject = function(req, res){
   if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
+
+  var candidate = req.body['candidate'];
+  var project = req.body['project'];
+
+  if (candidate && project) {
+    projectDataMgr.removeCandidate(project, candidate._id, function(err){
+      console.log(err);
+      if (err)  res.json({error: 'Remove candidate failed'});
+      else  res.json({success: true});
+    });
+  }else{
+    res.json({error: 'Lost submitted data'});
+  }
 }
 
+/**
+ * Add candidate into specified project
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.insertCandidateIntoProject = function(req, res){
   if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
 
+  var candidate = req.body['candidate'];
+  var project = req.body['project'];
 
+  if (candidate && project) {
+    projectDataMgr.insertCandidate(project, candidate._id, function(err){
+      if (err)  res.json({error: 'Add candidate failed'});
+      else  res.json({success: true});
+    });
+  }else{
+    res.json({error: 'Lost submitted data'});
+  }
 }
 
 /**
@@ -276,7 +313,7 @@ ManageOperation.renderLoginManagementView = function(req, res){
   if(isAuth(req)) return res.redirect('/management/project');
 
   if (admin && passwd) {
-    res.render('template/login', {
+    res.render('login', {
       js_control_file: 'management/login',
       is_need: false,
       guide_link: '',
@@ -331,19 +368,27 @@ ManageOperation.logoutManagement = function(req, res){
     res.redirect('management');
 }
 
-
+/**
+ * Render 'project-candidates' view
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.setProjectCandidates = function(req, res){
   if(!isAuth(req)) return res.redirect('/management');
 
   var projectId = req.params.projectId;
   projectDataMgr.queryProject({id:projectId}, function(err, records){
     if (!err && records) {
-      res.render('template/candidates', {
-        candidate_ctrl: 'management/project-candidates-manager',
-        is_need: true,
+      res.render('project-candidates', {
+        project_status: '',
+        candidate_status: '',
+        modal_id: 'select-candidate-modal',
+        modal_type: 'Add Candidate',
         project_id: records[0].id,
         project_title: records[0].name,
-        modal_file: 'create-candidate-modal'
       });
     };
   });

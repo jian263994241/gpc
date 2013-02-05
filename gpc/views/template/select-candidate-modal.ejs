@@ -1,0 +1,17 @@
+<div id="select-candidate-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="select-candidate-modal-label" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="select-candidate-modal-label">Add Selected Candidate</h3>
+  </div>
+  <div class="modal-body">
+    <form>
+      <select id="candidate-selection">
+        <option value ="{{candidate._id}}" ng-repeat="candidate in all" ><span>{{candidate.title}}</span></option>
+      </select>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="submit" ng-click="add()">Add</button>
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>

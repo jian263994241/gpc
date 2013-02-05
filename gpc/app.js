@@ -61,6 +61,8 @@ app.post('/management/candidate/add', routes.addCandidate);
 app.post('/management/candidate/remove', routes.removeCandidate);
 app.get('/management/project/candidates/:projectId', routes.projectCandidatesManagement);
 app.post('/management/project/candidates/all', routes.queryProjectCandidates);
+app.post('/management/project/candidates/add', routes.insertCandidateIntoProject);
+app.post('/management/project/candidates/remove', routes.removeCandidateFromProject);
 
 // app.get('/director/result?:project', routes.showResult);
 

@@ -114,6 +114,7 @@ ProjectDataManager.removeProject = function(project, fn){
  *
  * @api public
  * @see http://docs.mongodb.org/manual/applications/update/
+ * @see http://mongodb.github.com/node-mongodb-native/api-articles/nodekoarticle1.html
  */
 ProjectDataManager.insertCandidate = function(project, candidateId, fn){
   var mongoServer = dataMgr.createDbServer();
@@ -121,7 +122,31 @@ ProjectDataManager.insertCandidate = function(project, candidateId, fn){
 
   dbConnector.open(function(err, db){
     db.collection(ProjectDataManager.key, function(err, collection){
-      collection.update({_id: project._id, candidates: candidateId}, {$push: {candidates: candidateId}}, {upsert: true}, function(err){
+      collection.update({id: project.id}, {$addToSet: {candidates: candidateId}}, {upsert: true}, function(err){
+        fn(err);
+      });
+    });
+  });
+}
+
+/**
+ * Remove candidateId from specified project in GPC_DB.projects
+ *
+ * @param{JSON} project data object {id}
+ * @paran{String} candidateId
+ * @param{Function} callback function(err){}
+ *
+ * @api public
+ * @see http://docs.mongodb.org/manual/applications/update/
+ * @see http://mongodb.github.com/node-mongodb-native/api-articles/nodekoarticle1.html
+ */
+ProjectDataManager.removeCandidate = function(project, candidateId, fn){
+  var mongoServer = dataMgr.createDbServer();
+  var dbConnector = dataMgr.createDbConnector(mongoServer);
+
+  dbConnector.open(function(err, db){
+    db.collection(ProjectDataManager.key, function(err, collection){
+      collection.update({id: project.id}, {$pull: {candidates: candidateId}}, {upsert: true}, function(err){
         fn(err);
       });
     });

@@ -66,3 +66,5 @@ exports.logoutManagement = ManageOperation.logoutManagement;
 
 exports.projectCandidatesManagement = ManageOperation.setProjectCandidates;
 exports.queryProjectCandidates = ManageOperation.queryProjectCandidates;
+exports.insertCandidateIntoProject = ManageOperation.insertCandidateIntoProject;
+exports.removeCandidateFromProject = ManageOperation.removeCandidateFromProject;

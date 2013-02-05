@@ -9,7 +9,7 @@
     <link href='http://fonts.googleapis.com/css?family=Wendy+One' rel='stylesheet' type='text/css'>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js"></script>
-    <script type="text/javascript" src="/javascripts/client-login.js"></script>
+    <script type="text/javascript" src="/javascripts/<%= js_control_file %>.js"></script>
 
     <link rel="stylesheet/less" type="text/css" href="/less/login.less">
     <link rel="stylesheet/less" type="text/css" href="/less/logo.less">
@@ -18,9 +18,12 @@
   </head>
   <body>
     <article class="container login-panel">
+      <% if(is_need){ %>
       <header class="row">
-        <a href="<%= link_register%>" class="btn btn-success btn-right">Register</a>
+        <a href="<%= guide_link %>" class="btn btn-success btn-right"><%= guide_link_title %></a>
       </header>
+      <% } %>
+
       <section class="row login-main">
         <div class="span3"></div>
 
@@ -32,24 +35,26 @@
           <form ng-controller="LoginCtrl" class="login-form">
             <fieldset>
               <legend>Login</legend>
-              <label>Username</label>
+              <label><%= username_title %></label>
               <div class="input-prepend">
                 <span class="add-on"><i class="icon-user"></i></span>
                 <input type="text" ng-model="user.username" ng-mousedown="clean()">
               </div>
-              <label>Password</label>
+              <label><%= password_title %></label>
               <div class="input-prepend">
                 <span class="add-on"><i class="icon-lock"></i></span>
                 <input type="password" ng-model="user.password" ng-mousedown="clean()">
               </div>
               <div class="control-group">
                 <div class="controls">
+                  <% if(is_need_remember){ %>
                   <label class="checkbox">
                     <input type="checkbox"> 
                     <span>Remember me -- </span>
                     <a href="#">Forget password</a>
                   </label>
-                  <button type="submit" class="btn btn-primary login-btn" ng-click="submit(user)">Sign in</button>
+                  <% } %>
+                  <button type="submit" class="btn btn-primary login-btn" ng-click="submit(user)"><%= submit_button_title %></button>
                 </div>
               </div>
               <label class="alert alert-error login-error" ng-show="isError">{{error}}</label>
