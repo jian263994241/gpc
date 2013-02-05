@@ -1,4 +1,7 @@
+var _ = require('underscore');
+
 var projectDataMgr = require('../models/data-manager/project-data-manager');
+var candidateDataMgr = require('../models/data-manager/project-data-manager');
 
 var ManageOperation = exports = module.exports = {};
 
@@ -22,7 +25,7 @@ function process(req, res, key, fn){
 }
 
 /**
- * Render 'management-project' view
+ * Render 'management-projects' view
  *
  * @param{Request}
  * @param{Response}
@@ -82,66 +85,113 @@ ManageOperation.removeProject = function(req, res){
   });
 }
 
+/**
+ * Query specified candidate data
+ *
+ * @param{String} candidate record _id
+ * @param{Function} callback function(data){}
+ *
+ * @api private
+ */
+function queryCandiate(candidateId, fn) {
+  candidateDataMgr.queryCandiate({_id: candidateId}, fn);
+}
+
+/**
+ * Render 'management-candidates' view
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.setCandidates = function(req, res){
   res.render('management-candidates');
 }
 
+/**
+ * Query all candidates data and response json data
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.queryAllCandidates = function(req, res){
-  
-}
-
-ManageOperation.addCandidate = function(req, res) {
-  process(req, res, 'candidate', function(){
-
-  });
-  // var candidate = req.body['candidate'];
-  // if (candidate) 
-  //   candidateDataMgr.addCandidate(candidate, function(err){
-  //     if (err) res.json({error: true});
-  //     else res.json({success: true});
-  //   })
-  // else res.json({error: true});
-}
-
-// var projectMgr = require('../models/project-manager');
-// var candidateDataMgr = require('../models/candidate-data-manager');
-
-/*
-ManageOperation.queryProjectCandidate = function(req, res){
-  var project = req.body['project'];
-  candidateDataMgr.queryCandidate({project: project}, function(err, docs){
-    if (!err && docs) {
-      res.json({candidates: docs});
-    }else res.json({error: true});
+  candidateDataMgr.queryAllCandidates(function(err, records){
+    if (!err && records) res.json({candidates: records});
+    else res.json({error: true});
   });
 }
 
+/**
+ * Add candidate and response operation status
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.addCandidate = function(req, res) {
-  var candidate = req.body['candidate'];
-  if (candidate) 
+  process(req, res, 'candidate', function(candidate){
     candidateDataMgr.addCandidate(candidate, function(err){
-      if (err) res.json({error: true});
-      else res.json({success: true});
-    })
-  else res.json({error: true});
-}
-
-ManageOperation.removeCandidate = function(req, res){
-  var candidate = req.body['candidate'];
-  candidateDataMgr.removeProject(candidate, function(err){
-    if (err) res.json({error: true});
-    else res.json({success: true});
+      if (err)  res.json({error: 'Add candidate failed'});
+      else  res.json({success: true});
+    });
   });
 }
 
-exports.setProjectList = ManageOperation.setProjectList;
-exports.addProject = ManageOperation.addProject;
-exports.queryAllProjects = ManageOperation.queryAllProjects;
-exports.removeProject = ManageOperation.removeProject;
-exports.setCandidates = ManageOperation.setCandidates;
+/**
+ * Remove candidate and response operation status
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
+ManageOperation.removeCandidate = function(req, res){
+  process(req, res, 'candidate', function(candidate){
+    candidateDataMgr.removeCandidate(candidate, function(err){
+      if (err)  res.json({error: 'Remove candidate failed'});
+      else  res.json({success: true});
+    });
+  });
+}
 
-exports.queryProjectCandidate = ManageOperation.queryProjectCandidate;
-exports.addCandidate = ManageOperation.addCandidate;
-exports.removeCandidate = ManageOperation.removeCandidate;
+/**
+ * Query candidates in project
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
+ManageOperation.queryProjectCandidates = function(req, res){
+  process(req, res, 'project', function(project){
+    projectDataMgr.queryProject(project, function(err, records){
+      if (!err && records) {
+        var candidateArr = records[0].candidates;
+        var sen = new Array();
+        _.each(candidateArr, function(el, index, list){
+          sen.push({_id: el});
+        });
 
-*/
+        sen = sen.toString();
+        sen = '$or:'+sen;
+
+        candidateDataMgr.queryCandiate({sen}, function(err, records){
+          if (!err && records) res.json({candidates: records});
+          else res.json({error: true});
+        });
+      };
+    });
+  });
+}
+
+ManageOperation.removeCandidateFromProject = function(req, res){
+
+}
+
+ManageOperation.insertCandidateIntoProject = function(req, res){
+
+}
