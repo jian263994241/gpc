@@ -1,15 +1,34 @@
-
 /**
  * Module dependencies.
  */
-
 var express = require('express')
   , http = require('http')
-  , path = require('path')
-  , routes = require('./routes');
+  , path = require('path');
+  // , routes = require('./routes');
 
+var userOperator = require('./operation/user-operation');
+var manageOperator = require('./operation/manage-operation');
 
-var app = express();
+var app = module.exports = express();
+
+/**
+ * Define map function to process api
+ *
+ * @see https://github.com/visionmedia/express/blob/master/examples/route-map/index.js
+ */
+app.map = function(a, route){
+  route = route || '';
+  for (var key in a) {
+    switch (typeof a[key]) {
+      case 'object':
+        app.map(a[key], route + key);
+        break;
+      case 'function':
+        app[key](route, a[key]);
+        break;
+    }
+  }
+};
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -48,21 +67,56 @@ app.configure('development', function(){
 // app.get('/director/vote', routes.voteForm);
 // app.get('/director/logout', routes.closeProject);
 
-app.get('/management', routes.renderLoginManagementView);
-app.post('/management/login', routes.loginManagement);
-app.get('/mangement/logout', routes.logoutManagement);
-app.get('/management/project', routes.projectManagement);
-app.post('/management/project/add', routes.addProject);
-app.post('/management/project/remove', routes.removeProject);
-app.post('/management/project/all', routes.queryAllProjects);
-app.get('/management/candidate', routes.candidateManagement);
-app.post('/management/candidate/all', routes.queryAllCandidates);
-app.post('/management/candidate/add', routes.addCandidate);
-app.post('/management/candidate/remove', routes.removeCandidate);
-app.get('/management/project/candidates/:projectId', routes.projectCandidatesManagement);
-app.post('/management/project/candidates/all', routes.queryProjectCandidates);
-app.post('/management/project/candidates/add', routes.insertCandidateIntoProject);
-app.post('/management/project/candidates/remove', routes.removeCandidateFromProject);
+
+
+// app.map({
+//   '/':{
+//     get:          userOperator.renderLoginView ,
+//     'home':{
+//       get:        userOperator.renderHomeView
+//     },
+//     'login':{
+//       get:        userOperator.renderLoginView,
+//       post:       userOperator.login
+//     },
+//     'logout':{
+//       get:        userOperator.logout
+//     },
+//     'register':{
+//       get:        userOperator.renderRegisterView,
+//       post:       userOperator.register
+//     },
+//     'management':{
+//       get:        routes.renderLoginManagementView,
+//       '/login':   { post: routes.loginManagement },
+//       '/logout':  { get: routes.logoutManagement },
+//       '/project': {
+//         get:      routes.projectManagement,
+//         '/add':   { post: routes.addProject },
+//         '/remove':{ post: routes.removeProject },
+//         '/all':   { post: routes.queryAllProjects },
+//         '/candidates': {
+//           '/:projectId':  { get: routes.projectCandidatesManagement },
+//           '/all':         { post: routes.queryProjectCandidates },
+//           '/remove':      { post: routes.removeCandidateFromProject },
+//           '/add':         { post: routes.insertCandidateIntoProject }
+//         }
+//       },
+//       '/candidate':{
+//         get:      routes.candidateManagement,
+//         '/add':   { post: routes.addCandidate },
+//         '/remove':{ post: routes.removeCandidate },
+//         '/all':   { post: routes.queryAllCandidates }
+//       },
+//       '/user':{
+//         get:      routes.renderUserManagerView,
+//         '/all':   { post: routes.queryAllUsers },
+//         '/remove': { post: routes.removeUser}
+//       }
+//     },
+//   },
+// });
+
 
 // app.get('/director/result?:project', routes.showResult);
 

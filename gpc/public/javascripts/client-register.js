@@ -19,7 +19,7 @@ function RegisterCtrl ($scope, $http, $window){
         return;
       };
 
-      $http.post('register', user).
+      $http.post('/register', user).
       success(function(data, status, headers, config){
         if (data.error) {
           $scope.error = data.error;

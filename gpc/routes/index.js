@@ -68,3 +68,7 @@ exports.projectCandidatesManagement = ManageOperation.setProjectCandidates;
 exports.queryProjectCandidates = ManageOperation.queryProjectCandidates;
 exports.insertCandidateIntoProject = ManageOperation.insertCandidateIntoProject;
 exports.removeCandidateFromProject = ManageOperation.removeCandidateFromProject;
+
+exports.renderUserManagerView = ManageOperation.renderUserManagerView;
+exports.queryAllUsers = ManageOperation.queryAllUsers;
+exports.removeUser = ManageOperation.removeUser;

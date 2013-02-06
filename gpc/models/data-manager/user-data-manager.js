@@ -5,47 +5,23 @@
 
 var dataMgr = require('./data-manager');
 
-var CandidateDataManager = exports = module.exports = {};
-CandidateDataManager.key = dataMgr.COLLECTION_CANDIDATE;
+var UserDataManager = exports = module.exports = {};
+UserDataManager.key = dataMgr.COLLECTION_USER;
 
 /**
- * Query all candidates from GPC_DB.candidates
+ * Query all users from GPC_DB.users
  *
  * @param {Function} callback function(err, data){}
  *
  * @api public
  */
-CandidateDataManager.queryAllCandidates = function(fn) {
+UserDataManager.queryAllUsers = function(fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
   dbConnector.open(function(err, db){
-    db.collection(CandidateDataManager.key, function(err, collection){
+    db.collection(UserDataManager.key, function(err, collection){
       collection.find().toArray(function(err, data){
-        fn(err, data.concat());
-        mongoServer.close();
-      });
-    });
-  });
-}
-
-CandidateDataManager.render = function(res){
-  return res.render('candidates', {
-    project_status: '',
-    candidate_status: 'active',
-    user_status:'',
-    modal_id: 'candidate-modal',
-    modal_type: 'New Candidate'
-  });
-}
-
-CandidateDataManager.query = function(candidate, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
-
-  dbConnector.open(function(err, db){
-    db.collection(CandidateDataManager.key, function(err, collection){
-      collection.find(candidate).toArray(function(err, data){
         if(!err)fn(err, data.concat());
         else fn(err);
         mongoServer.close();
@@ -55,20 +31,45 @@ CandidateDataManager.query = function(candidate, fn){
 }
 
 /**
- * Query specified candidates from GPC_DB.candidates
+ * Query specified user from GPC_DB.users
  *
- * @param {JSON} candidate data object
+ * @param {JSON} user data object
  * @param {Function} callback function(err, data){}
  *
  * @api public
  */
-CandidateDataManager.queryCandidate = function(candidate, fn){
+UserDataManager.queryUser = function(user, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
   dbConnector.open(function(err, db){
-    db.collection(CandidateDataManager.key, function(err, collection){
-      collection.find(candidate).toArray(function(err, data){
+    db.collection(UserDataManager.key, function(err, collection){
+      collection.find(user).toArray(function(err, data){
+        if(!err)fn(err, data.concat());
+        else fn(err);
+        mongoServer.close();
+      });
+    });
+  });
+}
+
+UserDataManager.render = function(res){
+  return res.render('users', {
+    project_status: '',
+    candidate_status: '',
+    user_status:'active',
+    modal_id: 'user-modal',
+    modal_type: 'New User',
+  });
+}
+
+UserDataManager.query = function(user, fn){
+  var mongoServer = dataMgr.createDbServer();
+  var dbConnector = dataMgr.createDbConnector(mongoServer);
+
+  dbConnector.open(function(err, db){
+    db.collection(UserDataManager.key, function(err, collection){
+      collection.find(user).toArray(function(err, data){
         if(!err)fn(err, data.concat());
         else fn(err);
         mongoServer.close();
@@ -78,20 +79,20 @@ CandidateDataManager.queryCandidate = function(candidate, fn){
 }
 
 /**
- * Insert candidate into GPC_DB.candidates
+ * Insert user into GPC_DB.users
  *
- * @param {JSON} candidate data object
+ * @param {JSON} user data object
  * @param {Function} callback function(err, records){}
  *
  * @api public
  */
-CandidateDataManager.addCandidate = function(candidate, fn){
+UserDataManager.addUser = function(user, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
   dbConnector.open(function(err, db){
-    db.collection(CandidateDataManager.key, function(err, collection){
-      collection.find(candidate).toArray(function(err, data){
+    db.collection(UserDataManager.key, function(err, collection){
+      collection.find(user).toArray(function(err, data){
         if (err) {
           fn(err);
           mongoServer.close();
@@ -99,7 +100,7 @@ CandidateDataManager.addCandidate = function(candidate, fn){
           fn(new Error('Data Exist'));
           mongoServer.close();
         }else{
-          collection.insert(candidate, {safe: true}, function(err, records){
+          collection.insert(user, {safe: true}, function(err, records){
             fn(err, records);
             mongoServer.close();
           });
@@ -110,20 +111,20 @@ CandidateDataManager.addCandidate = function(candidate, fn){
 }
 
 /**
- * Remove candidate from GPC_DB.candidates
+ * Remove user from GPC_DB.users
  *
- * @param {JSON} candidate data object
+ * @param {JSON} user data object
  * @param {Function} callback function(err){}
  *
  * @api public
  */
-CandidateDataManager.removeCandidate = function(candidate, fn){
+UserDataManager.removeUser = function(user, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
   dbConnector.open(function(err, db){
-    db.collection(CandidateDataManager.key, function(err, collection){
-      collection.remove(candidate, false, function(err){
+    db.collection(UserDataManager.key, function(err, collection){
+      collection.remove(user, false, function(err){
         fn(err);
         mongoServer.close();
       });

@@ -11,8 +11,8 @@ ProjectDataManager.key = dataMgr.COLLECTION_PROJECT;
 /**
  * Query specified projects from GPC_DB.projects
  *
- * @param{JSON} project data object
- * @param{Function} callback function(err, data){}
+ * @param {JSON} project data object
+ * @param {Function} callback function(err, data){}
  *
  * @api public
  */
@@ -30,10 +30,34 @@ ProjectDataManager.queryProject = function(project, fn){
   });
 }
 
+ProjectDataManager.render = function(res){
+  return res.render('projects', {
+    project_status: 'active',
+    candidate_status: '',
+    user_status:'',
+    modal_id: 'project-modal',
+    modal_type: 'New Project',
+  });
+}
+
+ProjectDataManager.query = function(project, fn){
+  var mongoServer = dataMgr.createDbServer();
+  var dbConnector = dataMgr.createDbConnector(mongoServer);
+
+  dbConnector.open(function(err, db){
+    db.collection(ProjectDataManager.key, function(err, collection){
+      collection.find(project).toArray(function(err, data){
+        fn(err, data.concat());
+        mongoServer.close();
+      });
+    });
+  });
+}
+
 /**
  * Query all projects from GPC_DB.projects
  *
- * @param{Function} callback function(err, data){}
+ * @param {Function} callback function(err, data){}
  *
  * @api public
  */
@@ -54,8 +78,8 @@ ProjectDataManager.queryAllProjects = function(fn) {
 /**
  * Insert project into GPC_DB.projects
  *
- * @param{JSON} project data object
- * @param{Function} callback function(err, records){}
+ * @param {JSON} project data object
+ * @param {Function} callback function(err, records){}
  *
  * @api public
  */
@@ -86,8 +110,8 @@ ProjectDataManager.addProject = function(project, fn){
 /**
  * Remove project from GPC_DB.projects
  *
- * @param{JSON} project data object
- * @param{Function} callback function(err){}
+ * @param {JSON} project data object
+ * @param {Function} callback function(err){}
  *
  * @api public
  */
@@ -108,9 +132,9 @@ ProjectDataManager.removeProject = function(project, fn){
 /**
  * Insert candidateId into specified project in GPC_DB.projects
  *
- * @param{JSON} project data object
- * @paran{String} candidateId
- * @param{Function} callback function(err){}
+ * @param {JSON} project data object
+ * @paran {String} candidateId
+ * @param {Function} callback function(err){}
  *
  * @api public
  * @see http://docs.mongodb.org/manual/applications/update/
@@ -132,9 +156,9 @@ ProjectDataManager.insertCandidate = function(project, candidateId, fn){
 /**
  * Remove candidateId from specified project in GPC_DB.projects
  *
- * @param{JSON} project data object {id}
- * @paran{String} candidateId
- * @param{Function} callback function(err){}
+ * @param {JSON} project data object {id}
+ * @paran {String} candidateId
+ * @param {Function} callback function(err){}
  *
  * @api public
  * @see http://docs.mongodb.org/manual/applications/update/

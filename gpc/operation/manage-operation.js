@@ -10,6 +10,13 @@ var ObjectID = require('mongodb').ObjectID;
 
 var projectDataMgr = require('../models/data-manager/project-data-manager');
 var candidateDataMgr = require('../models/data-manager/candidate-data-manager');
+var userDataMgr = require('../models/data-manager/user-data-manager');
+
+var mgr = {
+  'project': projectDataMgr,
+  'candidate': candidateDataMgr,
+  'user': userDataMgr
+}
 
 var ManageOperation = exports = module.exports = {};
 var admin, passwd;
@@ -71,6 +78,14 @@ function process(req, res, key, fn){
   }
 }
 
+
+ManageOperation.render = function(req, res){
+  if(!isAuth(req)) return res.redirect('/management');
+  
+  var module = req.params.module;
+  return mgr[module].render(res);
+}
+
 /**
  * Render 'projects' view
  *
@@ -79,16 +94,49 @@ function process(req, res, key, fn){
  *
  * @api public
  */
-ManageOperation.setProjectList = function(req, res){
+ManageOperation.renderView = function(req, res){
   if(!isAuth(req)) return res.redirect('/management');
 
   res.render('projects', {
     project_status: 'active',
     candidate_status: '',
+    user_status:'',
     modal_id: 'project-modal',
     modal_type: 'New Project',
   });
 }
+
+ManageOperation.queryAll = function(req, res){
+  if(!isAuth(req)) return res.redirect('/management');
+
+  var module = req.params.module;
+  var operator = mgr[module];
+  operator.query({}, function(err, records){
+    if (!err && records) res.json({records: records});
+    else res.json({error: true});
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Query all projects data and response json data
@@ -160,6 +208,7 @@ ManageOperation.setCandidates = function(req, res){
   res.render('candidates', {
     project_status: '',
     candidate_status: 'active',
+    user_status:'',
     modal_id: 'candidate-modal',
     modal_type: 'New Candidate'
   });
@@ -316,6 +365,7 @@ ManageOperation.renderLoginManagementView = function(req, res){
     res.render('login', {
       js_control_file: 'management/login',
       is_need: false,
+      login_title: 'Management Login',
       guide_link: '',
       guide_link_title: '',
       username_title: 'Admin',
@@ -385,11 +435,45 @@ ManageOperation.setProjectCandidates = function(req, res){
       res.render('project-candidates', {
         project_status: '',
         candidate_status: '',
+        user_status:'',
         modal_id: 'select-candidate-modal',
         modal_type: 'Add Candidate',
         project_id: records[0].id,
         project_title: records[0].name,
       });
     };
+  });
+}
+
+/**
+ *
+ */
+ManageOperation.renderUserManagerView = function(req, res){
+  if(!isAuth(req)) return res.redirect('/management');
+
+  res.render('users', {
+    project_status: '',
+    candidate_status: '',
+    user_status:'active',
+    modal_id: 'user-modal',
+    modal_type: 'New User',
+  });
+}
+
+ManageOperation.queryAllUsers = function(req, res){
+  userDataMgr.queryAllUsers(function(err, records){
+    if (!err && records) res.json({users: records});
+    else res.json({error: true});
+  });
+}
+
+ManageOperation.removeUser = function(req, res){
+  if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
+
+  process(req, res, 'user', function(user){
+    userDataMgr.removeUser({_id: new ObjectID(user._id)}, function(err){
+      if (err)  res.json({error: 'Remove user failed'});
+      else  res.json({success: true});
+    });
   });
 }

@@ -1,6 +1,15 @@
-/* refer to express/example/auth */
+/**
+ * @author Michael.Lee(leewind19841209@gamil.com)
+ * @version Beta 1.1
+ */
 
-// check out https://github.com/visionmedia/node-pwd
+
+/**
+ * Include crypto module
+ *
+ * @see express/example/auth
+ * @see https://github.com/visionmedia/node-pwd
+ */
 var crypto = require('crypto');
 
 // Bytesize
@@ -9,11 +18,14 @@ var len = 128;
 // Iterations. ~300ms
 var iterations = 12000;
 
-var userDataMgr = require('./user-data-manager');
-var customError = require('./custom-error');
+var userDataMgr = require('./data-manager/user-data-manager');
+
+var UserExistError = require('./error/user-exist-error');
+var InvalidPasswordError = require('./error/invalid-password-error');
+var NoUserError =require('./error/no-user-error');
 
 // declare namespace UserCenter
-var UserCenter = UserCenter || {};
+var UserCenter = exports = module.exports = {};
 
 /**
  * Hashes a password with optional `salt`, otherwise
@@ -55,19 +67,8 @@ UserCenter.authenticate = function(input, pass, salt, fn){
     if (err) return fn(err);
     if (pass == hash) return fn(null, true);
 
-    return fn(new customError.InvalidPasswordError);
+    return fn(new InvalidPasswordError());
   });
-}
-
-/**
- * Query user database to check whether user exist in database.
- *
- * @param {String} username for query
- * @param {Function} callback fn(err, data)
- * @api private 
- */
-UserCenter.check = function(username, fn){
-  userDataMgr.queryUser(username, fn);
 }
 
 /**
@@ -79,7 +80,10 @@ UserCenter.check = function(username, fn){
  * @api public
  */
 UserCenter.login = function(username, password, fn){
-  UserCenter.check(username, function(err, data){
+  userDataMgr.queryUser({username:username}, function(err, data){
+    console.log(err);
+    console.log(data);
+
     if (err) return fn(err);
     var user = data[0];
     if (user) {
@@ -90,7 +94,7 @@ UserCenter.login = function(username, password, fn){
         }
       });
     }else{
-      return fn(new customError.NoUserError());
+      return fn(new NoUserError());
     }
   });
 }
@@ -117,7 +121,7 @@ UserCenter.isLogin = function(user){
  * @api public
  */
 UserCenter.register = function(username, password, email, fn){
-  UserCenter.check(username, function(err, data){
+   userDataMgr.queryUser({username:username, email:email}, function(err, data){
     if (err) return fn(err);
     var user = data[0];
     if (!user) {
@@ -128,12 +132,7 @@ UserCenter.register = function(username, password, email, fn){
         });
       });
     }else{
-      return fn(new customError.UserExistError());
+      return fn(new UserExistError());
     }
-    
   });
 }
-
-exports.isLogin = UserCenter.isLogin;
-exports.login = UserCenter.login;
-exports.register = UserCenter.register;

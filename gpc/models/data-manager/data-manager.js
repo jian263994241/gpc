@@ -51,7 +51,7 @@ DataManager.createDbServer = function(){
 /**
  * Create MongoDB client object
  *
- * @param{mongodb.Server}
+ * @param {mongodb.Server}
  *
  * @api public
  */
