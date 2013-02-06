@@ -9,24 +9,20 @@ var UserDataManager = exports = module.exports = {};
 UserDataManager.key = dataMgr.COLLECTION_USER;
 
 /**
- * Query all users from GPC_DB.users
+ * Render user data management view
  *
- * @param {Function} callback function(err, data){}
+ * @param {Response}
  *
  * @api public
  */
-UserDataManager.queryAllUsers = function(fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
-
-  dbConnector.open(function(err, db){
-    db.collection(UserDataManager.key, function(err, collection){
-      collection.find().toArray(function(err, data){
-        if(!err)fn(err, data.concat());
-        else fn(err);
-        mongoServer.close();
-      });
-    });
+UserDataManager.render = function(res){
+  return res.render('users', {
+    project_status: '',
+    candidate_status: '',
+    user_status:'active',
+    modal_id: 'user-modal',
+    modal_status: 'disabled',
+    modal_type: 'New User',
   });
 }
 
@@ -38,31 +34,6 @@ UserDataManager.queryAllUsers = function(fn){
  *
  * @api public
  */
-UserDataManager.queryUser = function(user, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
-
-  dbConnector.open(function(err, db){
-    db.collection(UserDataManager.key, function(err, collection){
-      collection.find(user).toArray(function(err, data){
-        if(!err)fn(err, data.concat());
-        else fn(err);
-        mongoServer.close();
-      });
-    });
-  });
-}
-
-UserDataManager.render = function(res){
-  return res.render('users', {
-    project_status: '',
-    candidate_status: '',
-    user_status:'active',
-    modal_id: 'user-modal',
-    modal_type: 'New User',
-  });
-}
-
 UserDataManager.query = function(user, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
@@ -86,7 +57,7 @@ UserDataManager.query = function(user, fn){
  *
  * @api public
  */
-UserDataManager.addUser = function(user, fn){
+UserDataManager.add = function(user, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
@@ -100,6 +71,7 @@ UserDataManager.addUser = function(user, fn){
           fn(new Error('Data Exist'));
           mongoServer.close();
         }else{
+          user.candidates = new Array();
           collection.insert(user, {safe: true}, function(err, records){
             fn(err, records);
             mongoServer.close();
@@ -118,7 +90,7 @@ UserDataManager.addUser = function(user, fn){
  *
  * @api public
  */
-UserDataManager.removeUser = function(user, fn){
+UserDataManager.remove = function(user, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 

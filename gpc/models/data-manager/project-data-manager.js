@@ -9,6 +9,24 @@ var ProjectDataManager = exports = module.exports = {};
 ProjectDataManager.key = dataMgr.COLLECTION_PROJECT;
 
 /**
+ * Render project data management view
+ *
+ * @param {Response}
+ *
+ * @api public
+ */
+ProjectDataManager.render = function(res){
+  return res.render('projects', {
+    project_status: 'active',
+    candidate_status: '',
+    user_status:'',
+    modal_id: 'project-modal',
+    modal_status: '',
+    modal_type: 'New Project',
+  });
+}
+
+/**
  * Query specified projects from GPC_DB.projects
  *
  * @param {JSON} project data object
@@ -16,30 +34,6 @@ ProjectDataManager.key = dataMgr.COLLECTION_PROJECT;
  *
  * @api public
  */
-ProjectDataManager.queryProject = function(project, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
-
-  dbConnector.open(function(err, db){
-    db.collection(ProjectDataManager.key, function(err, collection){
-      collection.find(project).toArray(function(err, data){
-        fn(err, data.concat());
-        mongoServer.close();
-      });
-    });
-  });
-}
-
-ProjectDataManager.render = function(res){
-  return res.render('projects', {
-    project_status: 'active',
-    candidate_status: '',
-    user_status:'',
-    modal_id: 'project-modal',
-    modal_type: 'New Project',
-  });
-}
-
 ProjectDataManager.query = function(project, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
@@ -55,27 +49,6 @@ ProjectDataManager.query = function(project, fn){
 }
 
 /**
- * Query all projects from GPC_DB.projects
- *
- * @param {Function} callback function(err, data){}
- *
- * @api public
- */
-ProjectDataManager.queryAllProjects = function(fn) {
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
-
-  dbConnector.open(function(err, db){
-    db.collection(ProjectDataManager.key, function(err, collection){
-      collection.find().toArray(function(err, data){
-        fn(err, data.concat());
-        mongoServer.close();
-      });
-    });
-  });
-}
-
-/**
  * Insert project into GPC_DB.projects
  *
  * @param {JSON} project data object
@@ -83,7 +56,7 @@ ProjectDataManager.queryAllProjects = function(fn) {
  *
  * @api public
  */
-ProjectDataManager.addProject = function(project, fn){
+ProjectDataManager.add = function(project, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
@@ -115,7 +88,7 @@ ProjectDataManager.addProject = function(project, fn){
  *
  * @api public
  */
-ProjectDataManager.removeProject = function(project, fn){
+ProjectDataManager.remove = function(project, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
@@ -126,6 +99,26 @@ ProjectDataManager.removeProject = function(project, fn){
         mongoServer.close();
       });
     });
+  });
+}
+
+/**
+ * Render project detailed data management view
+ *
+ * @param {Response}
+ *
+ * @api public
+ */
+ProjectDataManager.renderDetailView = function(records, res){
+  return res.render('project-candidates', {
+    project_status: '',
+    candidate_status: '',
+    user_status:'',
+    modal_id: 'select-candidate-modal',
+    modal_status: '',
+    modal_type: 'Add Candidate',
+    project_id: records[0].id,
+    project_title: records[0].name,
   });
 }
 

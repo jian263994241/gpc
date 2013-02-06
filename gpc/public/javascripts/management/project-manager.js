@@ -1,8 +1,18 @@
 function ProjectManageCtrl($scope, $http, $window) {
   $scope.projects = new Array();
 
+  $scope.init = function(){
+    $http.post('/management/project/all').
+    success(function(data, status, headers, config){
+      if (!data.error) $scope.projects = data.records;
+    }).
+    error(function(data, status, headers, config){
+
+    });
+  }
+
   $scope.save = function(){
-    $http.post('/management/project/add', {project:{id:$scope.project.id, name:$scope.project.name, key:$scope.project.key}}).
+    $http.post('/management/project/add', {project: $scope.project}).
     success(function(data, status, headers, config){
       if (data.success) {
         $('#project-modal').modal('hide')
@@ -10,16 +20,6 @@ function ProjectManageCtrl($scope, $http, $window) {
       }else{
         alert('error');
       }
-    }).
-    error(function(data, status, headers, config){
-
-    });
-  }
-
-  $scope.init = function(){
-    $http.post('/management/project/all').
-    success(function(data, status, headers, config){
-      if (!data.error) $scope.projects = data.projects;
     }).
     error(function(data, status, headers, config){
 

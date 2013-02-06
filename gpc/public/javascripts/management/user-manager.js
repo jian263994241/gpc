@@ -4,7 +4,7 @@ function UserManageCtrl($scope, $http, $window) {
   $scope.init = function(){
     $http.post('/management/user/all').
     success(function(data, status, headers, config){
-      if (!data.error) $scope.users = data.users;
+      if (!data.error) $scope.users = data.records;
     }).
     error(function(data, status, headers, config){
 

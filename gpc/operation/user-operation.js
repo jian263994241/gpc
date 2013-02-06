@@ -1,3 +1,8 @@
+/**
+ * @author Michael.Lee(leewind19841209@gamil.com)
+ * @version Beta 1.1
+ */
+
 var userCenter = require('../models/user-center');
 var UserExistError = require('../models/error/user-exist-error');
 // var projectMgr = require('../models/project-manager');
@@ -68,7 +73,7 @@ UserOperation.register = function(req, res){
 
   userCenter.register(username, password, email, function(err, user){
     if (err instanceof UserExistError){
-      res.json({error:'Username or Email has been already occupied. Please change username'});
+      res.json({error:'Username has been already occupied. Please change username'});
     }else if(err instanceof Error){
       res.json({error:'Register Error'});
     }else if(user){

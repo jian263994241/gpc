@@ -9,48 +9,20 @@ var CandidateDataManager = exports = module.exports = {};
 CandidateDataManager.key = dataMgr.COLLECTION_CANDIDATE;
 
 /**
- * Query all candidates from GPC_DB.candidates
+ * Render candidate data management view
  *
- * @param {Function} callback function(err, data){}
+ * @param {Response}
  *
  * @api public
  */
-CandidateDataManager.queryAllCandidates = function(fn) {
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
-
-  dbConnector.open(function(err, db){
-    db.collection(CandidateDataManager.key, function(err, collection){
-      collection.find().toArray(function(err, data){
-        fn(err, data.concat());
-        mongoServer.close();
-      });
-    });
-  });
-}
-
 CandidateDataManager.render = function(res){
   return res.render('candidates', {
     project_status: '',
     candidate_status: 'active',
     user_status:'',
     modal_id: 'candidate-modal',
+    modal_status: '',
     modal_type: 'New Candidate'
-  });
-}
-
-CandidateDataManager.query = function(candidate, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
-
-  dbConnector.open(function(err, db){
-    db.collection(CandidateDataManager.key, function(err, collection){
-      collection.find(candidate).toArray(function(err, data){
-        if(!err)fn(err, data.concat());
-        else fn(err);
-        mongoServer.close();
-      });
-    });
   });
 }
 
@@ -62,7 +34,7 @@ CandidateDataManager.query = function(candidate, fn){
  *
  * @api public
  */
-CandidateDataManager.queryCandidate = function(candidate, fn){
+CandidateDataManager.query = function(candidate, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
@@ -85,7 +57,7 @@ CandidateDataManager.queryCandidate = function(candidate, fn){
  *
  * @api public
  */
-CandidateDataManager.addCandidate = function(candidate, fn){
+CandidateDataManager.add = function(candidate, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
@@ -117,7 +89,7 @@ CandidateDataManager.addCandidate = function(candidate, fn){
  *
  * @api public
  */
-CandidateDataManager.removeCandidate = function(candidate, fn){
+CandidateDataManager.remove = function(candidate, fn){
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 

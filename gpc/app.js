@@ -48,14 +48,7 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-// app.get('/', routes.userLogin);
 // app.get('/home', routes.searchProject);
-// app.get('/login', routes.userLogin);
-// app.post('/login', routes.userLoginSubmit);
-// app.get('/logout', routes.userLogoutSubmit);
-
-// app.get('/register', routes.userRegister);
-// app.post('/register', routes.userRegisterSubmit);
 
 // app.get('/director', routes.directorVisit);
 // app.get('/director/login', routes.directorLogin);
@@ -66,59 +59,62 @@ app.configure('development', function(){
 // app.get('/director/vote/:project', routes.selectProject);
 // app.get('/director/vote', routes.voteForm);
 // app.get('/director/logout', routes.closeProject);
-
-
-
-// app.map({
-//   '/':{
-//     get:          userOperator.renderLoginView ,
-//     'home':{
-//       get:        userOperator.renderHomeView
-//     },
-//     'login':{
-//       get:        userOperator.renderLoginView,
-//       post:       userOperator.login
-//     },
-//     'logout':{
-//       get:        userOperator.logout
-//     },
-//     'register':{
-//       get:        userOperator.renderRegisterView,
-//       post:       userOperator.register
-//     },
-//     'management':{
-//       get:        routes.renderLoginManagementView,
-//       '/login':   { post: routes.loginManagement },
-//       '/logout':  { get: routes.logoutManagement },
-//       '/project': {
-//         get:      routes.projectManagement,
-//         '/add':   { post: routes.addProject },
-//         '/remove':{ post: routes.removeProject },
-//         '/all':   { post: routes.queryAllProjects },
-//         '/candidates': {
-//           '/:projectId':  { get: routes.projectCandidatesManagement },
-//           '/all':         { post: routes.queryProjectCandidates },
-//           '/remove':      { post: routes.removeCandidateFromProject },
-//           '/add':         { post: routes.insertCandidateIntoProject }
-//         }
-//       },
-//       '/candidate':{
-//         get:      routes.candidateManagement,
-//         '/add':   { post: routes.addCandidate },
-//         '/remove':{ post: routes.removeCandidate },
-//         '/all':   { post: routes.queryAllCandidates }
-//       },
-//       '/user':{
-//         get:      routes.renderUserManagerView,
-//         '/all':   { post: routes.queryAllUsers },
-//         '/remove': { post: routes.removeUser}
-//       }
-//     },
-//   },
-// });
-
-
 // app.get('/director/result?:project', routes.showResult);
+
+app.map({
+  '/':{
+    get:          userOperator.renderLoginView ,
+    'home':{
+      get:        userOperator.renderHomeView
+    },
+    'login':{
+      get:        userOperator.renderLoginView,
+      post:       userOperator.login
+    },
+    'logout':{
+      get:        userOperator.logout
+    },
+    'register':{
+      get:        userOperator.renderRegisterView,
+      post:       userOperator.register
+    },
+    'management':{
+      get:        manageOperator.renderLoginView,
+      '/login': {
+        post:     manageOperator.login
+      },
+      '/logout': {
+        get:      manageOperator.logout
+      },
+      '/:module': {
+        get:      manageOperator.render,
+        '/all': {
+          post:   manageOperator.queryAll
+        },
+        '/add': {
+          post:   manageOperator.add
+        },
+        '/remove': {
+          post:   manageOperator.remove
+        },
+        '/candidates': {
+          '/:projectId':{ 
+            get:  manageOperator.renderProjectDetailView 
+          },
+          '/all':{ 
+            post: manageOperator.queryProjectCandidates 
+          },
+          '/remove':{ 
+            post: manageOperator.removeCandidateFromProject 
+          },
+          '/add':{ 
+            post: manageOperator.insertCandidateIntoProject 
+          }
+        }
+      }
+    }
+  }
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

@@ -5,7 +5,7 @@ function CandidateManageCtrl ($scope, $http, $window) {
     $http.post('/management/candidate/all').
     success(function(data, status, headers, config){
       console.log(data);
-      if (!data.error) $scope.candidates = data.candidates;
+      if (!data.error) $scope.candidates = data.records;
     }).
     error(function(data, status, headers, config){
 
