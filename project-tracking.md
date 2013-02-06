@@ -1,8 +1,15 @@
+##### Daily Work 2013-2-6
+
++ [Finished]添加User管理界面，提供浏览和删除用户功能
++ [Finished]重构Login和Register功能，合并为user-operation模块
+
+***************************
+
 ##### Daily Work 2013-2-5
 
 + [Finished]根据新的数据库结果，调整Management管理平台的内容
 + [Finished]给Management管理平台增加Login页面，同时配置config文件设置密码
-+ 添加单一Project查看candidate的页面
++ [Finished]添加单一Project查看candidate的页面
 
 ***************************
 
