@@ -1,19 +1,34 @@
-var candidateDataMgr = require('./candidate-data-manager');
-var projectMgr = require('./project-manager');
-var _ = require('underscore');
+/**
+ * @author Michael.Lee(leewind19841209@gamil.com)
+ * @version Beta 1.1
+ */
 
-var Status = require('./status');
-var StatusKeeper = require('./status-keeper');
-var Marker = require('./marker');
+// Declare required lib
+var projectDataMgr    = require('./data-manager/project-data-manager');
+var candidateDataMgr  = require('./data-manager/candidate-data-manager');
+var markDataMgr       = require('./data-manager/mark-data-manager');
+var projectMgr        = require('./project-manager');
+var _                 = require('underscore');
 
+var Status            = require('./status');
+var StatusKeeper      = require('./status-keeper');
+var Marker            = require('./marker');
+var ObjectID          = require('mongodb').ObjectID;
+
+var ThreadLockError   = require('./error/thread-lock-error');
+
+/**
+ * 
+ */
 function Director (project) {
   this.source = new Array();
-  this.candidate = {
-    index: -1,
-    data: null
-  };
-  this.project = project
+  this.curCandidate = null;
+  this.curCandidateIndex = -1;
+  this.project = project;
   this.queue = new Array();
+  this.lock = false;
+  this.status = null;
+  this.marker = null;
 
   var that = this;
   this.keeper = new StatusKeeper(function(){
@@ -21,42 +36,28 @@ function Director (project) {
       res.json({status: that.status, candidate: that.candidate});
     }
   });
-
-  this.lock = false;
-  this.status = null;
-  this.marker = null;
 }
 
-/**
- * Query and save the candidate data
- *
- * @param {JSON} {id, key} project info
+/*
+ * Notify observer to update
+ * 
  * @api private
  */
-Director.prototype.getData = function(project, fn) {
-  var that = this;
-  candidateDataMgr.queryCandidate({project:project.id}, function(err, data){
-    _.each(data, function(el, key, list){
-      console.log('***************************');
-      console.log(el)
-
-      that.source.push(el.data);
-    });
-    fn(err);
-  });
-};
+Director.prototype.notify = function(){
+  this.keeper.update();
+}
 
 /*
  * Change the status and notify statuskeeper to update
  *
- * @param {JSON} {status, data}
+ * @param {JSON} {status, candidate}
  * @param {Function} callback
  * @api private
  */
 Director.prototype.changeStatus = function(config, fn) {
   if (this.lock)
     if ('function' === typeof fn) 
-      return fn(new Error());
+      return fn(new ThreadLockError());
     else return;
 
   this.lock = true;
@@ -69,23 +70,14 @@ Director.prototype.changeStatus = function(config, fn) {
 };
 
 /*
- * notify observer to update
- * 
- * @api private
- */
-Director.prototype.notify = function(){
-  this.keeper.update();
-}
-
-/*
  * Set candidate data
  *
  * @param {int} index of candidate
  * @api private
  */
 Director.prototype.setCandidate = function(index) {
-  this.candidate.index = index;
-  this.candidate.data = this.source[index];
+  this.curCandidateIndex = index;
+  this.curCandidate = this.source[index];
 };
 
 /*
@@ -98,104 +90,91 @@ Director.prototype.setCandidate = function(index) {
 Director.prototype.statusEvent = function(status, fn) {
   switch(status){
     case Status.prepare:
-      return this.changeStatus({status: Status.prepare}, fn);
+      return this.changeStatus({status: Status.prepare, candidate: null}, fn);
     case Status.show:
     case Status.process:
     case Status.end:
-      if (this.candidate) return this.changeStatus({status: status, data: this.candidate}, fn);
+      if (this.curCandidate) return this.changeStatus({status: status, candidate: this.curCandidate}, fn);
       else return fn(new Error());
     default:
       fn(new Error());
   }
 };
 
+/**
+ * Query and save the candidate data
+ *
+ * @param {JSON} {id, key} project info
+ * @api private
+ */
+Director.prototype.getData = function(project, fn) {
+  var that = this;
+  projectDataMgr.query(project, function(err, records){
+    if (!err && records) {
+      var candidateArr = records[0].candidates;
+      var sen = new Array();
+      _.each(candidateArr, function(el, index, list){
+        sen.push({_id: new ObjectID(el)});
+      });
+
+      if(sen.length == 0) return fn(new Error());
+
+      candidateDataMgr.query({$or: sen}, function(err, records){
+        that.source = records;
+        fn(err);
+      });
+    };
+  });
+};
+
 /*
  * Director init
  *
- * !!Not Good Enough!!
- *
  * @param {Function} callback
+ *
  * @api private
  */
 Director.prototype.init = function(fn) {
   var that = this;
   this.statusEvent(Status.prepare, function(err){
     if (err) return fn(err);
-    that.getData(that.project, function(cerr){
+    that.getData(that.project, function(e){
       that.setCandidate(0);
       that.statusEvent(Status.show);
-      fn(cerr);
+      fn(e);
     });
   })
 };
 
 
 /**
- * @deprecated
+ * Switch candidate to the previous one
  *
- * register project to projectMgr.
- * if success, save project id in access project queue
- *
- * @param {JSON} {id, key}
  * @param {Function} callback
  *
  * @api public
  */
-Director.prototype.register = function(project, fn) {
-  var that = this;
-  projectMgr.register(project, function(err, projectInfo){
-    that.project = projectInfo;
-    if(!err && projectInfo) that.init(fn);
-    else fn(new Error());
-  });
+Director.prototype.previous = function(fn){
+  if (this.curCandidateIndex > 0 && (this.status == Status.show || this.status == Status.end)) {
+    this.marker = null;
+    this.setCandidate(this.curCandidateIndex -1);
+    this.statusEvent(Status.show, fn);
+  }else{
+    fn(new Error());
+  }
 }
 
 /**
- * @deprecated
+ * Switch candidate to the next one
+ *
+ * @param {Function} callback
  *
  * @api public
  */
-Director.prototype.unregister = function(project, fn){
-  var that = this;
-  projectMgr.unregister(project.id, function(err, success){
-    if(!err && success) that.end(fn);
-    else fn(new Error());
-  });
-}
-
-/**
- * @api public
- */
-Director.prototype.previous = function(fn){
-  if (this.candidate.index > 0 && (this.status == Status.show || this.status == Status.end)) {
-    this.marker = null;
-    this.setCandidate(this.candidate.index -1);
-    this.statusEvent(Status.show, fn);
-  }else{
-    fn(new Error());
-  }
-}
-
-Director.prototype.save = function(fn) {
-  var that = this;
-  candidateDataMgr.queryCandidate({data: this.candidate.data}, function(err, data){
-    var el = data;
-    if (el.length > 0) candidateDataMgr.updateCandidate({data:el[0].data}, {marks:that.marker.getMarks(), average:that.marker.average}, fn);
-    else fn(new Error());
-  });
-};
-
-Director.prototype.end = function(fn){
-  // end of the project
-}
-
-/**
- * @api public
- */
 Director.prototype.next = function(fn){
-  if (this.candidate.index < this.source.length-1 && (this.status == Status.show || this.status == Status.end)) {
+  if (this.curCandidateIndex < this.source.length-1 && (this.status == Status.show || this.status == Status.end)) {
     this.marker = null;
-    this.setCandidate(this.candidate.index +1);
+    this.setCandidate(this.curCandidateIndex +1);
     this.statusEvent(Status.show, fn);
   }else{
     fn(new Error());
@@ -203,11 +182,15 @@ Director.prototype.next = function(fn){
 }
 
 /**
- * @api private
+ * Start Vote
+ *
+ * @param {Function} callback
+ *
+ * @api public
  */
 Director.prototype.startVote = function(fn){
-  if (this.candidate && this.candidate.index > -1) {
-    this.marker = new Marker({candidate: this.candidate, project: this.project});
+  if (this.curCandidate && this.curCandidateIndex > -1) {
+    this.marker = new Marker({candidate: this.curCandidate, project: this.project});
     this.statusEvent(Status.process, fn);
   }else{
     fn(new Error());
@@ -215,7 +198,11 @@ Director.prototype.startVote = function(fn){
 }
 
 /**
- * @api private
+ * End Vote
+ *
+ * @param {Function} callback
+ *
+ * @api public
  */
 Director.prototype.endVote = function(fn){
   if (this.status == Status.process) {
@@ -226,18 +213,48 @@ Director.prototype.endVote = function(fn){
 }
 
 /**
- * @deprecated
+ * Save mark into database
+ *
+ * @param {Function} callback
  *
  * @api public
- * 
  */
-Director.prototype.vote = function(fn){
+Director.prototype.save = function(fn) {
+  if (this.marker){
+    this.marker.save();
+  };
+};
+
+Director.prototype.queryResult = function(res) {
   var that = this;
-  this.startVote(function(err){
-    if(!err) setTimeout(function() {
-      that.endVote(fn);
-    }, 30000);
-  })
-}
+  projectDataMgr.query(this.project, function(err, records){
+    if (!err && records.length > 0) {
+      var candidateArr = records[0].candidates;
+      var sen = new Array();
+      _.each(candidateArr, function(el, index, list){
+        sen.push({_id: new ObjectID(el)});
+      });
+
+      if(sen.length == 0) return res.json({marks: []});
+
+      candidateDataMgr.query({$or: sen}, function(er, re){
+        if (er) return res.json({error: 'error'});
+        
+        sen = new Array();
+        _.each(re, function(el, index, list){
+          sen.push({candidate: el._id});
+        });
+
+        markDataMgr.query({$or: sen}, function(e, r){
+          if (!e && r) res.json({
+            candidates: re,
+            marks: r
+          });
+          else res.json({error: true});
+        });
+      });
+    };
+  });
+};
 
 module.exports = Director;

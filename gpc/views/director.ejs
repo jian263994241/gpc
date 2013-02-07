@@ -9,7 +9,7 @@
     <link href='http://fonts.googleapis.com/css?family=Wendy+One' rel='stylesheet' type='text/css'>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js"></script>
-    <script type="text/javascript" src="/javascripts/client-director.js"></script>
+    <script type="text/javascript" src="/javascripts/director/director.js"></script>
 
     <link rel="stylesheet/less" type="text/css" href="/less/vote.less">
     <link rel="stylesheet/less" type="text/css" href="/less/logo.less">
@@ -26,7 +26,7 @@
             <p class="logo-desc">Vote favorates</p>
           </div>
           
-          <img src="{{qrcode}}" alt="">
+          <img ng-src="{{qrcode}}" alt="">
 
           <ul class="nav nav-tabs nav-stacked">
             <li><a href="#" ng-click="prev()">Previous</a></li>
@@ -55,7 +55,7 @@
             <span>{{candidate.author}}</span>
           </p>
           <div>
-            <strong>Product</strong>
+            <p><strong>Product</strong></p>
             <img src="" alt="" ng-show="isImage" ng-src="{{candidate.source}}">
             <video src="" alt="" ng-show="isVideo" ng-src="{{candidate.source}}">
           </div>

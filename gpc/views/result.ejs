@@ -32,12 +32,12 @@
         </div>
         <div id="result-list">
           <div class="span3" ng-repeat="candidate in candidates">
-            <h4>{{candidate.data.title}}</h4>
+            <h4>{{candidate.title}}</h4>
             <p>
               <strong>Score:</strong>
               <span class="label label-important">{{candidate.average}}</span>
             </p>
-            <p>Author:{{candidate.data.author}}</p>
+            <p>Author:{{candidate.author}}</p>
             <a href="#candidateModal" role="button" class="btn" data-toggle="modal" ng-click="setCandidate(candidate)"><i class="icon icon-eye-open"></i>Details</a>
           </div>
         </div>

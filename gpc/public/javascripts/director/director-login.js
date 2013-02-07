@@ -1,11 +1,11 @@
-function ProjectLoginCtrl($scope, $http, $window){
+function LoginCtrl($scope, $http, $window){
   $scope.isError = false;
   $scope.error = '';
 
-  $scope.submit = function(project){
-    if (project && project.id && project.key) {
+  $scope.submit = function(user){
+    if (user && user.username && user.password) {
 
-      $http.post('/director/login', project).
+      $http.post('/director/login', {id: user.username, key: user.password}).
       success(function(data, status, headers, config){
         if (data.error) {
           $scope.error = data.error;

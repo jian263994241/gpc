@@ -3,7 +3,6 @@
  * @version Beta 1.1
  */
 
-
 /**
  * Include crypto module
  *
@@ -24,7 +23,7 @@ var UserExistError = require('./error/user-exist-error');
 var InvalidPasswordError = require('./error/invalid-password-error');
 var NoUserError =require('./error/no-user-error');
 
-// declare namespace UserCenter
+// Declare namespace UserCenter
 var UserCenter = exports = module.exports = {};
 
 /**

@@ -1,3 +1,11 @@
+##### Daily Work 2013-2-7
+
++ [Finished]重构Director Module登录和退出功能
++ [Finished]重构Direcotr Module查询和Candidate展示功能
++ 重构Director 状态机维护
+
+***************************
+
 ##### Daily Work 2013-2-6
 
 + [Finished]添加User管理界面，提供浏览和删除用户功能

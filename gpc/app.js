@@ -4,10 +4,10 @@
 var express = require('express')
   , http = require('http')
   , path = require('path');
-  // , routes = require('./routes');
 
-var userOperator = require('./operation/user-operation');
-var manageOperator = require('./operation/manage-operation');
+var userOperator    = require('./operation/user-operation');
+var manageOperator  = require('./operation/manage-operation');
+var voteOperator    = require('./operation/vote-operation');
 
 var app = module.exports = express();
 
@@ -48,17 +48,6 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-// app.get('/home', routes.searchProject);
-
-// app.get('/director', routes.directorVisit);
-// app.get('/director/login', routes.directorLogin);
-// app.post('/director/login', routes.directorLoginSubmit);
-// app.post('/director/exec', routes.directorExec);
-// app.post('/director/status', routes.queryStatus);
-// app.post('/director/vote', routes.collectMarker);
-// app.get('/director/vote/:project', routes.selectProject);
-// app.get('/director/vote', routes.voteForm);
-// app.get('/director/logout', routes.closeProject);
 // app.get('/director/result?:project', routes.showResult);
 
 app.map({
@@ -111,6 +100,35 @@ app.map({
             post: manageOperator.insertCandidateIntoProject 
           }
         }
+      }
+    },
+    'director':{
+      get:        voteOperator.renderDirectorView,
+      '/login':{
+        get:      voteOperator.renderDirectorLoginView,
+        post:     voteOperator.login
+      },
+      '/logout':{
+        get:      voteOperator.close
+      },
+      '/exec':{
+        post:     voteOperator.exec
+      },
+      '/status':{
+        post:     voteOperator.query
+      },
+      '/vote':{
+        get:      voteOperator.renderVoteFormView,
+        post:     voteOperator.collect,
+        '/:project': {
+          get:    voteOperator.search
+        }
+      },
+      '/result':{
+        post:     voteOperator.result
+      },
+      '/result?:project':{
+        get:      voteOperator.renderResultView
       }
     }
   }

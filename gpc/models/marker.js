@@ -1,4 +1,5 @@
-var _ = require('underscore');
+var _           = require('underscore');
+var markDataMgr = require('./data-manager/mark-data-manager');
 
 function Marker(params){
   this.candidate = params.candidate;
@@ -10,15 +11,19 @@ function Marker(params){
 }
 
 Marker.prototype.collect = function(params, fn) {
-  candidate = params.candidate;
-  mark = params.mark;
+  var candidate = params.candidate;
+  var mark = params.mark;
 
-  if (candidate && candidate.index == this.candidate.index && !this.isLocked) {
-    this.marks.push(mark);
-    this.calculateAverage();
+  if (candidate && candidate._id == this.candidate._id && !this.isLocked) {
+
+    var check = _.where(this.marks, {username: mark.username});
+    if (check.length == 0) {
+      this.marks.push(mark);
+      this.calculateAverage();
+    };
     fn(null);
   }else{
-    fn(new Error('Auth Error'));
+    fn(new Error('Authentication Failed'));
   }
 };
 
@@ -34,20 +39,16 @@ Marker.prototype.calculateAverage = function() {
 };
 
 Marker.prototype.reset = function() {
-  this.unlock();
+  this.isLocked = false;
   this.marks = new Array();
 };
 
-Marker.prototype.getMarks = function() {
-  return this.marks;
-};
-
-Marker.prototype.lock = function() {
-  this.isLocked = true;
-};
-
-Marker.prototype.unlock = function() {
-  this.isLocked = false;
+Marker.prototype.save = function(fn) {
+  markDataMgr.add({
+    candidate: this.candidate._id,
+    project: this.project._id,
+    marks: this.marks
+  }, fn);
 };
 
 module.exports = Marker;

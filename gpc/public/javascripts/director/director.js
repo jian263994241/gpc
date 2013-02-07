@@ -6,7 +6,7 @@ function DirectorCtrl ($scope, $http, $timeout, $window) {
 
   $scope.setCandidate = function(data){
     $scope.project = data.project;
-    $scope.candidate = data.candidate.data;
+    $scope.candidate = data.candidate;
     
     if ($scope.candidate && $scope.candidate.type == 'image') $scope.isImage = true;
     else $scope.isImage = false;
@@ -24,15 +24,14 @@ function DirectorCtrl ($scope, $http, $timeout, $window) {
   $scope.request = function(action){
     $http.post('/director/exec', {action: action}).
     success(function(data, status, headers, config){
-      console.log(data);
       if (data.error) return;
-
       switch(action){
         case 'init':
         case 'prev':
         case 'next':
         case 'save':
-          $scope.isEnd = false;
+          if (data.status == 'end') $scope.isEnd = true;
+          else $scope.isEnd = false;
           return $scope.setCandidate(data);
         case 'start_vote':
           $scope.isStart = true;
@@ -49,7 +48,6 @@ function DirectorCtrl ($scope, $http, $timeout, $window) {
       }
     }).
     error(function(data, status, headers, config){
-
     });
   }
 

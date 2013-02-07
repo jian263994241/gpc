@@ -2,12 +2,19 @@
  * @author Michael.Lee(leewind19841209@gamil.com)
  * @version Beta 1.1
  */
-
-var userCenter = require('../models/user-center');
-var UserExistError = require('../models/error/user-exist-error');
-// var projectMgr = require('../models/project-manager');
+var userCenter      = require('../models/user-center');
+var UserExistError  = require('../models/error/user-exist-error');
+var projectMgr      = require('../models/project-manager');
 
 var UserOperation = exports = module.exports = {};
+
+UserOperation.renderHomeView = function(req, res){
+  if (userCenter.isLogin(req.session.user)) {
+    res.render('home', {username: req.session.user.username, logout_url: 'logout', directors: projectMgr.accessQueue});
+  }else{
+    res.redirect('/login');
+  }
+}
 
 UserOperation.renderLoginView = function(req, res){
   if (userCenter.isLogin(req.session.user)) res.redirect('/home');
@@ -21,6 +28,31 @@ UserOperation.renderLoginView = function(req, res){
     password_title: 'Password',
     submit_button_title: 'Sign in',
     is_need_remember: true
+  });
+}
+
+UserOperation.renderRegisterView = function(req, res){
+  if (userCenter.isLogin(req.session.user)) res.redirect('/home');
+  else  res.render('register', {link_login: '/login'});
+}
+
+UserOperation.register = function(req, res){
+
+  var username = req.body['username'];
+  var password = req.body['password'];
+  var email    = req.body['email'];
+
+  userCenter.register(username, password, email, function(err, user){
+    if (err instanceof UserExistError){
+      res.json({error:'Username has been already occupied. Please change username'});
+    }else if(err instanceof Error){
+      res.json({error:'Register Error'});
+    }else if(user){
+      req.session.regenerate(function(){
+        req.session.user = user;
+        res.json({success:true, redirect:'home'});
+      });
+    }
   });
 }
 
@@ -48,39 +80,5 @@ UserOperation.login = function(req, res){
 UserOperation.logout = function(req, res){
   req.session.destroy(function(){
     res.redirect('/login');
-  });
-}
-
-UserOperation.renderHomeView = function(req, res){
-  if (userCenter.isLogin(req.session.user)) {
-    // res.render('home', {username: req.session.user.username, logout_url: 'logout', directors: projectMgr.accessQueue});
-    res.send('home');
-  }else{
-    res.redirect('/login');
-  }
-}
-
-UserOperation.renderRegisterView = function(req, res){
-  if (userCenter.isLogin(req.session.user)) res.redirect('/home');
-  else  res.render('register', {link_login: '/login'});
-}
-
-UserOperation.register = function(req, res){
-
-  var username = req.body['username'];
-  var password = req.body['password'];
-  var email    = req.body['email'];
-
-  userCenter.register(username, password, email, function(err, user){
-    if (err instanceof UserExistError){
-      res.json({error:'Username has been already occupied. Please change username'});
-    }else if(err instanceof Error){
-      res.json({error:'Register Error'});
-    }else if(user){
-      req.session.regenerate(function(){
-        req.session.user = user;
-        res.json({success:true, redirect:'home'});
-      });
-    }
   });
 }

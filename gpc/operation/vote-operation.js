@@ -1,9 +1,7 @@
-var _ = require('underscore');
+var _             = require('underscore');
 
-var StatusKeeper = require('../models/status-keeper.js');
-
-var projectMgr = require('../models/project-manager');
-var userCenter = require('../models/user-center');
+var projectMgr    = require('../models/project-manager');
+var userCenter    = require('../models/user-center');
 
 var DirectorAction = {
   init: 'init',
@@ -14,7 +12,43 @@ var DirectorAction = {
   save: 'save'
 }
 
-var VoteOperation = VoteOperation || {};
+var VoteOperation = exports = module.exports = {};
+
+VoteOperation.renderDirectorView = function(req, res){
+  if(req.session.project) 
+    res.render('director');
+  else
+    res.redirect('/director/login');
+}
+
+VoteOperation.renderDirectorLoginView = function(req, res){
+  if(req.session.project) 
+    res.redirect('/director');
+  else
+    res.render('login', {
+      js_control_file: '/director/director-login',
+      is_need: false,
+      login_title: 'Project Login',
+      guide_link: '',
+      guide_link_title: '',
+      username_title: 'Project',
+      password_title: 'Key',
+      submit_button_title: 'Sign in',
+      is_need_remember: false
+    });
+}
+
+VoteOperation.renderVoteFormView = function(req, res){
+  if (req.session.project && req.session.user) res.render('vote');
+  else res.redirect('/home');
+}
+
+VoteOperation.renderResultView = function(req, res){
+  if(req.session.project) 
+    res.render('result');
+  else
+    res.redirect('/director/login');
+}
 
 VoteOperation.login = function(req, res) {
   var id = req.body['id'];
@@ -45,28 +79,30 @@ VoteOperation.exec = function(req, res){
     res.json({error:true, redirect: '/director/login'});
   });
 
+  console.log(action);
+
   switch(action){
     case DirectorAction.init:
-      return res.json({candidate: director.candidate, project: director.project});
+      return res.json({candidate: director.curCandidate, project: director.project, status: director.status});
     case DirectorAction.prev:
       return director.previous(function(err){
         if (err) return res.json({error: true});
-        res.json({candidate: director.candidate, project: director.project});
+        res.json({candidate: director.curCandidate, project: director.project, status: director.status});
       });
     case DirectorAction.next:
       return director.next(function(err){
         if (err) return res.json({error: true});
-        res.json({candidate: director.candidate, project: director.project});
+        res.json({candidate: director.curCandidate, project: director.project, status: director.status});
       });
     case DirectorAction.startVote:
       return director.startVote(function() {
         if(director.marker) director.marker.reset();
-        res.send('start');
+        res.send('vote-start');
       });
     case DirectorAction.endVote:
       return director.endVote(function() {
-        if(director.marker) director.marker.lock();
-        res.send('end');
+        if(director.marker) director.marker.isLocked = true;
+        res.send('vote-end');
       });
     case DirectorAction.save:
       return director.save(function(err){
@@ -105,10 +141,10 @@ VoteOperation.query = function(req, res){
     res.json({redirect: '/director/login'});
   });
 
-  if (!candidate || !status) return res.json({status: director.status, candidate: director.candidate});
+  if (!candidate || !status) return res.json({status: director.status, candidate: director.curCandidate});
 
-  if (director.status == status && director.candidate.index == candidate.index) director.queue.push(res);
-  else res.json({status: director.status, candidate: director.candidate});
+  if (director.status == status) director.queue.push(res);
+  else res.json({status: director.status, candidate: director.curCandidate});
 }
 
 VoteOperation.collect = function(req, res){
@@ -134,7 +170,6 @@ VoteOperation.collect = function(req, res){
 }
 
 VoteOperation.close = function(req, res){
-  console.log('close project');
   var director = VoteOperation.getDirector(req.session.project);
   if (!director) return req.session.destroy(function(){
     res.redirect('/director');
@@ -148,9 +183,10 @@ VoteOperation.close = function(req, res){
   });
 }
 
-exports.directorLoginSubmit = VoteOperation.login;
-exports.directorExec = VoteOperation.exec;
-exports.queryStatus = VoteOperation.query;
-exports.collectMarker = VoteOperation.collect;
-exports.selectProject = VoteOperation.search;
-exports.closeProject = VoteOperation.close;
+
+VoteOperation.result = function(req, res){
+  var project = req.body['project'];
+  var director = VoteOperation.getDirector(project);
+
+  director.queryResult(res);
+}
