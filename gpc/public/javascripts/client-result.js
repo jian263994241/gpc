@@ -14,7 +14,7 @@ function ResultCtrl ($scope, $http, $location, $window) {
     $scope.project = {id: param.project};
     if (!$scope.project) return alert('error');
 
-    $http.post('/director/result', {project : $scope.project}).
+    $http.post('/director/exec', {action: 'result'}).
     success(function(data, status, headers, config){
       console.log(data);
       if (!data.error){

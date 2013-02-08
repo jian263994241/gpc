@@ -3,7 +3,8 @@
  * @version Beta 1.1
  */
 
-var dataMgr = require('./data-manager');
+var dataMgr   = require('./data-manager');
+var ObjectID  = require('mongodb').ObjectID;
 
 var MarkDataManager = exports = module.exports = {};
 MarkDataManager.key = dataMgr.COLLECTION_MARK;
@@ -22,7 +23,7 @@ MarkDataManager.query = function(mark, fn){
 
   dbConnector.open(function(err, db){
     db.collection(MarkDataManager.key, function(err, collection){
-      collection.find({candidate: mark.candidate, project: mark.project}).toArray(function(err, data){
+      collection.find(mark).toArray(function(err, data){
         if(!err)fn(err, data.concat());
         else fn(err);
         mongoServer.close();
@@ -40,22 +41,26 @@ MarkDataManager.query = function(mark, fn){
  * @api public
  */
 MarkDataManager.add = function(mark, fn){
+
+  console.log(mark);
+
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
   dbConnector.open(function(err, db){
     db.collection(MarkDataManager.key, function(err, collection){
       collection.find({candidate: mark.candidate, project: mark.project}).toArray(function(err, data){
+        console.log(data);
         if (err) {
           fn(err);
           mongoServer.close();
         }else if(data.length > 0){
           mark._id = data[0]._id;
           collection.save(mark, {safe: true}, function(err){
+            console.log(err);
             fn(err);
             mongoServer.close();
           });
-          mongoServer.close();
         }else{
           collection.insert(mark, {safe: true}, function(err){
             fn(err);
@@ -81,7 +86,7 @@ MarkDataManager.remove = function(mark, fn){
 
   dbConnector.open(function(err, db){
     db.collection(MarkDataManager.key, function(err, collection){
-      collection.remove({candidate: mark.candidate, project: mark.project}, false, function(err){
+      collection.remove(mark, false, function(err){
         fn(err);
         mongoServer.close();
       });

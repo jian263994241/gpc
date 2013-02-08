@@ -29,7 +29,6 @@ function DirectorCtrl ($scope, $http, $timeout, $window) {
         case 'init':
         case 'prev':
         case 'next':
-        case 'save':
           if (data.status == 'end') $scope.isEnd = true;
           else $scope.isEnd = false;
           return $scope.setCandidate(data);
@@ -43,6 +42,8 @@ function DirectorCtrl ($scope, $http, $timeout, $window) {
           $scope.isStart = false;
           $scope.isEnd = true;
           return;
+        case 'save':
+          return $scope.isEnd = false;
         default:
           return;
       }

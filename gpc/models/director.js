@@ -221,11 +221,18 @@ Director.prototype.endVote = function(fn){
  */
 Director.prototype.save = function(fn) {
   if (this.marker){
-    this.marker.save();
+    this.marker.save(fn);
   };
 };
 
-Director.prototype.queryResult = function(res) {
+/**
+ * Query the result from mark colletion
+ *
+ * @param {Function} callback function(err){}
+ *
+ * @api public
+ */
+Director.prototype.result = function(fn) {
   var that = this;
   projectDataMgr.query(this.project, function(err, records){
     if (!err && records.length > 0) {
@@ -235,10 +242,10 @@ Director.prototype.queryResult = function(res) {
         sen.push({_id: new ObjectID(el)});
       });
 
-      if(sen.length == 0) return res.json({marks: []});
+      if(sen.length == 0) return fn({marks:[]});
 
       candidateDataMgr.query({$or: sen}, function(er, re){
-        if (er) return res.json({error: 'error'});
+        if (er) return fn({error: 'error'});
         
         sen = new Array();
         _.each(re, function(el, index, list){
@@ -246,11 +253,9 @@ Director.prototype.queryResult = function(res) {
         });
 
         markDataMgr.query({$or: sen}, function(e, r){
-          if (!e && r) res.json({
-            candidates: re,
-            marks: r
-          });
-          else res.json({error: true});
+
+          if (!e && r) return fn({candidates: re, marks: r});
+          else return fn({error: 'error'});
         });
       });
     };

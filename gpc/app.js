@@ -124,9 +124,6 @@ app.map({
           get:    voteOperator.search
         }
       },
-      '/result':{
-        post:     voteOperator.result
-      },
       '/result?:project':{
         get:      voteOperator.renderResultView
       }
