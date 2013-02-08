@@ -20,10 +20,12 @@ function VoteCtrl($scope, $http, $timeout){
           $scope.isForbidden = false;
           break;
         case 'process':
+          if (res.candidate) {$scope.candidate = res.candidate;};
           $scope.isStart = true;
           $scope.isForbidden = false;
           break;
         case 'end':
+          if (res.candidate) {$scope.candidate = res.candidate;};
           $scope.isStart = false;
           $scope.isForbidden = true;
         default:

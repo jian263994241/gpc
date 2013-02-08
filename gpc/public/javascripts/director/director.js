@@ -3,6 +3,7 @@ function DirectorCtrl ($scope, $http, $timeout, $window) {
   $scope.isStart = false;
   $scope.isEnd = false;
   $scope.qrcode = 'http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl='+$window.location.host+'&choe=UTF-8&chld=Q|2'
+  $scope.lock = false;
 
   $scope.setCandidate = function(data){
     $scope.project = data.project;
@@ -31,19 +32,25 @@ function DirectorCtrl ($scope, $http, $timeout, $window) {
         case 'next':
           if (data.status == 'end') $scope.isEnd = true;
           else $scope.isEnd = false;
-          return $scope.setCandidate(data);
+          $scope.lock = false;
+          $scope.setCandidate(data);
+          return;
         case 'start_vote':
           $scope.isStart = true;
           $scope.time = 0;
           $timeout($scope.timer, 1000);
           $scope.isEnd = false;
+          $scope.lock = true;
           return;
         case 'end_vote':
           $scope.isStart = false;
           $scope.isEnd = true;
+          $scope.lock = false;
           return;
         case 'save':
-          return $scope.isEnd = false;
+          $scope.lock = false;
+          $scope.isEnd = false;
+          return;
         default:
           return;
       }
@@ -59,10 +66,12 @@ function DirectorCtrl ($scope, $http, $timeout, $window) {
   }
 
   $scope.next = function(){
+    if ($scope.lock) return;
     $scope.request('next');
   }
 
   $scope.prev = function(){
+    if ($scope.lock) return;
     $scope.request('prev');
   }
 
@@ -79,7 +88,8 @@ function DirectorCtrl ($scope, $http, $timeout, $window) {
   }
 
   $scope.showResult = function(){
-    console.log($scope.project);
+    if ($scope.lock) return;
+
     if ($scope.project) {
       $window.location.href = '/director/result?project='+$scope.project.id;
     };

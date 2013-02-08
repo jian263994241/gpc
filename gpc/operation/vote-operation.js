@@ -22,7 +22,7 @@ var VoteOperation = exports = module.exports = {};
  *
  * @api private
  */
-function getDirector = function(project){
+var getDirector = function(project){
   var director = null;
   if (project) director = projectMgr.getDirector(project);
   return director;
@@ -227,16 +227,28 @@ VoteOperation.search = function(req, res){
  * @api public
  */
 VoteOperation.query = function(req, res){
+
+  console.log('***************************');
+  console.log('query');
+
   var status = req.body['status'];
   var candidate = req.body['candidate'];
   var project = req.session.project;
 
+  console.log('project: '+project);
+
   var director = getDirector(project);
   if (!director) return req.session.destroy(function(){
-    res.json({redirect: '/director/login'});
+    res.json({redirect: '/login'});
   });
 
+  console.log('candidate: '+candidate);
+  console.log('status: '+status);
+
   if (!candidate || !status) return res.json({status: director.status, candidate: director.curCandidate});
+
+  console.log('director.status: '+director.status);
+  console.log('director.curCandidate: '+director.curCandidate);
 
   if (director.status == status) director.queue.push(res);
   else res.json({status: director.status, candidate: director.curCandidate});
