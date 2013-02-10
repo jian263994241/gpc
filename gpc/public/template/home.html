@@ -1,0 +1,24 @@
+<article class="container login-panel">
+  <section class="row login-main">
+    <div class="span3"></div>
+    <nav class="span3 logo">
+      <h2 class="logo-title">GPC</h2>
+      <p class="logo-desc">Vote favorates</p>
+    </nav>
+    <div class="span4">
+      <div class="page-header">
+        <h4>Welcome! {{user.username}}</h4><a href="/logout">Logout</a>
+      </div>
+      <ul>
+        <li ng-repeat="director in directors">
+          <a href="/director/vote/{{director.project.id}}" class="btn">{{director.project.name}}</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+  <footer class="login-footer">
+    <span>@2013 Leo Burnette</span>
+    <span>-</span>
+    <a href="#">Leo Burnette</a>
+  </footer>
+</article>

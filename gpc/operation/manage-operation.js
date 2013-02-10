@@ -86,22 +86,9 @@ function process(req, res, key, fn){
  *
  * @api public
  */
-ManageOperation.renderLoginView = function(req, res){
+ManageOperation.render = function(req, res){
   if(isAuth(req)) return res.redirect('/management/project');
-
-  if (admin && passwd) {
-    res.render('login', {
-      js_control_file: 'management/login',
-      is_need: false,
-      login_title: 'Management Login',
-      guide_link: '',
-      guide_link_title: '',
-      username_title: 'Admin',
-      password_title: 'Password',
-      submit_button_title: 'Submit',
-      is_need_remember: false
-    });
-  };
+  if (admin && passwd) res.render('main');
 }
 
 /**
@@ -154,12 +141,12 @@ ManageOperation.logout = function(req, res){
  *
  * @api public
  */
-ManageOperation.render = function(req, res){
-  if(!isAuth(req)) return res.redirect('/management');
+// ManageOperation.render = function(req, res){
+//   if(!isAuth(req)) return res.redirect('/management');
   
-  var module = req.params.module;
-  return mgr[module].render(res);
-}
+//   var module = req.params.module;
+//   return mgr[module].render(res);
+// }
 
 /**
  * render management view

@@ -8,6 +8,7 @@ var projectMgr      = require('../models/project-manager');
 
 var UserOperation = exports = module.exports = {};
 
+// 在客户端如何获得用户数据，这里要仔细想一想
 UserOperation.renderHomeView = function(req, res){
   if (userCenter.isLogin(req.session.user)) {
     res.render('home', {username: req.session.user.username, logout_url: 'logout', directors: projectMgr.accessQueue});
@@ -16,24 +17,9 @@ UserOperation.renderHomeView = function(req, res){
   }
 }
 
-UserOperation.renderLoginView = function(req, res){
+UserOperation.render = function(req, res){
   if (userCenter.isLogin(req.session.user)) res.redirect('/home');
-  else  res.render('login', {
-    js_control_file: 'client-login',
-    is_need: true,
-    login_title: 'User Login',
-    guide_link: '/register',
-    guide_link_title: 'Register',
-    username_title: 'Username',
-    password_title: 'Password',
-    submit_button_title: 'Sign in',
-    is_need_remember: true
-  });
-}
-
-UserOperation.renderRegisterView = function(req, res){
-  if (userCenter.isLogin(req.session.user)) res.redirect('/home');
-  else  res.render('register', {link_login: '/login'});
+  else res.render('main');
 }
 
 UserOperation.register = function(req, res){

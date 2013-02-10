@@ -38,7 +38,7 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser('your secret here'));
+  app.use(express.cookieParser('leobrunett_gpc'));
   app.use(express.session());
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
@@ -52,23 +52,23 @@ app.configure('development', function(){
 
 app.map({
   '/':{
-    get:          userOperator.renderLoginView ,
+    get:          userOperator.render ,
     'home':{
       get:        userOperator.renderHomeView
     },
     'login':{
-      get:        userOperator.renderLoginView,
+      get:        userOperator.render,
       post:       userOperator.login
     },
     'logout':{
       get:        userOperator.logout
     },
     'register':{
-      get:        userOperator.renderRegisterView,
+      get:        userOperator.render,
       post:       userOperator.register
     },
     'management':{
-      get:        manageOperator.renderLoginView,
+      get:        manageOperator.render,
       '/login': {
         post:     manageOperator.login
       },
