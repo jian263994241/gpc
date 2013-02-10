@@ -1,0 +1,46 @@
+<article class="container" ng-init="init()">
+  <section class="row">
+    <nav class="span3">
+      <div class="logo logo-brand">
+        <h2 class="logo-title">GPC</h2>
+        <p class="logo-desc">Vote favorates</p>
+      </div>
+      
+      <img ng-src="{{qrcode}}" alt="">
+
+      <ul class="nav nav-tabs nav-stacked">
+        <li><a href="#" ng-click="prev()">Previous</a></li>
+        <li><a href="#" ng-click="next()">Next</a></li>
+        <li><a href="#" ng-click="showResult()">Show Result</a></li>
+      </ul>
+      <div>
+        <a href="#" class="btn" ng-click="start()" ng-show="!isStart">Start Voting</a>
+        <a href="#" class="btn" ng-click="end()" ng-show="isStart">End Voting</a>
+        <a href="#" class="btn" ng-click="save()" ng-show="!isStart && isEnd">Save</a>
+      </div>
+      <div ng-show="isStart">
+        <h4>Timmer</h4>
+        <h6 class="timer">{{time}}s</h6>
+      </div>
+    </nav>
+    <div class="span9">
+      <h2 class="page-header">
+        <em class="vote-name">{{project.name}}</em>
+      </h2>
+      <h3>
+        <span>Candidate - </span>{{candidate.title}}</span>
+      </h3>
+      <p>
+        <strong>Author - </strong>
+        <span>{{candidate.author}}</span>
+      </p>
+      <div>
+        <p><strong>Product</strong></p>
+        <img src="" alt="" ng-show="isImage" ng-src="{{candidate.source}}">
+        <video src="" alt="" ng-show="isVideo" ng-src="{{candidate.source}}">
+      </div>
+      <p><strong>Introduction</strong></p>
+<pre>{{candidate.intro}}</pre>
+    </div>
+  </section>
+</article>

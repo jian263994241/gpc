@@ -17,23 +17,32 @@
         </div>
       </h2>
     </div>
-    <div id="project-list">
-      <h4><span>Project List</span></h4>
+    <div id="project-candidate-list">
+      <h4>
+        <span class="label label-info" id="project-id" data-project-id="{{project.id}}">Project Id: {{project.id}}</span>
+        <span class="label label-info" id="project-title">Project Title: {{project.name}}</span>
+      </h4>
+      <h4>Candidate List</h4>
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th>id</th>
-            <th>name</th>
+            <th>title</th>
+            <th>auth</th>
+            <th>type</th>
+            <th>source</th>
+            <th>introduction</th>
             <th>option</th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="project in projects">
-            <td>{{project.id}}</td>
-            <td>{{project.name}}</td>
+          <tr ng-repeat="candidate in candidates">
+            <td>{{candidate.title}}</td>
+            <td>{{candidate.author}}</td>
+            <td>{{candidate.type}}</td>
+            <td>{{candidate.source}}</td>
+            <td>{{candidate.intro}}</td>
             <td>
-              <a href="" class="btn" ng-click="delete(project)"><i class="icon icon-remove"></i>Delete</a>
-              <a href="/management/project/candidates/{{project.id}}" class="btn"><i class="icon icon-folder-open"></i>Open</a>
+              <a href="" class="btn" ng-click="delete(candidate)"><i class="icon icon-remove"></i>Delete</a>
             </td>
           </tr>
         </tbody>
@@ -41,23 +50,20 @@
     </div>
   </section>
 </article>
-<div id="project-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="project-modal-label" aria-hidden="true">
+<div id="select-candidate-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="select-candidate-modal-label" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="project-modal-label">New Project</h3>
+    <h3 id="select-candidate-modal-label">Add Selected Candidate</h3>
   </div>
   <div class="modal-body">
     <form>
-      <label for="">Project id</label>
-      <input type="text" ng-model="project.id" required>
-      <label for="">Project name</label>
-      <input type="text" ng-model="project.name" required>
-      <label for="">Access Key</label>
-      <input type="password" ng-model="project.key" required>
+      <select id="candidate-selection">
+        <option value ="{{candidate._id}}" ng-repeat="candidate in all" ><span>{{candidate.title}}</span></option>
+      </select>
     </form>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-primary" type="submit" ng-click="save()">Save</button>
+    <button class="btn btn-primary" type="submit" ng-click="add()">Add</button>
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
   </div>
 </div>

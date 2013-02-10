@@ -79,19 +79,6 @@ function process(req, res, key, fn){
 }
 
 /**
- * Render login mangement view
- *
- * @param{Request}
- * @param{Response}
- *
- * @api public
- */
-ManageOperation.render = function(req, res){
-  if(isAuth(req)) return res.redirect('/management/project');
-  if (admin && passwd) res.render('main');
-}
-
-/**
  * Login management system
  *
  * @param{Request}
@@ -109,7 +96,7 @@ ManageOperation.login = function(req, res){
   if (username == admin && password == passwd) {
     req.session.regenerate(function(){
       req.session.admin = admin;
-      res.json({success:true, redirect:'management/project'});
+      res.json({success:true, redirect:'/management/project'});
     });
   }else{
     res.json({error: 'Management Login Error'});
@@ -125,12 +112,9 @@ ManageOperation.login = function(req, res){
  * @api public
  */
 ManageOperation.logout = function(req, res){
-  if(isAuth(req)) 
-    req.session.destroy(function(){
-      res.redirect('management');
-    });
-  else
-    res.redirect('management');
+  req.session.destroy(function(){
+    res.json({success: true, redirect:'/management'});
+  });
 }
 
 /**
@@ -141,12 +125,26 @@ ManageOperation.logout = function(req, res){
  *
  * @api public
  */
-// ManageOperation.render = function(req, res){
-//   if(!isAuth(req)) return res.redirect('/management');
-  
-//   var module = req.params.module;
-//   return mgr[module].render(res);
-// }
+ManageOperation.render = function(req, res){
+
+  if (req.session) {
+    if (req.session.project) {
+      return res.redirect('/director');
+    }else if(req.session.user){
+      return res.redirect('/');
+    }
+  };
+
+  switch(req.route.path){
+    case '/management': 
+      if(isAuth(req)) return res.redirect('/management/project');
+      if (admin && passwd) return res.render('main');
+    default:
+      if(!isAuth(req)) return res.redirect('/management');
+      // var module = req.params.module;
+      return res.render('main');
+  }
+}
 
 /**
  * render management view
@@ -162,6 +160,19 @@ ManageOperation.queryAll = function(req, res){
   var module = req.params.module;
   var operator = mgr[module];
   operator.query({}, function(err, records){
+    if (!err && records) res.json({records: records});
+    else res.json({error: true});
+  });
+}
+
+ManageOperation.query = function(req, res){
+  if(!isAuth(req)) return res.redirect('/management');
+
+  var module = req.params.module;
+  var operator = mgr[module];
+
+  var keyword = req.body['keyword'];
+  operator.query(keyword, function(err, records){
     if (!err && records) res.json({records: records});
     else res.json({error: true});
   });
@@ -209,28 +220,6 @@ ManageOperation.remove = function(req, res){
       if (err)  res.json({error: 'Remove '+module+' failed'});
       else  res.json({success: true});
     });
-  });
-}
-
-/**
- * Render 'project-candidates' view
- *
- * @param{Request}
- * @param{Response}
- *
- * @api public
- */
-ManageOperation.renderProjectDetailView = function(req, res){
-  if(!isAuth(req)) return res.redirect('/management');
-
-  var module = req.params.module;
-  if (module != 'project') return res.send(404);
-
-  var projectId = req.params.projectId;
-  projectDataMgr.query({id:projectId}, function(err, records){
-    if (!err && records) {
-      projectDataMgr.renderDetailView(records, res);
-    };
   });
 }
 

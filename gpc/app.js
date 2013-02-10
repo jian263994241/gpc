@@ -48,13 +48,11 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-// app.get('/director/result?:project', routes.showResult);
-
 app.map({
   '/':{
-    get:          userOperator.render ,
+    get:          userOperator.render,
     'home':{
-      get:        userOperator.renderHomeView
+      get:        userOperator.render
     },
     'login':{
       get:        userOperator.render,
@@ -66,6 +64,11 @@ app.map({
     'register':{
       get:        userOperator.render,
       post:       userOperator.register
+    },
+    'user':{
+      '/project': {
+        post:     voteOperator.accessedProject
+      }
     },
     'management':{
       get:        manageOperator.render,
@@ -86,9 +89,12 @@ app.map({
         '/remove': {
           post:   manageOperator.remove
         },
+        '/query': {
+          post:   manageOperator.query
+        },
         '/candidates': {
           '/:projectId':{ 
-            get:  manageOperator.renderProjectDetailView 
+            get:  manageOperator.render 
           },
           '/all':{ 
             post: manageOperator.queryProjectCandidates 
@@ -103,9 +109,9 @@ app.map({
       }
     },
     'director':{
-      get:        voteOperator.renderDirectorView,
+      get:        voteOperator.render,
       '/login':{
-        get:      voteOperator.renderDirectorLoginView,
+        get:      voteOperator.render,
         post:     voteOperator.login
       },
       '/logout':{
@@ -118,14 +124,13 @@ app.map({
         post:     voteOperator.query
       },
       '/vote':{
-        get:      voteOperator.renderVoteFormView,
         post:     voteOperator.collect,
         '/:project': {
-          get:    voteOperator.search
+          get:    voteOperator.render
         }
       },
-      '/result?:project':{
-        get:      voteOperator.renderResultView
+      '/result/:project':{
+        get:      voteOperator.render
       }
     }
   }

@@ -1,0 +1,25 @@
+<article class="container" ng-controller="VoteCtrl" ng-init="request()">
+  <section class="row">
+    <nav class="span3">
+      <div class="logo logo-brand">
+        <h2 class="logo-title">GPC</h2>
+        <p class="logo-desc">Vote favorates</p>
+      </div>
+    </nav>
+    <div class="span9">
+      <h2 class="page-header">
+        <em class="vote-name">{{candidate.title}}</em>
+      </h2>
+      <p>
+        <strong>Author - </strong><span>{{candidate.author}}</span>
+      </p>
+      <form action="" >
+        <label for="inputScore">Score:</label>
+        <input type="number" name="inputScore" val="0" max="10" min="0" ng-disabled="isForbidden" ng-model="mark.score">
+        <label for="inputComment">Comment:</label>
+        <label for=""><textarea name="inputComment" id="" cols="30" rows="5" class="vote-comment" ng-disabled="isForbidden" ng-model="mark.comment"></textarea></label>
+        <button type="submit" class="btn btn-primary" ng-disabled="!isStart" ng-click="submit()">Submit</button>
+      </form>
+    </div>
+  </section>
+</article>

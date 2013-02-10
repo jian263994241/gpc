@@ -28,72 +28,38 @@ var getDirector = function(project){
   return director;
 }
 
-/**
- * Render director view
- *
- * @param{Request}
- * @param{Response}
- *
- * @api public
- */
-VoteOperation.renderDirectorView = function(req, res){
-  if(req.session.project) 
-    res.render('director');
-  else
-    res.redirect('/director/login');
+VoteOperation.render = function(req, res){
+  if (req.session) {
+    if (req.session.admin){
+      return res.redirect('/management');
+    }else if(req.session.user){
+      return res.redirect('/');
+    }
+  };
+
+  switch(req.route.path){
+    case '/director':
+    case '/director/result/:project':
+      if(req.session.project) return res.render('main');
+      else return res.redirect('/director/login');
+    case '/director/vote/:project':
+      var projectId = req.params.project;
+      var director = getDirector({id: projectId});
+      if (director && director.project) {
+        req.session.project = director.project;
+        return res.render('main');
+      }else{
+        return res.redirect('/home');
+      }
+    default:
+      return res.render('main');
+  }
 }
 
-/**
- * Render director login view
- *
- * @param{Request}
- * @param{Response}
- *
- * @api public
- */
-VoteOperation.renderDirectorLoginView = function(req, res){
-  if(req.session.project) 
-    res.redirect('/director');
-  else
-    res.render('login', {
-      js_control_file: '/director/director-login',
-      is_need: false,
-      login_title: 'Project Login',
-      guide_link: '',
-      guide_link_title: '',
-      username_title: 'Project',
-      password_title: 'Key',
-      submit_button_title: 'Sign in',
-      is_need_remember: false
-    });
-}
-
-/**
- * Render result view
- *
- * @param{Request}
- * @param{Response}
- *
- * @api public
- */
-VoteOperation.renderResultView = function(req, res){
-  if(req.session.project) 
-    res.render('result');
-  else
-    res.redirect('/director/login');
-}
-
-/**
- * Render vote form view
- *
- * @param{Request}
- * @param{Response}
- *
- * @api public
- */
-VoteOperation.renderVoteFormView = function(req, res){
-  if (req.session.project && req.session.user) res.render('vote');
-  else res.redirect('/home');
+VoteOperation.accessedProject = function(req, res){
+  if (req.session.user) {
+    res.json({directors: projectMgr.accessQueue});
+  };
 }
 
 /**
@@ -197,25 +163,6 @@ VoteOperation.close = function(req, res){
     });
     else return res.redirect('/director/login');
   });
-}
-
-/**
- * User guide after login
- *
- * @param{Request}
- * @param{Response}
- *
- * @api public
- */
-VoteOperation.search = function(req, res){
-  var projectId = req.params.project;
-  var director = getDirector({id: projectId});
-  if (director && director.project) {
-    req.session.project = director.project;
-    res.redirect('/director/vote');
-  }else{
-    res.redirect('/home');
-  }
 }
 
 /**
