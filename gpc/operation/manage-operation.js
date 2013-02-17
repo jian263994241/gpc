@@ -3,6 +3,7 @@
  * @version Beta 1.1
  */
 
+// Declare required lib
 var _     = require('underscore');
 var path  = require("path");
 var fs    = require("fs");

@@ -9,7 +9,6 @@
   "dependencies": {
     "express": "3.0.6",
     "ejs": "*",
-    "mongojs": "0.5.x",
     "pwd": "0.0.2",
     "underscore": "1.4.x",
     "mongodb": "1.2.x"

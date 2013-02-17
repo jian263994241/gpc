@@ -2,12 +2,22 @@
  * @author Michael.Lee(leewind19841209@gamil.com)
  * @version Beta 1.1
  */
+
+ // Declare required lib
 var userCenter      = require('../models/user-center');
 var UserExistError  = require('../models/error/user-exist-error');
 var projectMgr      = require('../models/project-manager');
 
 var UserOperation = exports = module.exports = {};
 
+/**
+ * User Login/Register/Logout view controller
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 UserOperation.render = function(req, res){
   if (req.session) {
     if (req.session.project) {
@@ -30,6 +40,14 @@ UserOperation.render = function(req, res){
   }
 }
 
+/**
+ * [POST] User register 
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 UserOperation.register = function(req, res){
 
   var username = req.body['username'];
@@ -50,6 +68,14 @@ UserOperation.register = function(req, res){
   });
 }
 
+/**
+ * [POST] User login 
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 UserOperation.login = function(req, res){
 
   var username = req.body['username'];
@@ -71,6 +97,14 @@ UserOperation.login = function(req, res){
   });
 }
 
+/**
+ * [GET] User logout 
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 UserOperation.logout = function(req, res){
   req.session.destroy(function(){
     res.json({success: true, redirect:'/'});

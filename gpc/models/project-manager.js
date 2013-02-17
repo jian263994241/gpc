@@ -2,6 +2,8 @@
  * @author Michael.Lee(leewind19841209@gamil.com)
  * @version Beta 1.1
  */
+
+// Declare required lib
 var Director            = require('./director');
 var ProjectExistError   = require('./error/project-exist-error');
 var ProjectNoExistError = require('./error/project-no-exist-error');

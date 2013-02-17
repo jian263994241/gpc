@@ -18,7 +18,7 @@ var ObjectID          = require('mongodb').ObjectID;
 var ThreadLockError   = require('./error/thread-lock-error');
 
 /**
- * 
+ * Class Director
  */
 function Director (project) {
   this.source = new Array();

@@ -48,6 +48,7 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+// Route map
 app.map({
   '/':{
     get:          userOperator.render,

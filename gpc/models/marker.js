@@ -1,6 +1,15 @@
+/**
+ * @author Michael.Lee(leewind19841209@gamil.com)
+ * @version Beta 1.1
+ */
+
+// Declare required lib
 var _           = require('underscore');
 var markDataMgr = require('./data-manager/mark-data-manager');
 
+/**
+ *  Class Marker
+ */
 function Marker(params){
   this.candidate = params.candidate;
   this.project = params.project;
@@ -10,6 +19,14 @@ function Marker(params){
   this.average = 0;
 }
 
+/**
+ * Collect the mark and commects submitted from users
+ * 
+ * @param {JSON} candidate and mark data
+ * @param {Function} {error} callback
+ *
+ * @api public 
+ */
 Marker.prototype.collect = function(params, fn) {
   var candidate = params.candidate;
   var mark = params.mark;
@@ -27,6 +44,11 @@ Marker.prototype.collect = function(params, fn) {
   }
 };
 
+/**
+ * Calculate the average score of marks
+ * 
+ * @api public 
+ */
 Marker.prototype.calculateAverage = function() {
   this.average = 0;
   if (this.marks && this.marks.length > 0 ) {
@@ -38,11 +60,21 @@ Marker.prototype.calculateAverage = function() {
   };
 };
 
+/**
+ * Reset the status of mark
+ * 
+ * @api public 
+ */
 Marker.prototype.reset = function() {
   this.isLocked = false;
   this.marks = new Array();
 };
 
+/**
+ * Save the marks to database
+ * 
+ * @api public 
+ */
 Marker.prototype.save = function(fn) {
   markDataMgr.add({
     candidate: this.candidate._id,

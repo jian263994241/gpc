@@ -9,24 +9,6 @@ var UserDataManager = exports = module.exports = {};
 UserDataManager.key = dataMgr.COLLECTION_USER;
 
 /**
- * Render user data management view
- *
- * @param {Response}
- *
- * @api public
- */
-UserDataManager.render = function(res){
-  return res.render('users', {
-    project_status: '',
-    candidate_status: '',
-    user_status:'active',
-    modal_id: 'user-modal',
-    modal_status: 'disabled',
-    modal_type: 'New User',
-  });
-}
-
-/**
  * Query specified user from GPC_DB.users
  *
  * @param {JSON} user data object

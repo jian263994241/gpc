@@ -9,24 +9,6 @@ var CandidateDataManager = exports = module.exports = {};
 CandidateDataManager.key = dataMgr.COLLECTION_CANDIDATE;
 
 /**
- * Render candidate data management view
- *
- * @param {Response}
- *
- * @api public
- */
-CandidateDataManager.render = function(res){
-  return res.render('candidates', {
-    project_status: '',
-    candidate_status: 'active',
-    user_status:'',
-    modal_id: 'candidate-modal',
-    modal_status: '',
-    modal_type: 'New Candidate'
-  });
-}
-
-/**
  * Query specified candidates from GPC_DB.candidates
  *
  * @param {JSON} candidate data object

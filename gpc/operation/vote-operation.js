@@ -1,8 +1,15 @@
+/**
+ * @author Michael.Lee(leewind19841209@gamil.com)
+ * @version Beta 1.1
+ */
+
+ // Declare required lib
 var _             = require('underscore');
 
 var projectMgr    = require('../models/project-manager');
 var userCenter    = require('../models/user-center');
 
+// Director action definition
 var DirectorAction = {
   init: 'init',
   prev: 'prev',
@@ -28,6 +35,14 @@ var getDirector = function(project){
   return director;
 }
 
+/**
+ * Director and Submit page view controller
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 VoteOperation.render = function(req, res){
   if (req.session) {
     if (req.session.admin){
@@ -56,6 +71,14 @@ VoteOperation.render = function(req, res){
   }
 }
 
+/**
+ * Add project into access queue
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 VoteOperation.accessedProject = function(req, res){
   if (req.session.user) {
     res.json({directors: projectMgr.accessQueue});
@@ -166,7 +189,8 @@ VoteOperation.close = function(req, res){
 }
 
 /**
- * User query status
+ * For user to query status
+ * keep debug status
  *
  * @param{Request}
  * @param{Response}

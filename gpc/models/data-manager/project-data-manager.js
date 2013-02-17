@@ -9,24 +9,6 @@ var ProjectDataManager = exports = module.exports = {};
 ProjectDataManager.key = dataMgr.COLLECTION_PROJECT;
 
 /**
- * Render project data management view
- *
- * @param {Response}
- *
- * @api public
- */
-ProjectDataManager.render = function(res){
-  return res.render('projects', {
-    project_status: 'active',
-    candidate_status: '',
-    user_status:'',
-    modal_id: 'project-modal',
-    modal_status: '',
-    modal_type: 'New Project',
-  });
-}
-
-/**
  * Query specified projects from GPC_DB.projects
  *
  * @param {JSON} project data object
@@ -99,26 +81,6 @@ ProjectDataManager.remove = function(project, fn){
         mongoServer.close();
       });
     });
-  });
-}
-
-/**
- * Render project detailed data management view
- *
- * @param {Response}
- *
- * @api public
- */
-ProjectDataManager.renderDetailView = function(records, res){
-  return res.render('project-candidates', {
-    project_status: '',
-    candidate_status: '',
-    user_status:'',
-    modal_id: 'select-candidate-modal',
-    modal_status: '',
-    modal_type: 'Add Candidate',
-    project_id: records[0].id,
-    project_title: records[0].name,
   });
 }
 
