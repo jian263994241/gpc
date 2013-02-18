@@ -603,3 +603,23 @@ Admin用户退出，进入localhost:3000/management页面
 手持设备进入用户登录页面，若用户已经登录过，则导向Home页面
 
 ******************************
+
+#### No.TC032
+
+测试模块：导演模块
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：localhost:3000/director
+3. 页面跳转到项目登陆页面
+4. 填写信息，输入正确的Project Id和Access Key
+5. 点击Sign in按钮
+6. 进入localhost:3000/director页面后，点击Show Result
+7. 进入Result页面后点击Close Project
+
+期待结果:
+
+页面回到用户登录页面，退出Director系统
+
+******************************
