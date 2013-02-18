@@ -49,6 +49,7 @@ var util = {
           }
         }).
         error(function(data, status, headers, config){
+          alert('error');
         });
     }
   }
@@ -588,9 +589,7 @@ var DirectorResultCtrl = function($scope, $route, $location, $routeParams, $http
     $scope.$location.path('/director');
   }
 
-  $scope.logout = function(){
-    $scope.$location.path('/director/logout');
-  }
+  util.manageLogout($scope, '/director/logout');
 }
 
 var VoteCtrl = function($scope, $http){

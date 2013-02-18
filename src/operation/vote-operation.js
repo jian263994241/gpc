@@ -177,14 +177,14 @@ VoteOperation.exec = function(req, res){
 VoteOperation.close = function(req, res){
   var director = getDirector(req.session.project);
   if (!director) return req.session.destroy(function(){
-    res.redirect('/director');
+    res.json({success:true, redirect:'/director/login'});
   });
 
   projectMgr.unregister(director, function(err){
     if (!err) return req.session.destroy(function(){
-      res.redirect('/director/login');
+      res.json({success:true, redirect:'/director/login'});
     });
-    else return res.redirect('/director/login');
+    else return res.json({error:'Logout Error'});
   });
 }
 
