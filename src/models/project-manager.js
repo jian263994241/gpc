@@ -36,7 +36,7 @@ ProjectMgr.register = function(project, fn){
 
     var p = docs[0];
     var check = _.find(ProjectMgr.accessQueue, function(d){
-      return d.project._id == p._id;
+      return d.project.id == p.id;
     });
 
     if (check) {

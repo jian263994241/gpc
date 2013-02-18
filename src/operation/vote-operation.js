@@ -4,10 +4,11 @@
  */
 
  // Declare required lib
-var _             = require('underscore');
+var _                   = require('underscore');
 
-var projectMgr    = require('../models/project-manager');
-var userCenter    = require('../models/user-center');
+var projectMgr          = require('../models/project-manager');
+var userCenter          = require('../models/user-center');
+var ProjectExistError   = require('../models/error/project-exist-error');
 
 // Director action definition
 var DirectorAction = {
@@ -109,7 +110,10 @@ VoteOperation.login = function(req, res) {
         }
       });
     }
-    else return res.json({error:'Authentication failed, please check project id and key'});
+    else if (err && err instanceof ProjectExistError)
+      return res.json({error: 'Authentication failed. Project is running!'});
+    else
+      return res.json({error:'Authentication failed, please check project id and key'});
   });
 }
 
