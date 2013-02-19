@@ -160,6 +160,9 @@ VoteOperation.exec = function(req, res){
       });
     case DirectorAction.result:
       return director.result(function(data){
+        console.log('****************************');
+        console.log('DirectorAction.result');
+        console.log(data);
         res.json(data);
       });
     default:

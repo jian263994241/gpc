@@ -129,7 +129,6 @@ var UserHomeCtrl = function($scope, $route, $location, $http){
   $scope.init = function(){
     $scope.$http.post('/user/project').
     success(function(data, status, headers, config){
-      console.log(data);
       if (data.directors) $scope.directors = data.directors;
     }).
     error(function(data, status, headers, config){
@@ -237,7 +236,6 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
   $scope.init = function(){
     $scope.$http.post('/management/candidate/all').
     success(function(data, status, headers, config){
-      console.log(data);
       if (!data.error) $scope.candidates = data.records;
     }).
     error(function(data, status, headers, config){
@@ -248,7 +246,6 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
   $scope.save = function(){
     $scope.$http.post('/management/candidate/add', {candidate: $scope.candidate}).
     success(function(data, status, headers, config){
-      console.log(data);
       if (data.success) {
         $scope.$route.reload();
       }else{
@@ -263,7 +260,6 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
   $scope.delete = function(candidate){
     $scope.$http.post('/management/candidate/remove', {candidate: candidate}).
     success(function(data, status, headers, config){
-      console.log(data);
       if (data.success) {
         $scope.$route.reload();
       }else{
@@ -569,7 +565,6 @@ var DirectorResultCtrl = function($scope, $route, $location, $routeParams, $http
 
     $scope.$http.post('/director/exec', {action: 'result'}).
     success(function(data, status, headers, config){
-      console.log(data);
       if (!data.error){
         $scope.candidates = data.candidates;
         $scope.setCandidate($scope.candidates[0]);
@@ -581,8 +576,8 @@ var DirectorResultCtrl = function($scope, $route, $location, $routeParams, $http
   }
 
   $scope.setCandidate =function(candidate){
-    $scope.marks = new Array();
     $scope.candidate = candidate;
+    $scope.marks = candidate.marks;
   }
 
   $scope.goBack = function(){
@@ -656,7 +651,6 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
   $scope.submit = function(){
     $scope.$http.post('/director/vote', {candidate: $scope.candidate, mark: $scope.mark}).
     success(function(data, status, headers, config){
-      console.log(data);
       if (data.success) {
         $scope.isStart = false;
         $scope.isForbidden = true;

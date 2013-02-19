@@ -254,6 +254,16 @@ Director.prototype.result = function(fn) {
 
         markDataMgr.query({$or: sen}, function(e, r){
 
+          _.each(re, function(el, index, list){
+            var check = _.find(r, function(ef){
+              return el._id.toString(16) == ef.candidate.toString(16);
+            });
+            if (check && !check.length) {
+              el.marks = check.marks;
+              el.average = check.average;
+            }
+          });
+
           if (!e && r) return fn({candidates: re, marks: r});
           else return fn({error: 'error'});
         });

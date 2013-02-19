@@ -41,23 +41,18 @@ MarkDataManager.query = function(mark, fn){
  * @api public
  */
 MarkDataManager.add = function(mark, fn){
-
-  console.log(mark);
-
   var mongoServer = dataMgr.createDbServer();
   var dbConnector = dataMgr.createDbConnector(mongoServer);
 
   dbConnector.open(function(err, db){
     db.collection(MarkDataManager.key, function(err, collection){
       collection.find({candidate: mark.candidate, project: mark.project}).toArray(function(err, data){
-        console.log(data);
         if (err) {
           fn(err);
           mongoServer.close();
         }else if(data.length > 0){
           mark._id = data[0]._id;
           collection.save(mark, {safe: true}, function(err){
-            console.log(err);
             fn(err);
             mongoServer.close();
           });

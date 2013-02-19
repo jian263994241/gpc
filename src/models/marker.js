@@ -79,7 +79,8 @@ Marker.prototype.save = function(fn) {
   markDataMgr.add({
     candidate: this.candidate._id,
     project: this.project._id,
-    marks: this.marks
+    marks: this.marks,
+    average: this.average
   }, fn);
 };
 
