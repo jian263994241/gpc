@@ -232,6 +232,8 @@ VoteOperation.query = function(req, res){
 
   console.log('project: '+project);
 
+  if (!project) return res.json({error: 'project not open'});
+
   var director = getDirector(project);
   if (!director) return req.session.destroy(function(){
     res.json({redirect: '/login'});

@@ -642,10 +642,10 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
           break;
       }
 
-      setTimeout($scope.request, 1000);
+      setTimeout($scope.request, 0);
     }).
     error(function(data, status, headers, config){
-
+      setTimeout($scope.request, 1000*10);
     });
   }
 
