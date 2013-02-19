@@ -128,13 +128,9 @@ ManageOperation.logout = function(req, res){
  */
 ManageOperation.render = function(req, res){
 
-  if (req.session) {
-    if (req.session.project) {
-      return res.redirect('/director');
-    }else if(req.session.user){
-      return res.redirect('/');
-    }
-  };
+  if (req.session)
+    if (req.session.project) return res.redirect('/director');
+    else if(req.session.user) return res.redirect('/');
 
   switch(req.route.path){
     case '/management': 

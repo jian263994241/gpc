@@ -48,22 +48,17 @@ VoteOperation.render = function(req, res){
   switch(req.route.path){
     case '/director':
     case '/director/result/:project':
-      if (req.session) {
-        if (req.session.admin){
-          return res.redirect('/management');
-        }else if(req.session.user){
-          return res.redirect('/');
-        }
-      };
-      if(req.session.project) return res.render('main');
+      if (req.session) 
+        if (req.session.admin) return res.redirect('/management');
+        else if(req.session.user) return res.redirect('/');
+        else if(req.session.project) return res.render('main');
       else return res.redirect('/director/login');
     case '/director/vote/:project':
-      if (req.session && req.session.admin) return res.redirect('/management');
-      if (req.session.project) {
-        return res.render('main');
-      }else{
-        return res.redirect('/');
-      }
+      if (req.session) 
+        if (req.session.admin) return res.redirect('/management');
+        else if(req.session.user) return res.render('main');
+        else if(req.session.project) return res.render('/director');
+      else return res.redirect('/');
     default:
       return res.render('main');
   }
@@ -127,9 +122,7 @@ VoteOperation.exec = function(req, res){
 
   var director = getDirector(req.session.project);
 
-  if (!director) return req.session.destroy(function(){
-    res.json({error:true, redirect: '/director/login'});
-  });
+  if (!director) return res.json({success: true, redirect: '/director/login'});
 
   switch(action){
     case DirectorAction.init:
@@ -180,36 +173,14 @@ VoteOperation.exec = function(req, res){
  */
 VoteOperation.close = function(req, res){
   var director = getDirector(req.session.project);
-  if (!director) return req.session.destroy(function(){
-    res.json({success:true, redirect:'/director/login'});
-  });
+  if (!director) return res.json({success: true, redirect: '/director/login'});
 
   projectMgr.unregister(director, function(err){
     if (!err) return req.session.destroy(function(){
-      res.json({success:true, redirect:'/director/login'});
+      res.json({success: true, redirect:'/director/login'});
     });
     else return res.json({error:'Logout Error'});
   });
-}
-
-/**
- * Create session.project for client
- *
- * @param{Request}
- * @param{Response}
- *
- * @api public
- */
-VoteOperation.open = function(req, res){
-  if (req.session.project) return res.json({success:true});
-
-  var projectId = req.body['id'];
-
-  var director = projectMgr.getDirector({id: projectId});
-  if (director) {
-    req.session.project = director.project;
-    return res.json({success:true});
-  }else res.json({error: 'no such project director running'});
 }
 
 /**
@@ -222,22 +193,17 @@ VoteOperation.open = function(req, res){
  * @api public
  */
 VoteOperation.query = function(req, res){
+  if (!req.session || !req.session.user) return res.json({error: true, redirect: '/login'});
 
   console.log('***************************');
   console.log('query');
 
   var status = req.body['status'];
   var candidate = req.body['candidate'];
-  var project = req.session.project;
+  var projectId = req.body['projectId'];
+  var director = projectMgr.getDirector({id: projectId});
 
-  console.log('project: '+project);
-
-  if (!project) return res.json({error: 'project not open'});
-
-  var director = getDirector(project);
-  if (!director) return req.session.destroy(function(){
-    res.json({redirect: '/login'});
-  });
+  if (!director) return res.json({error: true, redirect: '/home'});
 
   console.log('candidate: '+candidate);
   console.log('status: '+status);
@@ -262,14 +228,11 @@ VoteOperation.query = function(req, res){
 VoteOperation.collect = function(req, res){
   var candidate = req.body['candidate'];
   var mark = req.body['mark'];
-
-  var project = req.session.project;
+  var projectId = req.body['projectId'];
+  var director = projectMgr.getDirector({id: projectId});
   var user = req.session.user;
 
-  var director = getDirector(project);
-  if (!director) return req.session.destroy(function(){
-    res.json({redirect: '/director/login'});
-  });
+  if (!director) return res.json({error: true, redirect: '/home'});
 
   if (user && candidate && mark && director && director.marker) {
     mark.username = user.username;

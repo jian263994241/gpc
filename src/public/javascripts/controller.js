@@ -599,28 +599,13 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
   $scope.isForbidden = false;
   $scope.isError = false;
 
-  $scope.open = function(){
-    var projectId = $scope.$routeParams.projectId;
-    $scope.$http.post('/director/open', {id: projectId}).
-    success(function(data, status, headers, config){
-      if (data.success) {
-        $scope.request();
-      }else if(data.error){
-        $scope.$location.path('/home');
-      }
-    }).
-    error(function(data, status, headers, config){
-      $scope.$location.path('/home');
-    });
-  }
-
   $scope.request = function(){
-
-    $scope.$http.post('/director/status', {status: $scope.status, candidate: $scope.candidate}, {timeout: 9999999999}).
+    var projectId = $scope.$routeParams.projectId;
+    $scope.$http.post('/director/status', {status: $scope.status, candidate: $scope.candidate, projectId: projectId}, {timeout: 9999999999}).
     success(function(data, status, headers, config){
 
       var res =data;
-      if (data.error) return;
+      if (data.error && data.redirect) $scope.$location.path(redirect);
 
       $scope.status = res.status;
       switch(res.status){
@@ -656,7 +641,8 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
       return;
     };
 
-    $scope.$http.post('/director/vote', {candidate: $scope.candidate, mark: $scope.mark}).
+    var projectId = $scope.$routeParams.projectId;
+    $scope.$http.post('/director/vote', {candidate: $scope.candidate, mark: $scope.mark, projectId: projectId}).
     success(function(data, status, headers, config){
       if (data.success) {
         $scope.isStart = false;

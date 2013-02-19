@@ -19,13 +19,9 @@ var UserOperation = exports = module.exports = {};
  * @api public
  */
 UserOperation.render = function(req, res){
-  if (req.session) {
-    if (req.session.project) {
-      return res.redirect('/director');
-    }else if(req.session.admin){
-      return res.redirect('/management');
-    }
-  };
+  if (req.session)
+    if (req.session.project) return res.redirect('/director');
+    else if(req.session.admin) return res.redirect('/management');
 
   switch(req.route.path){
     case '/':
