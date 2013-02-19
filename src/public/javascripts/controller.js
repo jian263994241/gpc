@@ -592,18 +592,36 @@ var DirectorResultCtrl = function($scope, $route, $location, $routeParams, $http
   util.manageLogout($scope, '/director/logout');
 }
 
-var VoteCtrl = function($scope, $http){
+var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
   $scope.$http = $http;
+  $scope.$location = $location;
+  $scope.$route = $route;
+  $scope.$routeParams = $routeParams;
 
   $scope.status = null;
   $scope.candidate = null;
   $scope.isStart = false;
   $scope.isForbidden = false;
 
+  $scope.open = function(){
+    var projectId = $scope.$routeParams.projectId;
+    $scope.$http.post('/director/open', {id: projectId}).
+    success(function(data, status, headers, config){
+      if (data.success) {
+        $scope.request();
+      }else if(data.error){
+        $scope.$location.path('/home');
+      }
+    }).
+    error(function(data, status, headers, config){
+      $scope.$location.path('/home');
+    });
+  }
+
   $scope.request = function(){
+
     $scope.$http.post('/director/status', {status: $scope.status, candidate: $scope.candidate}, {timeout: 9999999999}).
     success(function(data, status, headers, config){
-      console.log(data);
 
       var res =data;
       if (data.error) return;

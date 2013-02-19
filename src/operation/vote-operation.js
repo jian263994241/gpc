@@ -59,10 +59,7 @@ VoteOperation.render = function(req, res){
       if(req.session.project) return res.render('main');
       else return res.redirect('/director/login');
     case '/director/vote/:project':
-      var projectId = req.params.project;
-      var director = getDirector({id: projectId});
-      if (director && director.project) {
-        req.session.project = director.project;
+      if (req.session.project) {
         return res.render('main');
       }else{
         return res.redirect('/home');
@@ -190,6 +187,26 @@ VoteOperation.close = function(req, res){
     });
     else return res.json({error:'Logout Error'});
   });
+}
+
+/**
+ * Create session.project for client
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
+VoteOperation.open = function(req, res){
+  if (req.session.project) return res.json({success:true});
+
+  var projectId = req.body['id'];
+
+  var director = projectMgr.getDirector({id: projectId});
+  if (director) {
+    req.session.project = director.project;
+    return res.json({success:true});
+  }else res.json({error: 'no such project director running'});
 }
 
 /**

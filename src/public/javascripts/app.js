@@ -1,7 +1,7 @@
 angular.module('lb-gpc', []).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
     $routeProvider.
-      when('/', {templateUrl: 'template/login.html', controller: UserLoginCtrl}).
+      when('/', {templateUrl: '/template/login.html', controller: UserLoginCtrl}).
       when('/login',  {redirectTo: '/'}).
       when('/register', {templateUrl: '/template/register.html', controller: UserRegisterCtrl}).
       when('/home', {templateUrl: '/template/home.html', controller: UserHomeCtrl}).

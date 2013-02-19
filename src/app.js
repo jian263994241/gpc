@@ -124,11 +124,14 @@ app.map({
       '/status':{
         post:     voteOperator.query
       },
+      '/open':{
+        post:     voteOperator.open
+      },
       '/vote':{
         post:     voteOperator.collect,
         '/:project': {
           get:    voteOperator.render
-        }
+        },
       },
       '/result/:project':{
         get:      voteOperator.render
