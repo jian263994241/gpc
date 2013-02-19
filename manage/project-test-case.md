@@ -623,3 +623,163 @@ Admin用户退出，进入localhost:3000/management页面
 页面回到用户登录页面，退出Director系统
 
 ******************************
+
+#### No.TC033
+
+测试模块：导演模块
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：address:3000/director
+3. 页面跳转到项目登陆页面
+4. 填写信息，输入正确的Project Id和Access Key
+5. 点击Sign in按钮
+6. 进入address:3000/director页面后，用手持设备连入同一网络，用二维码扫描程序扫描二维码
+7. 手持设备进入用户登录页面，若用户已经登录过，则导向Home页面，并跳过步骤8
+8. 输入用户名和密码，登录到Home页面
+9. 选择Home页面中出现的项目，进入项目投票页面
+
+期待结果:
+
+显示正确的Candidate Name和Author, score和comment可以输入, submit按钮不能点击
+
+******************************
+
+#### No.TC034
+
+测试模块：导演模块
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：address:3000/director
+3. 页面跳转到项目登陆页面
+4. 填写信息，输入正确的Project Id和Access Key
+5. 点击Sign in按钮
+6. 进入address:3000/director页面后，用手持设备连入同一网络，用二维码扫描程序扫描二维码
+7. 手持设备进入用户登录页面，若用户已经登录过，则导向Home页面，并跳过步骤8
+8. 输入用户名和密码，登录到Home页面
+9. 选择Home页面中出现的项目，进入项目投票页面
+10. 点击address:3000/director "Start Voting"按钮
+
+期待结果:
+
+director开始计时，手持设备端Submit按钮可以点击
+
+******************************
+
+#### No.TC035
+
+测试模块：导演模块
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：address:3000/director
+3. 页面跳转到项目登陆页面
+4. 填写信息，输入正确的Project Id和Access Key
+5. 点击Sign in按钮
+6. 进入address:3000/director页面后，用手持设备连入同一网络，用二维码扫描程序扫描二维码
+7. 手持设备进入用户登录页面，若用户已经登录过，则导向Home页面，并跳过步骤8
+8. 输入用户名和密码，登录到Home页面
+9. 选择Home页面中出现的项目，进入项目投票页面
+10. 点击address:3000/director "Start Voting"按钮
+11. 手持设备Score和Comment不输入任何内容，点击Submit
+
+期待结果:
+
+出现错误提示
+
+******************************
+
+#### No.TC036
+
+测试模块：导演模块
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：address:3000/director
+3. 页面跳转到项目登陆页面
+4. 填写信息，输入正确的Project Id和Access Key
+5. 点击Sign in按钮
+6. 进入address:3000/director页面后，用手持设备连入同一网络，用二维码扫描程序扫描二维码
+7. 手持设备进入用户登录页面，若用户已经登录过，则导向Home页面，并跳过步骤8
+8. 输入用户名和密码，登录到Home页面
+9. 选择Home页面中出现的项目，进入项目投票页面
+10. 点击address:3000/director "Start Voting"按钮
+11. 等待60秒之后点击End Voting
+
+期待结果:
+
+手持设备端，Score和Comment不能输入，Submit按钮不能点击。Director端显示出Start Voting和Save按钮
+
+******************************
+
+#### No.TC037
+
+测试模块：导演模块
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：address:3000/director
+3. 页面跳转到项目登陆页面
+4. 填写信息，输入正确的Project Id和Access Key
+5. 点击Sign in按钮
+6. 进入address:3000/director页面后，用手持设备连入同一网络，用二维码扫描程序扫描二维码
+7. 手持设备进入用户登录页面，若用户已经登录过，则导向Home页面，并跳过步骤8
+8. 输入用户名和密码，登录到Home页面
+9. 选择Home页面中出现的项目，进入项目投票页面
+10. 点击address:3000/director "Start Voting"按钮
+11. 点击Previous/Next/Show Result按钮
+
+期待结果:
+
+页面不会跳转
+
+******************************
+
+#### No.TC038
+
+测试模块：导演模块
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：address:3000/director
+3. 页面跳转到项目登陆页面
+4. 填写信息，输入正确的Project Id和Access Key
+5. 点击Sign in按钮
+6. 点击address:3000/director Previous/Next按钮
+
+期待结果:
+
+页面内容跳转
+
+******************************
+
+#### No.TC039
+
+测试模块：导演模块
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：address:3000/director
+3. 页面跳转到项目登陆页面
+4. 填写信息，输入正确的Project Id和Access Key
+5. 点击Sign in按钮
+6. 进入address:3000/director页面后，用手持设备连入同一网络，用二维码扫描程序扫描二维码
+7. 手持设备进入用户登录页面，若用户已经登录过，则导向Home页面，并跳过步骤8
+8. 输入用户名和密码，登录到Home页面
+9. 选择Home页面中出现的项目，进入项目投票页面
+10. 点击address:3000/director "Start Voting"按钮
+11. 手持设备端，输入内容，点击Submit按钮
+
+期待结果:
+
+Submit按钮点击之后，Score和Comment不能再输入，Submit按钮不能再提交
+
+******************************
