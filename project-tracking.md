@@ -1,8 +1,8 @@
-##### Daily Work 2013-2-17
+##### Daily Work 2013-2-17 -- 2-19
 
 + [Finished]清理项目代码，把Deprecated的代码清理掉
-+ 写Test Case，参考以前项目中的Test Case表
-+ 做第一轮的Test，然后在项目中添加Bug记录
++ [Finished]写Test Case，参考以前项目中的Test Case表
++ [Finished]做第一轮的Test，然后在项目中添加Bug记录
 + 思考需要在GPC中加入什么新的功能，用Pencil Project做文档出来
 + 写Installation Guide和API文档，参考pan.baidu.com的开发文档来做
 

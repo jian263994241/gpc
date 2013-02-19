@@ -783,3 +783,42 @@ director开始计时，手持设备端Submit按钮可以点击
 Submit按钮点击之后，Score和Comment不能再输入，Submit按钮不能再提交
 
 ******************************
+
+#### No.TC040
+
+测试模块：导演模块
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：address:3000/director
+3. 页面跳转到项目登陆页面
+4. 填写信息，输入正确的Project Id和Access Key
+5. 点击Sign in按钮
+6. 点击Show Result，进入显示结果页面
+
+期待结果:
+
+正确显示所有的Candidate和Average Score
+
+******************************
+
+#### No.TC041
+
+测试模块：导演模块
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：address:3000/director
+3. 页面跳转到项目登陆页面
+4. 填写信息，输入正确的Project Id和Access Key
+5. 点击Sign in按钮
+6. 点击Show Result，进入显示结果页面
+7. 选择一个Candidate，点击Detail
+
+期待结果:
+
+正确显示所有的投票结果
+
+******************************
