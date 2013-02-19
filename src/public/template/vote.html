@@ -14,10 +14,11 @@
         <strong>Author - </strong><span>{{candidate.author}}</span>
       </p>
       <form action="" >
+        <label class="alert alert-error login-error" ng-show="isError">{{error}}</label>
         <label for="inputScore">Score:</label>
-        <input type="number" name="inputScore" val="0" max="10" min="0" ng-disabled="isForbidden" ng-model="mark.score">
+        <input type="number" name="inputScore" val="0" max="10" min="0" ng-disabled="isForbidden" ng-model="mark.score" ng-mousedown="clean()">
         <label for="inputComment">Comment:</label>
-        <label for=""><textarea name="inputComment" id="" cols="30" rows="5" class="vote-comment" ng-disabled="isForbidden" ng-model="mark.comment"></textarea></label>
+        <label for=""><textarea name="inputComment" id="" cols="30" rows="5" class="vote-comment" ng-disabled="isForbidden" ng-model="mark.comment" ng-mousedown="clean()"></textarea></label>
         <button type="submit" class="btn btn-primary" ng-disabled="!isStart" ng-click="submit()">Submit</button>
       </form>
     </div>

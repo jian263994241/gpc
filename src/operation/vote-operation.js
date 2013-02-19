@@ -45,24 +45,24 @@ var getDirector = function(project){
  * @api public
  */
 VoteOperation.render = function(req, res){
-  if (req.session) {
-    if (req.session.admin){
-      return res.redirect('/management');
-    }else if(req.session.user){
-      return res.redirect('/');
-    }
-  };
-
   switch(req.route.path){
     case '/director':
     case '/director/result/:project':
+      if (req.session) {
+        if (req.session.admin){
+          return res.redirect('/management');
+        }else if(req.session.user){
+          return res.redirect('/');
+        }
+      };
       if(req.session.project) return res.render('main');
       else return res.redirect('/director/login');
     case '/director/vote/:project':
+      if (req.session && req.session.admin) return res.redirect('/management');
       if (req.session.project) {
         return res.render('main');
       }else{
-        return res.redirect('/home');
+        return res.redirect('/');
       }
     default:
       return res.render('main');

@@ -597,6 +597,7 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
   $scope.candidate = null;
   $scope.isStart = false;
   $scope.isForbidden = false;
+  $scope.isError = false;
 
   $scope.open = function(){
     var projectId = $scope.$routeParams.projectId;
@@ -649,6 +650,12 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
   }
 
   $scope.submit = function(){
+    if (!$scope.mark || !$scope.mark.score) {
+      $scope.isError = true;
+      $scope.error = 'Please input your score and comment.';
+      return;
+    };
+
     $scope.$http.post('/director/vote', {candidate: $scope.candidate, mark: $scope.mark}).
     success(function(data, status, headers, config){
       if (data.success) {
@@ -659,5 +666,10 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
     error(function(data, status, headers, config){
 
     });
+  }
+
+  $scope.clean = function(){
+    $scope.isError = false;
+    $scope.error = '';
   }
 }
