@@ -7,9 +7,10 @@
       </div>
     </nav>
     <div class="span9">
-      <h2 class="page-header">
-        <em class="vote-name">{{candidate.title}}</em>
-      </h2>
+      <div class="page-header">
+        <h2 class="vote-name">{{candidate.title}}</h2>
+        <a href="#" ng-click="logout()" class="btn btn-small pull-right">Logout</a>
+      </div>
       <p>
         <strong>Author - </strong><span>{{candidate.author}}</span>
       </p>

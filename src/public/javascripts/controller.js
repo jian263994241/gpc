@@ -655,4 +655,6 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
     $scope.isError = false;
     $scope.error = '';
   }
+
+  util.manageLogout($scope, '/logout');
 }

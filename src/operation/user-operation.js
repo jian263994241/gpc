@@ -11,7 +11,7 @@ var projectMgr      = require('../models/project-manager');
 var UserOperation = exports = module.exports = {};
 
 /**
- * User Login/Register/Logout view controller
+ * [GET] User Login/Register/Logout view controller
  *
  * @param{Request}
  * @param{Response}
