@@ -101,7 +101,7 @@ ProjectDataManager.insertCandidate = function(project, candidateId, fn){
 
   dbConnector.open(function(err, db){
     db.collection(ProjectDataManager.key, function(err, collection){
-      collection.update({id: project.id}, {$addToSet: {candidates: candidateId}}, {upsert: true}, function(err){
+      collection.update(project, {$addToSet: {candidates: candidateId}}, {upsert: true}, function(err){
         fn(err);
       });
     });
@@ -111,7 +111,7 @@ ProjectDataManager.insertCandidate = function(project, candidateId, fn){
 /**
  * Remove candidateId from specified project in GPC_DB.projects
  *
- * @param {JSON} project data object {id}
+ * @param {JSON} project data object {_id}
  * @paran {String} candidateId
  * @param {Function} callback function(err){}
  *
@@ -125,7 +125,7 @@ ProjectDataManager.removeCandidate = function(project, candidateId, fn){
 
   dbConnector.open(function(err, db){
     db.collection(ProjectDataManager.key, function(err, collection){
-      collection.update({id: project.id}, {$pull: {candidates: candidateId}}, {upsert: true}, function(err){
+      collection.update(project, {$pull: {candidates: candidateId}}, {upsert: true}, function(err){
         fn(err);
       });
     });

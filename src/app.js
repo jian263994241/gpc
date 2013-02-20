@@ -81,31 +81,24 @@ app.map({
       },
       '/:module': {
         get:      manageOperator.render,
+        post:     manageOperator.add,
         '/all': {
-          post:   manageOperator.queryAll
+          get:    manageOperator.queryAll
         },
-        '/add': {
-          post:   manageOperator.add
+        '/:id': {
+          delete: manageOperator.remove,
+          get:    manageOperator.query,
         },
-        '/remove': {
-          post:   manageOperator.remove
-        },
-        '/query': {
-          post:   manageOperator.query
-        },
-        '/candidates': {
-          '/:projectId':{ 
-            get:  manageOperator.render 
-          },
+        '/candidates/:projectId': {
+          get:  manageOperator.render,
+          // post: manageOperator.insertCandidateIntoProject,
           '/all':{ 
-            post: manageOperator.queryProjectCandidates 
+            get: manageOperator.queryProjectCandidates 
           },
-          '/remove':{ 
-            post: manageOperator.removeCandidateFromProject 
+          '/:candidateId':{
+            delete:   manageOperator.removeCandidateFromProject,
+            put:      manageOperator.insertCandidateIntoProject,
           },
-          '/add':{ 
-            post: manageOperator.insertCandidateIntoProject 
-          }
         }
       }
     },
@@ -123,9 +116,6 @@ app.map({
       },
       '/status':{
         post:     voteOperator.query
-      },
-      '/open':{
-        post:     voteOperator.open
       },
       '/vote':{
         post:     voteOperator.collect,

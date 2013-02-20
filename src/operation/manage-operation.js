@@ -166,10 +166,10 @@ ManageOperation.query = function(req, res){
   if(!isAuth(req)) return res.redirect('/management');
 
   var module = req.params.module;
-  var operator = mgr[module];
+  var _id = req.params.id;
 
-  var keyword = req.body['keyword'];
-  operator.query(keyword, function(err, records){
+  obj = {_id: new ObjectID(_id)};
+  mgr[module].query(obj, function(err, records){
     if (!err && records) res.json({records: records});
     else res.json({error: true});
   });
@@ -207,16 +207,12 @@ ManageOperation.remove = function(req, res){
   if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
 
   var module = req.params.module;
+  var _id = req.params.id;
 
-  process(req, res, module, function(data){
-    var obj = data;
-    if (data && data._id) {
-      obj = {_id: new ObjectID(data._id)};
-    };
-    mgr[module].remove(obj, function(err){
-      if (err)  res.json({error: 'Remove '+module+' failed'});
-      else  res.json({success: true});
-    });
+  obj = {_id: new ObjectID(_id)};
+  mgr[module].remove(obj, function(err){
+    if (err)  res.json({error: 'Remove '+module+' failed'});
+    else  res.json({success: true});
   });
 }
 
@@ -234,23 +230,46 @@ ManageOperation.queryProjectCandidates = function(req, res){
   var module = req.params.module;
   if (module != 'project') return res.send(404);
 
-  process(req, res, 'project', function(project){
-    projectDataMgr.query(project, function(err, records){
-      if (!err && records) {
-        var candidateArr = records[0].candidates;
-        var sen = new Array();
-        _.each(candidateArr, function(el, index, list){
-          sen.push({_id: new ObjectID(el)});
-        });
+  var _id = req.params.projectId;
+  obj = {_id: new ObjectID(_id)};
 
-        if(sen.length == 0) return res.json({candidates: []});
+  projectDataMgr.query(obj, function(err, records){
+    if (!err && records && records.length) {
+      var candidateArr = records[0].candidates;
+      console.log(candidateArr);
+      var sen = new Array();
+      _.each(candidateArr, function(el, index, list){
+        sen.push({_id: new ObjectID(el)});
+      });
 
-        candidateDataMgr.query({$or: sen}, function(err, records){
-          if (!err && records) res.json({candidates: records});
-          else res.json({error: true});
-        });
+      if(sen.length == 0) return res.json({candidates: []});
+
+      candidateDataMgr.query({$or: sen}, function(err, records){
+        if (!err && records) res.json({candidates: records});
+        else res.json({error: true});
+
+        syncProjectCandidates(obj, candidateArr);
+      });
+    };
+  });
+}
+
+/**
+ * Not Good 
+ * Templately sync project with candidates by hand
+ *
+ * @param {JSON} project data object
+ * @param {JSON} candidate data object
+ * 
+ * @api private
+ */
+function syncProjectCandidates(project, candidates){
+  _.each(candidates, function(el, index, list){
+    candidateDataMgr.query({_id: new ObjectID(el)}, function(err, records){
+      if (!err && records && records.length == 0) {
+        projectDataMgr.removeCandidate(project, el, function(){});
       };
-    });
+    })
   });
 }
 
@@ -268,11 +287,11 @@ ManageOperation.removeCandidateFromProject = function(req, res){
   var module = req.params.module;
   if (module != 'project') return res.send(404);
 
-  var candidate = req.body['candidate'];
-  var project = req.body['project'];
+  var project = {_id: new ObjectID(req.params.projectId)};
+  var candidateId = req.params.candidateId;
 
-  if (candidate && project) {
-    projectDataMgr.removeCandidate(project, candidate._id, function(err){
+  if (candidateId && project) {
+    projectDataMgr.removeCandidate(project, candidateId, function(err){
       console.log(err);
       if (err)  res.json({error: 'Remove candidate failed'});
       else  res.json({success: true});
@@ -296,8 +315,8 @@ ManageOperation.insertCandidateIntoProject = function(req, res){
   var module = req.params.module;
   if (module != 'project') return res.send(404);
 
+  var project = {_id: new ObjectID(req.params.projectId)};
   var candidate = req.body['candidate'];
-  var project = req.body['project'];
 
   if (candidate && project) {
     projectDataMgr.insertCandidate(project, candidate._id, function(err){

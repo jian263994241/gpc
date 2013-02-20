@@ -175,17 +175,17 @@ var ManageProjectCtrl = function($scope, $route, $location, $http){
   $scope.projects = new Array();
 
   $scope.init = function(){
-    $scope.$http.post('/management/project/all').
-    success(function(data, status, headers, config){
-      if (!data.error) $scope.projects = data.records;
-    }).
-    error(function(data, status, headers, config){
+    $scope.$http.get('/management/project/all').
+      success(function(data, status, headers, config){
+        if (!data.error) $scope.projects = data.records;
+      }).
+      error(function(data, status, headers, config){
 
-    });
+      });
   }
 
   $scope.save = function(){
-    $scope.$http.post('/management/project/add', {project: $scope.project}).
+    $scope.$http.post('/management/project', {project: $scope.project}).
     success(function(data, status, headers, config){
       if (data.success) {
         $('#project-modal').modal('hide')
@@ -200,17 +200,16 @@ var ManageProjectCtrl = function($scope, $route, $location, $http){
   }
 
   $scope.delete = function(project){
-    $scope.$http.post('/management/project/remove', {project:{id:project.id, name:project.name, key:project.key}}).
-    success(function(data, status, headers, config){
-      if (data.success) {
-        $scope.$route.reload();
-      }else{
-        alert('error');
-      }
-    }).
-    error(function(data, status, headers, config){
-
-    });
+    $scope.$http.delete('/management/project/'+project._id).
+      success(function(data, status, headers, config){
+        if (data.success) {
+          $scope.$route.reload();
+        }else{
+          alert('delete project error');
+        }
+      }).
+      error(function(data, status, headers, config){
+      });
   }
 
   util.manageLogout($scope, '/management/logout');
@@ -234,17 +233,17 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
   $scope.candidates = new Array();
 
   $scope.init = function(){
-    $scope.$http.post('/management/candidate/all').
-    success(function(data, status, headers, config){
-      if (!data.error) $scope.candidates = data.records;
-    }).
-    error(function(data, status, headers, config){
+    $scope.$http.get('/management/candidate/all').
+      success(function(data, status, headers, config){
+        if (!data.error) $scope.candidates = data.records;
+      }).
+      error(function(data, status, headers, config){
 
-    });
+      });
   }
 
   $scope.save = function(){
-    $scope.$http.post('/management/candidate/add', {candidate: $scope.candidate}).
+    $scope.$http.post('/management/candidate', {candidate: $scope.candidate}).
     success(function(data, status, headers, config){
       if (data.success) {
         $scope.$route.reload();
@@ -258,17 +257,17 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
   }
 
   $scope.delete = function(candidate){
-    $scope.$http.post('/management/candidate/remove', {candidate: candidate}).
-    success(function(data, status, headers, config){
-      if (data.success) {
-        $scope.$route.reload();
-      }else{
-        alert('error');
-      }
-    }).
-    error(function(data, status, headers, config){
+    $scope.$http.delete('/management/candidate/'+candidate._id).
+      success(function(data, status, headers, config){
+        if (data.success) {
+          $scope.$route.reload();
+        }else{
+          alert('delete candidate error');
+        }
+      }).
+      error(function(data, status, headers, config){
 
-    });
+      });
   }
 
   util.manageLogout($scope, '/management/logout');
@@ -293,27 +292,28 @@ var ManageUserCtrl = function($scope, $route, $location, $http){
   $scope.users = new Array();
 
   $scope.init = function(){
-    $scope.$http.post('/management/user/all').
-    success(function(data, status, headers, config){
-      if (!data.error) $scope.users = data.records;
-    }).
-    error(function(data, status, headers, config){
+    $scope.$http.get('/management/user/all').
+      success(function(data, status, headers, config){
+        if (!data.error) $scope.users = data.records;
+      }).
+      error(function(data, status, headers, config){
 
-    });
+      });
   }
 
   $scope.delete = function(user){
-    $scope.$http.post('/management/user/remove', {user: user}).
-    success(function(data, status, headers, config){
-      if (data.success) {
-        $scope.$route.reload();
-      }else{
-        alert('error');
-      }
-    }).
-    error(function(data, status, headers, config){
+    console.log(user);
+    $scope.$http.delete('/management/user/'+user._id).
+      success(function(data, status, headers, config){
+        if (data.success) {
+          $scope.$route.reload();
+        }else{
+          alert('error');
+        }
+      }).
+      error(function(data, status, headers, config){
 
-    });
+      });
   }
 
   util.manageLogout($scope, '/management/logout');
@@ -339,7 +339,7 @@ var ManageProjectCandidatesCtrl = function($scope, $route, $location, $routePara
   $scope.all = new Array();
 
   $scope.init = function(){
-    $scope.$http.post('/management/project/query', {id: $scope.$routeParams.projectId}).
+    $scope.$http.get('/management/project/'+$scope.$routeParams.projectId).
       success(function(data, status, headers, config){
         $scope.project = data.records[0];
       }).
@@ -347,7 +347,7 @@ var ManageProjectCandidatesCtrl = function($scope, $route, $location, $routePara
 
       });
 
-    $http.post('/management/candidate/all').
+    $scope.$http.get('/management/candidate/all').
       success(function(data, status, headers, config){
         if (!data.error) $scope.all = data.records;
       }).
@@ -355,7 +355,7 @@ var ManageProjectCandidatesCtrl = function($scope, $route, $location, $routePara
 
       });
 
-    $http.post('/management/project/candidates/all', {project: {id: $scope.$routeParams.projectId}}).
+    $scope.$http.get('/management/project/candidates/'+$scope.$routeParams.projectId+'/all').
       success(function(data, status, headers, config){
         if (!data.error) $scope.candidates = data.candidates;
       }).
@@ -366,25 +366,22 @@ var ManageProjectCandidatesCtrl = function($scope, $route, $location, $routePara
 
   $scope.add = function(){
     var candidateId = $('#candidate-selection').find("option:selected").val();
-    var projectId = $('#project-id').attr('data-project-id');
 
-    $http.post('/management/project/candidates/add', {candidate: {_id: candidateId}, project:{id: projectId}}).
-    success(function(data, status, headers, config){
-      if (data.success) {
-        $scope.$route.reload();
-      }else{
-        alert('error');
-      }
-    }).
-    error(function(data, status, headers, config){
+    $scope.$http.put('/management/project/candidates/'+$scope.$routeParams.projectId+'/'+candidateId, {candidate: {_id: candidateId}}).
+      success(function(data, status, headers, config){
+        if (data.success) {
+          $scope.$route.reload();
+        }else{
+          alert('error');
+        }
+      }).
+      error(function(data, status, headers, config){
 
-    });
+      });
   }
 
   $scope.delete = function(candidate){
-    var projectId = $('#project-id').attr('data-project-id');
-
-    $http.post('/management/project/candidates/remove', {candidate: {_id: candidate._id}, project:{id: projectId}}).
+    $scope.$http.delete('/management/project/candidates/'+$scope.$routeParams.projectId+'/'+candidate._id).
     success(function(data, status, headers, config){
       if (data.success) {
         $scope.$route.reload();
