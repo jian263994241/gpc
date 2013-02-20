@@ -161,6 +161,7 @@ var ManageProjectCtrl = function($scope, $route, $location, $http){
   $scope.$location = $location;
   $scope.$http = $http;
   $scope.$route = $route;
+  $scope.isError = false;
 
   $scope.config = {
     project: 'active',
@@ -185,13 +186,21 @@ var ManageProjectCtrl = function($scope, $route, $location, $http){
   }
 
   $scope.save = function(){
+    if (!$scope.project || !$scope.project.id || !$scope.project.name || !$scope.project.key) {
+      $scope.isError = true;
+      $scope.error = 'Please input project id, name and access key';
+      return;
+    };
+
     $scope.$http.post('/management/project', {project: $scope.project}).
     success(function(data, status, headers, config){
       if (data.success) {
         $('#project-modal').modal('hide')
         $scope.$route.reload();
       }else{
-        alert('error');
+        $scope.isError = true;
+        $scope.error = data.error;
+        return;
       }
     }).
     error(function(data, status, headers, config){
@@ -210,6 +219,11 @@ var ManageProjectCtrl = function($scope, $route, $location, $http){
       }).
       error(function(data, status, headers, config){
       });
+  }
+
+  $scope.clean = function(){
+    $scope.isError = false;
+    $scope.error = '';
   }
 
   util.manageLogout($scope, '/management/logout');

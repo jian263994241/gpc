@@ -3,7 +3,8 @@
  * @version Beta 1.1
  */
 
-var dataMgr = require('./data-manager');
+var dataMgr         = require('./data-manager');
+var DataExistError  = require('../error/data-exist-error');
 
 var ProjectDataManager = exports = module.exports = {};
 ProjectDataManager.key = dataMgr.COLLECTION_PROJECT;
@@ -44,12 +45,12 @@ ProjectDataManager.add = function(project, fn){
 
   dbConnector.open(function(err, db){
     db.collection(ProjectDataManager.key, function(err, collection){
-      collection.find(project).toArray(function(err, data){
+      collection.find({id: project.id}).toArray(function(err, data){
         if (err) {
           fn(err);
           mongoServer.close();
         }else if(data.length > 0){
-          fn(new Error('Data Exist'));
+          fn(new DataExistError());
           mongoServer.close();
         }else{
           collection.insert(project, {safe: true}, function(err, records){

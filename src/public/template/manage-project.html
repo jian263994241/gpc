@@ -49,11 +49,12 @@
   <div class="modal-body">
     <form>
       <label for="">Project id</label>
-      <input type="text" ng-model="project.id" required>
+      <input type="text" ng-model="project.id" ng-mousedown="clean()" required>
       <label for="">Project name</label>
-      <input type="text" ng-model="project.name" required>
+      <input type="text" ng-model="project.name" ng-mousedown="clean()" required>
       <label for="">Access Key</label>
-      <input type="password" ng-model="project.key" required>
+      <input type="password" ng-model="project.key" ng-mousedown="clean()" required>
+      <label class="alert alert-error login-error" ng-show="isError">{{error}}</label>
     </form>
   </div>
   <div class="modal-footer">

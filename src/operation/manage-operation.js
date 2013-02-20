@@ -12,6 +12,7 @@ var ObjectID = require('mongodb').ObjectID;
 var projectDataMgr = require('../models/data-manager/project-data-manager');
 var candidateDataMgr = require('../models/data-manager/candidate-data-manager');
 var userDataMgr = require('../models/data-manager/user-data-manager');
+var DataExistError = require('../models/error/data-exist-error');
 
 var mgr = {
   'project': projectDataMgr,
@@ -189,7 +190,9 @@ ManageOperation.add = function(req, res){
   var module = req.params.module;
   process(req, res, module, function(data){
     mgr[module].add(data, function(err){
-      if(err) res.json({error: 'Add '+module+' failed'});
+      if(err) 
+        if(err instanceof DataExistError) res.json({error: 'Data existed'});
+        else res.json({error: 'Add '+module+' failed'});
       else  res.json({success: true});
     })
   });
