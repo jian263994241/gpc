@@ -54,15 +54,17 @@
   <div class="modal-body">
     <form>
         <label for="">Candidate title</label>
-        <input type="text" ng-model="candidate.title" class="span4" required>
+        <input type="text" ng-model="candidate.title" class="span4" ng-mousedown="clean()" required>
         <label for="">Author</label>
-        <input type="text" ng-model="candidate.author" class="span4" required>
+        <input type="text" ng-model="candidate.author" class="span4" ng-mousedown="clean()" required>
         <label for="">Source type</label>
-        <input type="text" ng-model="candidate.type" class="span4" required>
+        <select ng-model="candidate.type" class="span4" ng-options="option.value as option.name for option in type" >
+        </select>
         <label for="">Source</label>
-        <input type="text" ng-model="candidate.source" class="span4" required>
+        <input type="text" ng-model="candidate.source" class="span4" ng-mousedown="clean()" required>
         <label for="">Introduction</label>
         <textarea cols="30" rows="3" ng-model="candidate.intro" class="span4" required></textarea>
+        <label class="alert alert-error login-error" ng-show="isError">{{error}}</label>
       </form>
   </div>
   <div class="modal-footer">

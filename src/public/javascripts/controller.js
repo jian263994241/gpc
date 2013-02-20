@@ -198,9 +198,12 @@ var ManageProjectCtrl = function($scope, $route, $location, $http){
         $('#project-modal').modal('hide')
         $scope.$route.reload();
       }else{
-        $scope.isError = true;
-        $scope.error = data.error;
-        return;
+        if (data.error) {
+          $scope.isError = true;
+          $scope.error = data.error;
+          return;
+        };
+        alert('error');
       }
     }).
     error(function(data, status, headers, config){
@@ -233,6 +236,11 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
   $scope.$location = $location;
   $scope.$http = $http;
   $scope.$route = $route;
+  $scope.isError = false;
+  $scope.type = [
+    {name: "image", value: "image"},
+    {name: "video", value: "video"},
+  ]
 
   $scope.config = {
     project: '',
@@ -257,17 +265,28 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
   }
 
   $scope.save = function(){
-    $scope.$http.post('/management/candidate', {candidate: $scope.candidate}).
-    success(function(data, status, headers, config){
-      if (data.success) {
-        $scope.$route.reload();
-      }else{
-        alert('error');
-      }
-    }).
-    error(function(data, status, headers, config){
+    if (!$scope.candidate || !$scope.candidate.author || !$scope.candidate.source || !$scope.candidate.title || !$scope.candidate.type) {
+      $scope.isError = true;
+      $scope.error = 'Please input candidate author, source type, source and title';
+      return;
+    };
 
-    });
+    $scope.$http.post('/management/candidate', {candidate: $scope.candidate}).
+      success(function(data, status, headers, config){
+        if (data.success) {
+          $scope.$route.reload();
+        }else{
+          if (data.error) {
+            $scope.isError = true;
+            $scope.error = data.error;
+            return;
+          };
+          alert('error');
+        }
+      }).
+      error(function(data, status, headers, config){
+
+      });
   }
 
   $scope.delete = function(candidate){
@@ -282,6 +301,11 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
       error(function(data, status, headers, config){
 
       });
+  }
+
+  $scope.clean = function(){
+    $scope.isError = false;
+    $scope.error = '';
   }
 
   util.manageLogout($scope, '/management/logout');

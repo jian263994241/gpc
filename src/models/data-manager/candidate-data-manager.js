@@ -3,7 +3,8 @@
  * @version Beta 1.1
  */
 
-var dataMgr = require('./data-manager');
+var dataMgr         = require('./data-manager');
+var DataExistError  = require('../error/data-exist-error');
 
 var CandidateDataManager = exports = module.exports = {};
 CandidateDataManager.key = dataMgr.COLLECTION_CANDIDATE;
@@ -45,12 +46,12 @@ CandidateDataManager.add = function(candidate, fn){
 
   dbConnector.open(function(err, db){
     db.collection(CandidateDataManager.key, function(err, collection){
-      collection.find(candidate).toArray(function(err, data){
+      collection.find({source: candidate.source}).toArray(function(err, data){
         if (err) {
           fn(err);
           mongoServer.close();
         }else if(data.length > 0){
-          fn(new Error('Data Exist'));
+          fn(new DataExistError());
           mongoServer.close();
         }else{
           collection.insert(candidate, {safe: true}, function(err, records){
