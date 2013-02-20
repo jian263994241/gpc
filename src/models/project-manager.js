@@ -59,6 +59,9 @@ ProjectMgr.register = function(project, fn){
  */
 ProjectMgr.unregister = function(director, fn){
   ProjectMgr.accessQueue = _.without(ProjectMgr.accessQueue, director);
+  while(res = director.queue.shift()){
+    res.json({redirect: '/home'});
+  }
   return fn(null);
 }
 

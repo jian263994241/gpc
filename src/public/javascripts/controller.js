@@ -129,7 +129,7 @@ var UserHomeCtrl = function($scope, $route, $location, $http){
   $scope.init = function(){
     $scope.$http.post('/user/project').
     success(function(data, status, headers, config){
-      if (data.directors) $scope.directors = data.directors;
+      if (data.projects) $scope.projects = data.projects;
     }).
     error(function(data, status, headers, config){
 
@@ -640,7 +640,9 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
     success(function(data, status, headers, config){
 
       var res =data;
-      if (data.error && data.redirect) $scope.$location.path(redirect);
+      if (res.redirect) {
+        $scope.$location.path(res.redirect);
+      }else if (data.error) return;
 
       $scope.status = res.status;
       switch(res.status){
@@ -662,7 +664,7 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
           break;
       }
 
-      setTimeout($scope.request, 0);
+      setTimeout($scope.request, 1000);
     }).
     error(function(data, status, headers, config){
       setTimeout($scope.request, 1000*10);

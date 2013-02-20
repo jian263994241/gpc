@@ -74,7 +74,11 @@ VoteOperation.render = function(req, res){
  */
 VoteOperation.accessedProject = function(req, res){
   if (req.session.user) {
-    res.json({directors: projectMgr.accessQueue});
+    var projects = new Array();
+    _.each(projectMgr.accessQueue, function(el, index, list){
+      projects.push(el.project);
+    });
+    res.json({projects: projects});
   };
 }
 

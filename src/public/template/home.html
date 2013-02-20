@@ -11,8 +11,8 @@
         <a href="#" ng-click="logout()" class="btn btn-small pull-right">Logout</a>
       </div>
       <ul>
-        <li ng-repeat="director in directors">
-          <a href="/director/vote/{{director.project.id}}" class="btn">{{director.project.name}}</a>
+        <li ng-repeat="project in projects">
+          <a href="/director/vote/{{project.id}}" class="btn">{{project.name}}</a>
         </li>
       </ul>
     </div>
