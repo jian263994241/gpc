@@ -125,6 +125,7 @@ var UserRegisterCtrl = function($scope, $location, $http){
 var UserHomeCtrl = function($scope, $route, $location, $http){
   $scope.$location = $location;
   $scope.$http = $http;
+  $scope.$route = $route;
 
   $scope.init = function(){
     $scope.$http.post('/user/project').
@@ -134,6 +135,10 @@ var UserHomeCtrl = function($scope, $route, $location, $http){
     error(function(data, status, headers, config){
 
     });
+  }
+
+  $scope.refresh =function(){
+    $scope.$route.reload();
   }
 
   util.manageLogout($scope, '/logout');
@@ -637,12 +642,11 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
   $scope.request = function(){
     var projectId = $scope.$routeParams.projectId;
     $scope.$http.post('/director/status', {status: $scope.status, candidate: $scope.candidate, projectId: projectId}, {timeout: 9999999999}).
-    success(function(data, status, headers, config){
+    success(function(res, status, headers, config){
 
-      var res =data;
       if (res.redirect) {
-        $scope.$location.path(res.redirect);
-      }else if (data.error) return;
+        return $scope.$location.path(res.redirect);
+      }else if (res.error) return;
 
       $scope.status = res.status;
       switch(res.status){
