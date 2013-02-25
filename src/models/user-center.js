@@ -80,7 +80,6 @@ UserCenter.authenticate = function(input, pass, salt, fn){
  */
 UserCenter.login = function(username, password, fn){
   userDataMgr.query({username:username}, function(err, data){
-
     if (err) return fn(err);
     var user = data[0];
     if (user) {
@@ -118,18 +117,10 @@ UserCenter.isLogin = function(user){
  * @api public
  */
 UserCenter.register = function(username, password, email, fn){
-   userDataMgr.query({username:username}, function(err, data){
+  UserCenter.hash(password, function(err, salt, hash){
     if (err) return fn(err);
-    var user = data[0];
-    if (!user) {
-      UserCenter.hash(password, function(err, salt, hash){
-        if (err) return fn(err);
-        userDataMgr.add({username: username, password: hash, salt: salt, email: email}, function(err){
-          fn(err, {username: username, password: hash, salt: salt});
-        });
-      });
-    }else{
-      return fn(new UserExistError());
-    }
+    userDataMgr.add({username: username, password: hash, salt: salt, email: email}, function(err){
+      fn(err, {username: username, password: hash, salt: salt});
+    });
   });
 }

@@ -2,8 +2,10 @@
  * @author Michael.Lee(leewind19841209@gamil.com)
  * @version Beta 1.1
  */
-
-var dataMgr = require('./data-manager');
+var dataMgr         = require('./data-manager');
+var DataExistError  = require('../error/data-exist-error');
+var events          = require('events');
+var emitter         = new events.EventEmitter();
 
 var UserDataManager = exports = module.exports = {};
 UserDataManager.key = dataMgr.COLLECTION_USER;
@@ -17,16 +19,25 @@ UserDataManager.key = dataMgr.COLLECTION_USER;
  * @api public
  */
 UserDataManager.query = function(user, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'user.data.query.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(UserDataManager.key, function(err, collection){
-      collection.find(user).toArray(function(err, data){
-        if(!err)fn(err, data.concat());
-        else fn(err);
-        mongoServer.close();
-      });
+  dataMgr.connectDbServer(UserDataManager.key, trigger, function(collection){
+    collection.find(user).toArray(function(err, data){
+      if (err) return trigger(err);
+      
+      fn(err, data.concat());
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
     });
   });
 }
@@ -40,26 +51,68 @@ UserDataManager.query = function(user, fn){
  * @api public
  */
 UserDataManager.add = function(user, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'user.data.add.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(UserDataManager.key, function(err, collection){
-      collection.find(user).toArray(function(err, data){
-        if (err) {
-          fn(err);
-          mongoServer.close();
-        }else if(data.length > 0){
-          fn(new Error('Data Exist'));
-          mongoServer.close();
-        }else{
-          user.candidates = new Array();
-          collection.insert(user, {safe: true}, function(err, records){
-            fn(err, records);
-            mongoServer.close();
-          });
-        }
-      });
+  dataMgr.connectDbServer(UserDataManager.key, trigger, function(collection){
+    collection.find({username: user.username}).toArray(function(err, data){
+      if (err) trigger(err);
+      else if(data.concat().length>0)
+        return trigger(new DataExistError());
+      else{
+        user.candidates = new Array();
+        collection.insert(user, {safe: true}, function(error, records){
+          if (error) return trigger(error);
+
+          fn(error, records);
+          emitter.removeListener(cEvent, cListener);
+          dataMgr.closeDbServer();
+          return;
+        });
+      }
+    });
+  });
+}
+
+/**
+ * Update user in GPC_DB.users
+ *
+ * @param {JSON} user data object
+ * @param {JSON} update data
+ * @param {Function} callback function(err){}
+ *
+ * @api public
+ */
+UserDataManager.update = function(user, data, fn){
+  var cEvent = 'user.data.update.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
+
+  dataMgr.connectDbServer(UserDataManager.key, trigger, function(collection){
+    collection.update(user, {$set: data}, {multi: true}, function(err){
+      if (err) trigger(err);
+      
+      fn(err);
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
+      return;
     });
   });
 }
@@ -73,15 +126,26 @@ UserDataManager.add = function(user, fn){
  * @api public
  */
 UserDataManager.remove = function(user, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'user.data.remove.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(UserDataManager.key, function(err, collection){
-      collection.remove(user, false, function(err){
-        fn(err);
-        mongoServer.close();
-      });
+  dataMgr.connectDbServer(UserDataManager.key, trigger, function(collection){
+    collection.remove(user, false, function(err){
+      if (err) trigger(err);
+
+      fn(err);
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
+      return;
     });
   });
 }

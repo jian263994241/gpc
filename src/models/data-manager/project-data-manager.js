@@ -5,6 +5,9 @@
 
 var dataMgr         = require('./data-manager');
 var DataExistError  = require('../error/data-exist-error');
+var ObjectID        = require('mongodb').ObjectID;
+var events          = require('events');
+var emitter         = new events.EventEmitter();
 
 var ProjectDataManager = exports = module.exports = {};
 ProjectDataManager.key = dataMgr.COLLECTION_PROJECT;
@@ -18,15 +21,25 @@ ProjectDataManager.key = dataMgr.COLLECTION_PROJECT;
  * @api public
  */
 ProjectDataManager.query = function(project, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'project.data.query.error';
+  var cListener = function(err){
+    emitter.removeListener(cEvent, cListener);
+    console.error(err.stack);
+    fn(err);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(ProjectDataManager.key, function(err, collection){
-      collection.find(project).toArray(function(err, data){
-        fn(err, data.concat());
-        mongoServer.close();
-      });
+  dataMgr.connectDbServer(ProjectDataManager.key, trigger, function(collection){
+    collection.find(project).toArray(function(err, data){
+      if (err) return trigger(err);
+      
+      fn(err, data.concat());
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
     });
   });
 }
@@ -40,25 +53,56 @@ ProjectDataManager.query = function(project, fn){
  * @api public
  */
 ProjectDataManager.add = function(project, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'project.data.add.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(ProjectDataManager.key, function(err, collection){
-      collection.find({id: project.id}).toArray(function(err, data){
-        if (err) {
-          fn(err);
-          mongoServer.close();
-        }else if(data.length > 0){
-          fn(new DataExistError());
-          mongoServer.close();
-        }else{
-          collection.insert(project, {safe: true}, function(err, records){
-            fn(err, records);
-            mongoServer.close();
-          });
-        }
-      });
+  dataMgr.connectDbServer(ProjectDataManager.key, trigger, function(collection){
+    collection.find({id: project.id}).toArray(function(err, data){
+      if (err) return trigger(err);
+      else if(data.concat().length>0)
+        return trigger(new DataExistError());
+      else{
+        collection.insert(project, {safe: true}, function(error, records){
+          if (error) return trigger(error);
+          
+          fn(error, records);
+          emitter.removeListener(cEvent, cListener);
+          dataMgr.closeDbServer();
+        });
+      }
+    });
+  });
+}
+
+ProjectDataManager.update = function(project, data, fn){
+  var cEvent = 'project.data.update.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
+
+  dataMgr.connectDbServer(ProjectDataManager.key, trigger, function(collection){
+    collection.update(project, {$set: data}, {multi: true}, function(err){
+      if (err) return trigger(err);
+      
+      fn(err);
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
     });
   });
 }
@@ -72,15 +116,25 @@ ProjectDataManager.add = function(project, fn){
  * @api public
  */
 ProjectDataManager.remove = function(project, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'project.data.remove.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(ProjectDataManager.key, function(err, collection){
-      collection.remove(project, false, function(err){
-        fn(err);
-        mongoServer.close();
-      });
+  dataMgr.connectDbServer(ProjectDataManager.key, trigger, function(collection){
+    collection.remove(project, false, function(err){
+      if (err) return trigger(err);
+
+      fn(err);
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
     });
   });
 }
