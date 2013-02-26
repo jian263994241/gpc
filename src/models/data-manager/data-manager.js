@@ -65,7 +65,7 @@ DataManager.connectDbServer = function(key, trigger, fn){
 
   dbConnector.open(function(err, db){
     if(err || !db) return trigger(err);
-    else return DataManager.fetchCollection(db, key, fn);
+    else return DataManager.fetchCollection(db, key, trigger, fn);
   });
 }
 

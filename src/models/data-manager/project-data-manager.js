@@ -151,14 +151,25 @@ ProjectDataManager.remove = function(project, fn){
  * @see http://mongodb.github.com/node-mongodb-native/api-articles/nodekoarticle1.html
  */
 ProjectDataManager.insertCandidate = function(project, candidateId, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'project.data.insert.candidate.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(ProjectDataManager.key, function(err, collection){
-      collection.update(project, {$addToSet: {candidates: candidateId}}, {upsert: true}, function(err){
-        fn(err);
-      });
+  dataMgr.connectDbServer(ProjectDataManager.key, trigger, function(collection){
+    collection.update(project, {$addToSet: {candidates: candidateId}}, {upsert: true}, function(err){
+      if (err) return trigger(err);
+
+      fn(err);
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
     });
   });
 }
@@ -175,14 +186,25 @@ ProjectDataManager.insertCandidate = function(project, candidateId, fn){
  * @see http://mongodb.github.com/node-mongodb-native/api-articles/nodekoarticle1.html
  */
 ProjectDataManager.removeCandidate = function(project, candidateId, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'project.data.remove.candidate.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(ProjectDataManager.key, function(err, collection){
-      collection.update(project, {$pull: {candidates: candidateId}}, {upsert: true}, function(err){
-        fn(err);
-      });
+  dataMgr.connectDbServer(ProjectDataManager.key, trigger, function(collection){
+    collection.update(project, {$pull: {candidates: candidateId}}, {upsert: true}, function(err){
+      if (err) return trigger(err);
+
+      fn(err);
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
     });
-  });
+  }); 
 }
