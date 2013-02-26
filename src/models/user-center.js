@@ -19,7 +19,6 @@ var iterations = 12000;
 
 var userDataMgr = require('./data-manager/user-data-manager');
 
-var UserExistError = require('./error/user-exist-error');
 var InvalidPasswordError = require('./error/invalid-password-error');
 var NoUserError =require('./error/no-user-error');
 
@@ -119,8 +118,8 @@ UserCenter.isLogin = function(user){
 UserCenter.register = function(username, password, email, fn){
   UserCenter.hash(password, function(err, salt, hash){
     if (err) return fn(err);
-    userDataMgr.add({username: username, password: hash, salt: salt, email: email}, function(err){
-      fn(err, {username: username, password: hash, salt: salt});
+    userDataMgr.add({username: username, password: hash, salt: salt, email: email}, function(error){
+      fn(error, {username: username, password: hash, salt: salt});
     });
   });
 }

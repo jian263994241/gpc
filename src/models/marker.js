@@ -6,6 +6,7 @@
 // Declare required lib
 var _           = require('underscore');
 var markDataMgr = require('./data-manager/mark-data-manager');
+var AuthError   = require('./error/thread-lock-error');
 
 /**
  *  Class Marker
@@ -40,7 +41,7 @@ Marker.prototype.collect = function(params, fn) {
     };
     fn(null);
   }else{
-    fn(new Error('Authentication Failed'));
+    fn(new AuthError());
   }
 };
 

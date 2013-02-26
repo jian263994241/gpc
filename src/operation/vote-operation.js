@@ -142,13 +142,15 @@ VoteOperation.exec = function(req, res){
         res.json({candidate: director.curCandidate, project: director.project, status: director.status});
       });
     case DirectorAction.startVote:
-      return director.startVote(function() {
-        if(director.marker) director.marker.reset();
+      return director.startVote(function(err) {
+        if (err) return res.json({error: true});
+        else if(director.marker) director.marker.reset();
         res.send('vote-start');
       });
     case DirectorAction.endVote:
-      return director.endVote(function() {
-        if(director.marker) director.marker.isLocked = true;
+      return director.endVote(function(err) {
+        if (err) return res.json({error: true});
+        else if(director.marker) director.marker.isLocked = true;
         res.send('vote-end');
       });
     case DirectorAction.save:
