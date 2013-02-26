@@ -51,11 +51,13 @@ UserOperation.register = function(req, res){
   var email    = req.body['email'];
 
   userCenter.register(username, password, email, function(err, user){
-    if (err instanceof UserExistError){
+    if (err && err instanceof UserExistError){
+      console.error(err.stack);
       res.json({error:'Username has been already occupied. Please change username'});
-    }else if(err instanceof Error){
+    }else if(err){
+      console.error(err.stack);
       res.json({error:'Register Error'});
-    }else if(user){
+    }else if(!err && user){
       req.session.regenerate(function(){
         req.session.user = user;
         res.json({success:true, redirect:'home'});
@@ -73,12 +75,11 @@ UserOperation.register = function(req, res){
  * @api public
  */
 UserOperation.login = function(req, res){
-
   var username = req.body['username'];
   var password = req.body['password'];
 
   userCenter.login(username, password, function(err, user){
-    if (user) {
+    if (!err && user) {
       req.session.regenerate(function(){
         req.session.user = user;
 
@@ -87,6 +88,7 @@ UserOperation.login = function(req, res){
         res.json({success:true, redirect:'home'});
       });
     }else{
+      if(err) console.error(err.stack);
       req.session.user = null;
       res.json({error:'Authentication failed, please check username and password'});
     }

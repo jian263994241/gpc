@@ -96,9 +96,11 @@ VoteOperation.login = function(req, res) {
 
   projectMgr.register({id:id, key: key}, function(err, director){
     if(!err && director){
-      director.init(function(err){
-        if (err) return res.json({error:'Authentication failed, please check project id and key'});
-        else {
+      director.init(function(error){
+        if (error) {
+          console.error(error.stack);
+          return res.json({error:'Authentication failed, please check project id and key'});
+        } else {
           req.session.regenerate(function(){
             req.session.project = director.project;
             res.json({success:true, redirect:'/director'});
@@ -106,10 +108,14 @@ VoteOperation.login = function(req, res) {
         }
       });
     }
-    else if (err && err instanceof ProjectExistError)
+    else if (err && err instanceof ProjectExistError){
+      console.error(err.stack);
       return res.json({error: 'Authentication failed. Project is running!'});
-    else
+    }else{
+      console.error(err.stack);
       return res.json({error:'Authentication failed, please check project id and key'});
+    }
+      
   });
 }
 

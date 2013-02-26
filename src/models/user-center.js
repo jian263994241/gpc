@@ -82,11 +82,9 @@ UserCenter.login = function(username, password, fn){
     if (err) return fn(err);
     var user = data[0];
     if (user) {
-      UserCenter.authenticate(password, user.password, user.salt, function(err, success){
-        if (err) return fn(err);
-        if (success) {
-          return fn(null, {username:username, password:user.password, salt:user.salt});
-        }
+      UserCenter.authenticate(password, user.password, user.salt, function(error, success){
+        if (error) return fn(error);
+        else if (success) return fn(null, {username:username, password:user.password, salt:user.salt});
       });
     }else{
       return fn(new NoUserError());
