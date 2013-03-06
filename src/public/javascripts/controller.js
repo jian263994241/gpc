@@ -493,7 +493,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
   $scope.candidate = null;
   $scope.isStart = false;
   $scope.isEnd = false;
-  $scope.qrcode = 'http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl='+$window.location.host+'&choe=UTF-8&chld=Q|2'
+  $scope.qrcode = 'http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl=http://'+$window.location.host+'&choe=UTF-8&chld=Q|2'
   $scope.lock = false;
 
   $scope.setCandidate = function(data){
