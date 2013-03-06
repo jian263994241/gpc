@@ -19,7 +19,6 @@ var iterations = 12000;
 
 var userDataMgr = require('./data-manager/user-data-manager');
 
-var UserExistError = require('./error/user-exist-error');
 var InvalidPasswordError = require('./error/invalid-password-error');
 var NoUserError =require('./error/no-user-error');
 
@@ -80,15 +79,12 @@ UserCenter.authenticate = function(input, pass, salt, fn){
  */
 UserCenter.login = function(username, password, fn){
   userDataMgr.query({username:username}, function(err, data){
-
     if (err) return fn(err);
     var user = data[0];
     if (user) {
-      UserCenter.authenticate(password, user.password, user.salt, function(err, success){
-        if (err) return fn(err);
-        if (success) {
-          return fn(null, {username:username, password:user.password, salt:user.salt});
-        }
+      UserCenter.authenticate(password, user.password, user.salt, function(error, success){
+        if (error) return fn(error);
+        else if (success) return fn(null, {username:username, password:user.password, salt:user.salt});
       });
     }else{
       return fn(new NoUserError());
@@ -118,18 +114,10 @@ UserCenter.isLogin = function(user){
  * @api public
  */
 UserCenter.register = function(username, password, email, fn){
-   userDataMgr.query({username:username}, function(err, data){
+  UserCenter.hash(password, function(err, salt, hash){
     if (err) return fn(err);
-    var user = data[0];
-    if (!user) {
-      UserCenter.hash(password, function(err, salt, hash){
-        if (err) return fn(err);
-        userDataMgr.add({username: username, password: hash, salt: salt, email: email}, function(err){
-          fn(err, {username: username, password: hash, salt: salt});
-        });
-      });
-    }else{
-      return fn(new UserExistError());
-    }
+    userDataMgr.add({username: username, password: hash, salt: salt, email: email}, function(error){
+      fn(error, {username: username, password: hash, salt: salt});
+    });
   });
 }

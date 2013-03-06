@@ -16,6 +16,9 @@ var Marker            = require('./marker');
 var ObjectID          = require('mongodb').ObjectID;
 
 var ThreadLockError   = require('./error/thread-lock-error');
+var UnknownError      = require('./error/unknown-error');
+var NoStatusError     = require('./error/no-status-error');
+var StatusError       = require('./error/status-error');
 
 /**
  * Class Director
@@ -95,9 +98,9 @@ Director.prototype.statusEvent = function(status, fn) {
     case Status.process:
     case Status.end:
       if (this.curCandidate) return this.changeStatus({status: status, candidate: this.curCandidate}, fn);
-      else return fn(new Error());
+      else return fn(new StatusError());
     default:
-      fn(new Error());
+      fn(new NoStatusError());
   }
 };
 
@@ -117,7 +120,8 @@ Director.prototype.getData = function(project, fn) {
         sen.push({_id: new ObjectID(el)});
       });
 
-      if(sen.length == 0) return fn(new Error());
+      // !Mark: it's not an error. it just can not be operated by dataMgr
+      if(sen.length == 0) return fn(new UnknownError());
 
       candidateDataMgr.query({$or: sen}, function(err, records){
         that.source = records;
@@ -138,10 +142,10 @@ Director.prototype.init = function(fn) {
   var that = this;
   this.statusEvent(Status.prepare, function(err){
     if (err) return fn(err);
-    that.getData(that.project, function(e){
+    that.getData(that.project, function(error){
       that.setCandidate(0);
       that.statusEvent(Status.show);
-      fn(e);
+      fn(error);
     });
   })
 };
@@ -160,7 +164,7 @@ Director.prototype.previous = function(fn){
     this.setCandidate(this.curCandidateIndex -1);
     this.statusEvent(Status.show, fn);
   }else{
-    fn(new Error());
+    fn(new StatusError());
   }
 }
 
@@ -177,7 +181,7 @@ Director.prototype.next = function(fn){
     this.setCandidate(this.curCandidateIndex +1);
     this.statusEvent(Status.show, fn);
   }else{
-    fn(new Error());
+    fn(new StatusError());
   }
 }
 
@@ -193,7 +197,7 @@ Director.prototype.startVote = function(fn){
     this.marker = new Marker({candidate: this.curCandidate, project: this.project});
     this.statusEvent(Status.process, fn);
   }else{
-    fn(new Error());
+    fn(new StatusError());
   }
 }
 
@@ -208,7 +212,7 @@ Director.prototype.endVote = function(fn){
   if (this.status == Status.process) {
     this.statusEvent(Status.end, fn);
   }else{
-    fn(new Error());
+    fn(new StatusError());
   }
 }
 

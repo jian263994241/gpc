@@ -39,7 +39,7 @@ function admin() {
           var conf = JSON.parse(file);
           admin = conf.admin;
           passwd = conf.password;
-        };
+        }else console.error(err.stack);
       });
     };
   });

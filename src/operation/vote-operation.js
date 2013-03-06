@@ -96,9 +96,11 @@ VoteOperation.login = function(req, res) {
 
   projectMgr.register({id:id, key: key}, function(err, director){
     if(!err && director){
-      director.init(function(err){
-        if (err) return res.json({error:'Authentication failed, please check project id and key'});
-        else {
+      director.init(function(error){
+        if (error) {
+          console.error(error.stack);
+          return res.json({error:'Authentication failed, please check project id and key'});
+        } else {
           req.session.regenerate(function(){
             req.session.project = director.project;
             res.json({success:true, redirect:'/director'});
@@ -106,10 +108,14 @@ VoteOperation.login = function(req, res) {
         }
       });
     }
-    else if (err && err instanceof ProjectExistError)
+    else if (err && err instanceof ProjectExistError){
+      console.error(err.stack);
       return res.json({error: 'Authentication failed. Project is running!'});
-    else
+    }else{
+      console.error(err.stack);
       return res.json({error:'Authentication failed, please check project id and key'});
+    }
+      
   });
 }
 
@@ -142,13 +148,15 @@ VoteOperation.exec = function(req, res){
         res.json({candidate: director.curCandidate, project: director.project, status: director.status});
       });
     case DirectorAction.startVote:
-      return director.startVote(function() {
-        if(director.marker) director.marker.reset();
+      return director.startVote(function(err) {
+        if (err) return res.json({error: true});
+        else if(director.marker) director.marker.reset();
         res.send('vote-start');
       });
     case DirectorAction.endVote:
-      return director.endVote(function() {
-        if(director.marker) director.marker.isLocked = true;
+      return director.endVote(function(err) {
+        if (err) return res.json({error: true});
+        else if(director.marker) director.marker.isLocked = true;
         res.send('vote-end');
       });
     case DirectorAction.save:
