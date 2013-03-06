@@ -18,7 +18,8 @@ var DirectorAction = {
   startVote: 'start_vote',
   endVote: 'end_vote',
   save: 'save',
-  result: 'result'
+  result: 'result',
+  query: 'query'
 }
 
 var VoteOperation = exports = module.exports = {};
@@ -156,8 +157,12 @@ VoteOperation.exec = function(req, res){
     case DirectorAction.endVote:
       return director.endVote(function(err) {
         if (err) return res.json({error: true});
-        else if(director.marker) director.marker.isLocked = true;
-        res.send('vote-end');
+        else if(director.marker) {
+          director.marker.isLocked = true;
+          director.save(function(error){
+            if(!error) res.send('vote-end');
+          });
+        }
       });
     case DirectorAction.save:
       return director.save(function(err){
@@ -170,6 +175,17 @@ VoteOperation.exec = function(req, res){
         console.log(data);
         res.json(data);
       });
+    case DirectorAction.query:
+      var voted = req.body['voted'];
+      if (!director.marker || voted == director.marker.marks.length) {
+        return director.operator = res;
+      }else{
+        if (director.operator){
+          director.operator.json({voted: director.marker.marks.length});
+          director.operator = null;
+        }
+        return 
+      };
     default:
       return res.json({error: 'Authentication Failed'});
   }
@@ -251,6 +267,11 @@ VoteOperation.collect = function(req, res){
     director.marker.collect({candidate: candidate, mark: mark}, function(err){
       if (!err) res.json({success: true});
       else res.json({error: 'Push Error'});
+
+      if (director.operator) {
+        director.operator.json({voted: director.marker.marks.length});
+        director.operator = null;
+      };
     });
   }else
     res.json({error: 'Param Error'});

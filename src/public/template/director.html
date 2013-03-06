@@ -16,9 +16,12 @@
       <div>
         <a href="#" class="btn" ng-click="start()" ng-show="!isStart">Start Voting</a>
         <a href="#" class="btn" ng-click="end()" ng-show="isStart">End Voting</a>
-        <a href="#" class="btn" ng-click="save()" ng-show="!isStart && isEnd">Save</a>
+        <!-- <a href="#" class="btn" ng-click="save()" ng-show="!isStart && isEnd">Save</a> -->
       </div>
+      
       <div ng-show="isStart">
+        <h4>Voted People</h4>
+        <h6 class="timer">{{voted}} people</h6>
         <h4>Timmer</h4>
         <h6 class="timer">{{time}}s</h6>
       </div>

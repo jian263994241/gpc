@@ -32,6 +32,7 @@ function Director (project) {
   this.lock = false;
   this.status = null;
   this.marker = null;
+  this.operator = null;
 
   var that = this;
   this.keeper = new StatusKeeper(function(){

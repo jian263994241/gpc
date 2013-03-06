@@ -495,6 +495,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
   $scope.isEnd = false;
   $scope.qrcode = 'http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl=http://'+$window.location.host+'&choe=UTF-8&chld=Q|2'
   $scope.lock = false;
+  $scope.voted = 0;
 
   $scope.setCandidate = function(data){
     $scope.project = data.project;
@@ -513,6 +514,25 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
     $timeout($scope.timer, 1000);
   }
 
+  $scope.query = function(){
+    console.log('$scope.query');
+    $scope.$http.post('/director/exec', {action: 'query', voted: $scope.voted}, {timeout: 9999999999}).
+    success(function(data, status, headers, config){
+      if (data.redirect) {
+        return $scope.$location.path(data.redirect);
+      }else if (data.error) return;
+
+      if (data.voted) {
+        $scope.voted = data.voted;
+      };
+
+      setTimeout($scope.query, 1000);
+    }).
+    error(function(data, status, headers, config){
+      setTimeout($scope.query, 1000*10);
+    });
+  }
+
   $scope.request = function(action){
     $scope.$http.post('/director/exec', {action: action}).
     success(function(data, status, headers, config){
@@ -525,6 +545,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
           else $scope.isEnd = false;
           $scope.lock = false;
           $scope.setCandidate(data);
+          $scope.voted = 0;
           return;
         case 'start_vote':
           $scope.isStart = true;
@@ -553,6 +574,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
   $scope.init = function(){
     if (!$scope.candidate) {
       $scope.request('init');
+      $scope.query();
     };
   }
 
