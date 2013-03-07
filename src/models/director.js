@@ -124,10 +124,11 @@ Director.prototype.getData = function(project, fn) {
       // !Mark: it's not an error. it just can not be operated by dataMgr
       if(sen.length == 0) return fn(new UnknownError());
 
-      candidateDataMgr.query({$or: sen}, function(err, records){
+      var queryCallback = function(err, records){
         that.source = records;
         fn(err);
-      });
+      }
+      candidateDataMgr.query({$or: sen}, queryCallback);
     };
   });
 };
@@ -143,11 +144,12 @@ Director.prototype.init = function(fn) {
   var that = this;
   this.statusEvent(Status.prepare, function(err){
     if (err) return fn(err);
-    that.getData(that.project, function(error){
+    var callback = function(err){
       that.setCandidate(0);
       that.statusEvent(Status.show);
-      fn(error);
-    });
+      fn(err);
+    }
+    that.getData(that.project, callback);
   })
 };
 
@@ -230,6 +232,7 @@ Director.prototype.save = function(fn) {
   };
 };
 
+// Too much callback
 /**
  * Query the result from mark colletion
  *
@@ -239,6 +242,33 @@ Director.prototype.save = function(fn) {
  */
 Director.prototype.result = function(fn) {
   var that = this;
+  var queryCallback = function(err, records){
+    if (err) return fn({error: 'error'});
+    
+    sen = new Array();
+    _.each(records, function(el, index, list){
+      sen.push({candidate: el._id});
+    });
+
+    var callback = function(err, r){
+
+      _.each(records, function(el, index, list){
+        var check = _.find(r, function(ef){
+          return el._id.toString(16) == ef.candidate.toString(16);
+        });
+        if (check && !check.length) {
+          el.marks = check.marks;
+          el.average = check.average;
+        }
+      });
+
+      if (!err && r) return fn({candidates: records, marks: r});
+      else return fn({error: 'error'});
+    }
+
+    markDataMgr.query({$or: sen}, callback);
+  }
+
   projectDataMgr.query(this.project, function(err, records){
     if (!err && records.length > 0) {
       var candidateArr = records[0].candidates;
@@ -248,31 +278,7 @@ Director.prototype.result = function(fn) {
       });
 
       if(sen.length == 0) return fn({marks:[]});
-
-      candidateDataMgr.query({$or: sen}, function(er, re){
-        if (er) return fn({error: 'error'});
-        
-        sen = new Array();
-        _.each(re, function(el, index, list){
-          sen.push({candidate: el._id});
-        });
-
-        markDataMgr.query({$or: sen}, function(e, r){
-
-          _.each(re, function(el, index, list){
-            var check = _.find(r, function(ef){
-              return el._id.toString(16) == ef.candidate.toString(16);
-            });
-            if (check && !check.length) {
-              el.marks = check.marks;
-              el.average = check.average;
-            }
-          });
-
-          if (!e && r) return fn({candidates: re, marks: r});
-          else return fn({error: 'error'});
-        });
-      });
+      candidateDataMgr.query({$or: sen}, queryCallback);
     };
   });
 };

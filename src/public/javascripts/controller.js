@@ -496,6 +496,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
   $scope.qrcode = 'http://chart.apis.google.com/chart?chs=200x200&cht=qr&chl=http://'+$window.location.host+'&choe=UTF-8&chld=Q|2'
   $scope.lock = false;
   $scope.voted = 0;
+  $scope.handle = null;
 
   $scope.setCandidate = function(data){
     $scope.project = data.project;
@@ -521,15 +522,16 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
       if (data.redirect) {
         return $scope.$location.path(data.redirect);
       }else if (data.error) return;
+      else if(data.close) return;
 
       if (data.voted) {
         $scope.voted = data.voted;
       };
 
-      setTimeout($scope.query, 1000);
+      $scope.handle = setTimeout($scope.query, 1000);
     }).
     error(function(data, status, headers, config){
-      setTimeout($scope.query, 1000*10);
+      $scope.handle = setTimeout($scope.query, 1000*10);
     });
   }
 
@@ -548,16 +550,20 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
           $scope.voted = 0;
           return;
         case 'start_vote':
+          $scope.voted = 0;
           $scope.isStart = true;
           $scope.time = 0;
           $timeout($scope.timer, 1000);
           $scope.isEnd = false;
           $scope.lock = true;
+          $scope.query();
           return;
         case 'end_vote':
           $scope.isStart = false;
           $scope.isEnd = true;
           $scope.lock = false;
+          if ($scope.handle)
+            clearTimeout($scope.handle);
           return;
         case 'save':
           $scope.lock = false;
@@ -660,6 +666,26 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
   $scope.isStart = false;
   $scope.isForbidden = false;
   $scope.isError = false;
+  $scope.mark = {
+    score: null,
+    comment: null
+  }
+
+  $scope.choices = [
+    {scope: 0, express: '0, oh, God'},
+    {score: 1, express: '1, worthless'},
+    {score: 2, express: '2, too bad'},
+    {score: 3, express: '3, it should be improved'},
+    {score: 4, express: '4, I can accept'},
+    {score: 5, express: '5, just so so'},
+    {score: 6, express: '6, yes'},
+    {score: 7, express: '7, good'},
+    {score: 8, express: '8, nice product'},
+    {score: 9, express: '9, fantastic'},
+    {score: 10, express: '10, oh, God!'}
+  ];
+
+  $scope.mark.score = $scope.choices[5];
 
   $scope.request = function(){
     var projectId = $scope.$routeParams.projectId;
@@ -705,7 +731,7 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
     };
 
     var projectId = $scope.$routeParams.projectId;
-    $scope.$http.post('/director/vote', {candidate: $scope.candidate, mark: $scope.mark, projectId: projectId}).
+    $scope.$http.post('/director/vote', {candidate: $scope.candidate, mark: {score: $scope.mark.score.score, comment: $scope.mark.comment}, projectId: projectId}).
     success(function(data, status, headers, config){
       if (data.success) {
         $scope.isStart = false;

@@ -34,13 +34,14 @@ function admin() {
   var filename = path.resolve(__dirname, '../conf.json');
   path.exists(filename, function(exists){
     if (exists) {
-      fs.readFile(filename, "binary", function(err, file) {    
+      var readFileCallback = function(err, file) {    
         if (!err) {
           var conf = JSON.parse(file);
           admin = conf.admin;
           passwd = conf.password;
         }else console.error(err.stack);
-      });
+      }
+      fs.readFile(filename, "binary", readFileCallback);
     };
   });
 }
@@ -189,12 +190,13 @@ ManageOperation.add = function(req, res){
 
   var module = req.params.module;
   process(req, res, module, function(data){
-    mgr[module].add(data, function(err){
+    var callback = function(err){
       if(err) 
         if(err instanceof DataExistError) res.json({error: 'Data existed'});
         else res.json({error: 'Add '+module+' failed'});
       else  res.json({success: true});
-    })
+    }
+    mgr[module].add(data, callback);
   });
 }
 
@@ -236,7 +238,7 @@ ManageOperation.queryProjectCandidates = function(req, res){
   var _id = req.params.projectId;
   obj = {_id: new ObjectID(_id)};
 
-  projectDataMgr.query(obj, function(err, records){
+  var callback = function(err, records){
     if (!err && records && records.length) {
       var candidateArr = records[0].candidates;
       console.log(candidateArr);
@@ -247,14 +249,18 @@ ManageOperation.queryProjectCandidates = function(req, res){
 
       if(sen.length == 0) return res.json({candidates: []});
 
-      candidateDataMgr.query({$or: sen}, function(err, records){
+      var queryCallback = function(err, records){
         if (!err && records) res.json({candidates: records});
         else res.json({error: true});
 
         syncProjectCandidates(obj, candidateArr);
-      });
+      }
+
+      candidateDataMgr.query({$or: sen}, queryCallback);
     };
-  });
+  }
+
+  projectDataMgr.query(obj, callback);
 }
 
 /**
@@ -268,11 +274,12 @@ ManageOperation.queryProjectCandidates = function(req, res){
  */
 function syncProjectCandidates(project, candidates){
   _.each(candidates, function(el, index, list){
-    candidateDataMgr.query({_id: new ObjectID(el)}, function(err, records){
+    var callback = function(err, records){
       if (!err && records && records.length == 0) {
         projectDataMgr.removeCandidate(project, el, function(){});
       };
-    })
+    }
+    candidateDataMgr.query({_id: new ObjectID(el)}, callback)
   });
 }
 

@@ -42,10 +42,12 @@ UserCenter.hash = function (pwd, salt, fn) {
     crypto.randomBytes(len, function(err, salt){
       if (err) return fn(err);
       salt = salt.toString('base64');
-      crypto.pbkdf2(pwd, salt, iterations, len, function(err, hash){
+
+      var callback = function(err, hash){
         if (err) return fn(err);
         fn(null, salt, hash);
-      });
+      }
+      crypto.pbkdf2(pwd, salt, iterations, len, callback);
     });
   }
 }
@@ -78,18 +80,23 @@ UserCenter.authenticate = function(input, pass, salt, fn){
  * @api public
  */
 UserCenter.login = function(username, password, fn){
-  userDataMgr.query({username:username}, function(err, data){
+  
+  var callback = function(err, data){
     if (err) return fn(err);
     var user = data[0];
     if (user) {
-      UserCenter.authenticate(password, user.password, user.salt, function(error, success){
-        if (error) return fn(error);
+      var authCallback = function(err, success){
+        if (err) return fn(err);
         else if (success) return fn(null, {username:username, password:user.password, salt:user.salt});
-      });
+      }
+      
+      UserCenter.authenticate(password, user.password, user.salt, authCallback);
     }else{
       return fn(new NoUserError());
     }
-  });
+  }
+
+  userDataMgr.query({username:username}, callback);
 }
 
 /**
@@ -116,8 +123,9 @@ UserCenter.isLogin = function(user){
 UserCenter.register = function(username, password, email, fn){
   UserCenter.hash(password, function(err, salt, hash){
     if (err) return fn(err);
-    userDataMgr.add({username: username, password: hash, salt: salt, email: email}, function(error){
-      fn(error, {username: username, password: hash, salt: salt});
-    });
+    var callback = function(err){
+      fn(err, {username: username, password: hash, salt: salt});
+    }
+    userDataMgr.add({username: username, password: hash, salt: salt, email: email}, callback);
   });
 }

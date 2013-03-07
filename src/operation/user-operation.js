@@ -50,7 +50,7 @@ UserOperation.register = function(req, res){
   var password = req.body['password'];
   var email    = req.body['email'];
 
-  userCenter.register(username, password, email, function(err, user){
+  var callback = function(err, user){
     if (err && err instanceof UserExistError){
       console.error(err.stack);
       res.json({error:'Username has been already occupied. Please change username'});
@@ -58,12 +58,15 @@ UserOperation.register = function(req, res){
       console.error(err.stack);
       res.json({error:'Register Error'});
     }else if(!err && user){
-      req.session.regenerate(function(){
+      var regenerateCallback = function(){
         req.session.user = user;
         res.json({success:true, redirect:'home'});
-      });
+      }
+      req.session.regenerate(regenerateCallback);
     }
-  });
+  }
+
+  userCenter.register(username, password, email, callback);
 }
 
 /**
@@ -78,21 +81,24 @@ UserOperation.login = function(req, res){
   var username = req.body['username'];
   var password = req.body['password'];
 
-  userCenter.login(username, password, function(err, user){
+  var callback = function(err, user){
     if (!err && user) {
-      req.session.regenerate(function(){
+      var regenerateCallback = function(){
         req.session.user = user;
 
         // ajax post is able to process redirect
         // res.redirect('/home ');
         res.json({success:true, redirect:'home'});
-      });
+      }
+      req.session.regenerate(regenerateCallback);
     }else{
       if(err) console.error(err.stack);
       req.session.user = null;
       res.json({error:'Authentication failed, please check username and password'});
     }
-  });
+  }
+
+  userCenter.login(username, password, callback);
 }
 
 /**

@@ -71,13 +71,14 @@ ProjectDataManager.add = function(project, fn){
       else if(data.concat().length>0)
         return trigger(new DataExistError());
       else{
-        collection.insert(project, {safe: true}, function(error, records){
-          if (error) return trigger(error);
+        var insertCallback = function(err, records){
+          if (err) return trigger(err);
           
-          fn(error, records);
+          fn(err, records);
           emitter.removeListener(cEvent, cListener);
           dataMgr.closeDbServer();
-        });
+        }
+        collection.insert(project, {safe: true}, insertCallback);
       }
     });
   });

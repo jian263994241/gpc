@@ -5,6 +5,8 @@
 
 var dataMgr   = require('./data-manager');
 var ObjectID  = require('mongodb').ObjectID;
+var events    = require('events');
+var emitter   = new events.EventEmitter();
 
 var MarkDataManager = exports = module.exports = {};
 MarkDataManager.key = dataMgr.COLLECTION_MARK;
@@ -18,16 +20,25 @@ MarkDataManager.key = dataMgr.COLLECTION_MARK;
  * @api public
  */
 MarkDataManager.query = function(mark, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'mark.data.query.error';
+  var cListener = function(err){
+    emitter.removeListener(cEvent, cListener);
+    console.error(err.stack);
+    fn(err);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(MarkDataManager.key, function(err, collection){
-      collection.find(mark).toArray(function(err, data){
-        if(!err)fn(err, data.concat());
-        else fn(err);
-        mongoServer.close();
-      });
+  dataMgr.connectDbServer(MarkDataManager.key, trigger, function(collection){
+    collection.find(mark).toArray(function(err, data){
+      if (err) return trigger(err);
+      
+      fn(err, data.concat());
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
     });
   });
 }
@@ -41,28 +52,43 @@ MarkDataManager.query = function(mark, fn){
  * @api public
  */
 MarkDataManager.add = function(mark, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'mark.data.add.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(MarkDataManager.key, function(err, collection){
-      collection.find({candidate: mark.candidate, project: mark.project}).toArray(function(err, data){
-        if (err) {
-          fn(err);
-          mongoServer.close();
-        }else if(data.length > 0){
-          mark._id = data[0]._id;
-          collection.save(mark, {safe: true}, function(err){
-            fn(err);
-            mongoServer.close();
-          });
-        }else{
-          collection.insert(mark, {safe: true}, function(err){
-            fn(err);
-            mongoServer.close();
-          });
-        }
-      });
+  dataMgr.connectDbServer(MarkDataManager.key, trigger, function(collection){
+    var saveCallback = function(err){
+      if (err) return trigger(err);
+      
+      fn(err);
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
+    }
+
+    var insertCallback = function(err){
+      if (err) return trigger(err);
+      
+      fn(err);
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
+    }
+
+    collection.find({candidate: mark.candidate, project: mark.project}).toArray(function(err, data){
+      if (err) return trigger(err);
+      else if(data.concat().length>0){
+        mark._id = data[0]._id;
+        collection.save(mark, {safe: true}, saveCallback);
+      }else{
+        collection.insert(mark, {safe: true}, insertCallback);
+      }
     });
   });
 }
@@ -76,15 +102,25 @@ MarkDataManager.add = function(mark, fn){
  * @api public
  */
 MarkDataManager.remove = function(mark, fn){
-  var mongoServer = dataMgr.createDbServer();
-  var dbConnector = dataMgr.createDbConnector(mongoServer);
+  var cEvent = 'mark.data.remove.error';
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(cEvent, cListener);
+    dataMgr.closeDbServer();
+  }
+  emitter.addListener(cEvent, cListener);
+  var trigger = function(err){
+    emitter.emit(cEvent, err);
+  }
 
-  dbConnector.open(function(err, db){
-    db.collection(MarkDataManager.key, function(err, collection){
-      collection.remove(mark, false, function(err){
-        fn(err);
-        mongoServer.close();
-      });
+  dataMgr.connectDbServer(MarkDataManager.key, trigger, function(collection){
+    collection.remove(mark, false, function(err){
+      if (err) return trigger(err);
+
+      fn(err);
+      emitter.removeListener(cEvent, cListener);
+      dataMgr.closeDbServer();
     });
   });
 }

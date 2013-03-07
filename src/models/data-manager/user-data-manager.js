@@ -70,14 +70,15 @@ UserDataManager.add = function(user, fn){
         return trigger(new DataExistError());
       else{
         user.candidates = new Array();
-        collection.insert(user, {safe: true}, function(error, records){
-          if (error) return trigger(error);
+        var insertCallback = function(err, records){
+          if (err) return trigger(err);
 
-          fn(error, records);
+          fn(err, records);
           emitter.removeListener(cEvent, cListener);
           dataMgr.closeDbServer();
           return;
-        });
+        }
+        collection.insert(user, {safe: true}, insertCallback);
       }
     });
   });

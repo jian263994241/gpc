@@ -97,17 +97,20 @@ VoteOperation.login = function(req, res) {
 
   projectMgr.register({id:id, key: key}, function(err, director){
     if(!err && director){
-      director.init(function(error){
-        if (error) {
-          console.error(error.stack);
+      var regenerateCallback = function(){
+        req.session.project = director.project;
+        res.json({success:true, redirect:'/director'});
+      }
+
+      var callback = function(err){
+        if (err) {
+          console.error(err.stack);
           return res.json({error:'Authentication failed, please check project id and key'});
         } else {
-          req.session.regenerate(function(){
-            req.session.project = director.project;
-            res.json({success:true, redirect:'/director'});
-          });
+          req.session.regenerate(regenerateCallback);
         }
-      });
+      }
+      director.init(callback);
     }
     else if (err && err instanceof ProjectExistError){
       console.error(err.stack);
@@ -155,18 +158,28 @@ VoteOperation.exec = function(req, res){
         res.send('vote-start');
       });
     case DirectorAction.endVote:
-      return director.endVote(function(err) {
+      var saveCallback = function(err){
+        if(!err) {
+          director.marker = null;
+          VoteOperation.endVotedRequest(director);
+          res.send('vote-end');
+        }
+      }
+      var callback = function(err) {
         if (err) return res.json({error: true});
         else if(director.marker) {
           director.marker.isLocked = true;
-          director.save(function(error){
-            if(!error) res.send('vote-end');
-          });
+          director.save(saveCallback);
         }
-      });
+      }
+      return director.endVote(callback);
     case DirectorAction.save:
       return director.save(function(err){
-        if(!err) res.send('save');
+        if(!err) {
+          director.marker = null;
+          VoteOperation.syncVoted(director);
+          res.send('save');
+        }
       });
     case DirectorAction.result:
       return director.result(function(data){
@@ -176,15 +189,14 @@ VoteOperation.exec = function(req, res){
         res.json(data);
       });
     case DirectorAction.query:
+      console.log('****************************');
+      console.log('DirectorAction.query');
       var voted = req.body['voted'];
+      if (director.status != DirectorAction.start_vote) VoteOperation.endVotedRequest(director);
       if (!director.marker || voted == director.marker.marks.length) {
         return director.operator = res;
       }else{
-        if (director.operator){
-          director.operator.json({voted: director.marker.marks.length});
-          director.operator = null;
-        }
-        return 
+        return VoteOperation.syncVoted(director);
       };
     default:
       return res.json({error: 'Authentication Failed'});
@@ -203,12 +215,16 @@ VoteOperation.close = function(req, res){
   var director = getDirector(req.session.project);
   if (!director) return res.json({success: true, redirect: '/director/login'});
 
-  projectMgr.unregister(director, function(err){
-    if (!err) return req.session.destroy(function(){
-      res.json({success: true, redirect:'/director/login'});
-    });
+  var destroyCallback = function(){
+    res.json({success: true, redirect:'/director/login'});
+  }
+
+  var callback = function(err){
+    if (!err) return req.session.destroy(destroyCallback);
     else return res.json({error:'Logout Error'});
-  });
+  }
+
+  projectMgr.unregister(director, callback);
 }
 
 /**
@@ -264,15 +280,29 @@ VoteOperation.collect = function(req, res){
 
   if (user && candidate && mark && director && director.marker) {
     mark.username = user.username;
-    director.marker.collect({candidate: candidate, mark: mark}, function(err){
+    var callback = function(err){
       if (!err) res.json({success: true});
       else res.json({error: 'Push Error'});
 
-      if (director.operator) {
-        director.operator.json({voted: director.marker.marks.length});
-        director.operator = null;
-      };
-    });
+      VoteOperation.syncVoted(director);
+    }
+
+    director.marker.collect({candidate: candidate, mark: mark}, callback);
   }else
     res.json({error: 'Param Error'});
+}
+
+VoteOperation.syncVoted = function(director){
+  if (director.operator) {
+    var people = director.marker ? director.marker.marks.length: 0;
+    director.operator.json({voted: people});
+    director.operator = null;
+  };
+}
+
+VoteOperation.endVotedRequest = function(director){
+  if (director.operator) {
+    director.operator.json({close: true});
+    director.operator = null;
+  };
 }
