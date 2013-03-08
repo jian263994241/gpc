@@ -6,7 +6,7 @@
  // Declare required lib
 var userCenter      = require('../models/user-center');
 var UserExistError  = require('../models/error/user-exist-error');
-var projectMgr      = require('../models/project-manager');
+// var projectMgr      = require('../models/project-manager');
 
 var UserOperation = exports = module.exports = {};
 
