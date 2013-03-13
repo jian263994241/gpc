@@ -79,6 +79,9 @@ app.map({
       '/logout': {
         get:      manageOperator.logout
       },
+      '/release':{
+        post:     voteOperator.release
+      },
       '/:module': {
         get:      manageOperator.render,
         post:     manageOperator.add,

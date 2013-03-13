@@ -227,6 +227,18 @@ VoteOperation.close = function(req, res){
   projectMgr.unregister(director, callback);
 }
 
+VoteOperation.release = function(req, res){
+  var project = req.body['project'];
+  var director = getDirector(project);
+
+  var callback = function(err){
+    if (err) return res.json({error: 'Release not success'});
+    else return res.json({feedback: 'Release success'});
+  }
+
+  projectMgr.unregister(director, callback);
+}
+
 /**
  * For user to query status
  * keep debug status

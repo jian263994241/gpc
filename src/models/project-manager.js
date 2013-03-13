@@ -58,6 +58,8 @@ ProjectMgr.register = function(project, fn){
  * @api public 
  */
 ProjectMgr.unregister = function(director, fn){
+  if (!director || !director.queue) return fn(null);
+
   ProjectMgr.accessQueue = _.without(ProjectMgr.accessQueue, director);
   while(res = director.queue.shift()){
     res.json({redirect: '/home'});

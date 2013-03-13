@@ -216,6 +216,16 @@ var ManageProjectCtrl = function($scope, $route, $location, $http){
     });
   }
 
+  $scope.release = function(project){
+    $scope.$http.post('/management/release/', {project: project}).
+      success(function(data, status, headers, config){
+        alert(data.error || data.feedback);
+      }).
+      error(function(data, status, headers, config){
+        alert('error');
+      });
+  }
+
   $scope.delete = function(project){
     $scope.$http.delete('/management/project/'+project._id).
       success(function(data, status, headers, config){
