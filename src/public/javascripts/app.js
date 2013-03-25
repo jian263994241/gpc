@@ -14,6 +14,8 @@ angular.module('lb-gpc', []).
       when('/director/login', {templateUrl: '/template/login.html', controller: DirectorLoginCtrl}).
       when('/director/result/:projectId', {templateUrl: '/template/result.html', controller: DirectorResultCtrl}).
       when('/director/vote/:projectId', {templateUrl: '/template/vote.html', controller: VoteCtrl}).
+      when('/forgot', {templateUrl: '/template/forgot.html', controller: UserFindPasswordCtrl}).
+      when('/forgot/:id', {templateUrl: '/template/reset.html', controller: UserResetPasswordCtrl}).
       otherwise({redirectTo: '/'});
     $locationProvider.html5Mode(true);
   }]);

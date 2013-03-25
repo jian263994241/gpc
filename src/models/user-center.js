@@ -17,10 +17,12 @@ var len = 128;
 // Iterations. ~300ms
 var iterations = 12000;
 
+var emailServer = require('emailjs');
+var ObjectID    = require('mongodb').ObjectID;
 var userDataMgr = require('./data-manager/user-data-manager');
 
-var InvalidPasswordError = require('./error/invalid-password-error');
-var NoUserError =require('./error/no-user-error');
+var InvalidPasswordError  = require('./error/invalid-password-error');
+var NoUserError           = require('./error/no-user-error');
 
 // Declare namespace UserCenter
 var UserCenter = exports = module.exports = {};
@@ -87,7 +89,7 @@ UserCenter.login = function(username, password, fn){
     if (user) {
       var authCallback = function(err, success){
         if (err) return fn(err);
-        else if (success) return fn(null, {username:username, password:user.password, salt:user.salt});
+        else return fn(null, {username:username, password:user.password, salt:user.salt});
       }
       
       UserCenter.authenticate(password, user.password, user.salt, authCallback);
@@ -100,7 +102,7 @@ UserCenter.login = function(username, password, fn){
 }
 
 /**
- * check whether user login info has been kept
+ * Check whether user login info has been kept
  *
  * @param {JSON} {username, password, salt}
  * @api public
@@ -127,5 +129,39 @@ UserCenter.register = function(username, password, email, fn){
       fn(err, {username: username, password: hash, salt: salt});
     }
     userDataMgr.add({username: username, password: hash, salt: salt, email: email}, callback);
+  });
+}
+
+UserCenter.getResetLink = function(email, config, fn){
+  var callback = function(err, data){
+    if (err || !data || (data && data.length ==0)) return fn(err || new Error());
+
+    var userInfo = data[0];
+    var server = emailServer.server.connect({
+      user: config["admin_email"],
+      password: config["admin_email_password"],
+      host: config["admin_email_host"],
+      ssl: true
+    });
+
+    server.send({
+      text: config["host"]+"/forgot/"+userInfo._id,
+      from: config["admin_email"],
+      to: email,
+      subject: "[GPC]Reset your password"
+    }, function(err, message){
+      console.log(err || message);
+      fn(err);
+    });
+  }
+
+  userDataMgr.query({email:email}, callback);
+}
+
+UserCenter.reset = function(id, password, fn){
+  UserCenter.hash(password, function(err, salt, hash){
+    if (err) return fn(err);
+
+    userDataMgr.update({_id: new ObjectID(id)}, {password: hash, salt: salt}, fn);
   });
 }

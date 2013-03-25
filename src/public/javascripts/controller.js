@@ -73,6 +73,113 @@ var UserLoginCtrl = function($scope, $location, $http){
   login($scope, 'login');
 }
 
+var UserResetPasswordCtrl = function($scope, $route, $location, $routeParams, $http, $timeout){
+  $scope.$location = $location;
+  $scope.$http = $http;
+  $scope.$route = $route;
+  $scope.$routeParams = $routeParams;
+  $scope.$timeout = $timeout;
+
+  $scope.isError = false;
+  $scope.error = '';
+
+  $scope.submit = function(user){
+    var id = $scope.$routeParams.id;
+    if (user && user.password && id) {
+      
+      if (user.password != user.repassword) {
+        $scope.error = 'Please confirm the repeated password';
+        $scope.alertStyle = 'alert-error';
+        $scope.isError = true;
+        return;
+      };
+
+      $scope.$http.post('/forgot/'+id, user).
+      success(function(data, status, headers, config){
+        if (data.error) {
+          $scope.error = data.error;
+          $scope.alertStyle = 'alert-error';
+          $scope.isError = true;
+        }else if(data.success && data.redirect){
+          $scope.error = 'Reset Success. Please wait for redirect!';
+          $scope.alertStyle = 'alert-info';
+          $scope.isError = true;
+
+          // setTimeout(function() {
+          //   $scope.$location.url(data.redirect);
+          // }, 2000);
+          $scope.$timeout(function() {
+            $scope.$location.url(data.redirect);
+          }, 2000);
+        }
+      }).
+      error(function(data, status, headers, config){
+
+      });
+
+    }else{
+      $scope.error = 'Please input the information completely';
+      $scope.alertStyle = 'alert-error';
+      $scope.isError = true;
+      return;
+    }
+  };
+
+  $scope.clean = function(){
+    $scope.isError = false;
+    $scope.error = '';
+  }
+}
+
+var UserFindPasswordCtrl = function($scope, $location, $http){
+  $scope.$http = $http;
+  $scope.$location = $location;
+
+  $scope.$isError = false;
+  $scope.error = '';
+
+  $scope.submit = function(user){
+    if (user && user.email) {
+      if (!util.checkEmailInput(user.email)) {
+        $scope.error = 'Email format error';
+        $scope.alertStyle = 'alert-error';
+        $scope.isError = true;
+        return;
+      };
+
+      $scope.error = "Sending request to server, wait...";
+      $scope.alertStyle = 'alert-success';
+      $scope.isError = true;
+
+      $scope.$http.post('/forgot', user).
+      success(function(data, status, headers, config){
+        if (data.error) {
+          $scope.error = data.error;
+          $scope.alertStyle = 'alert-error';
+          $scope.isError = true;
+        }else if(data.success){
+          $scope.error = data.success;
+          $scope.alertStyle = 'alert-info';
+          $scope.isError = true;
+        }
+      }).
+      error(function(data, status, headers, config){
+
+      });
+    }else{
+      $scope.error = 'Please input the information completely';
+      $scope.alertStyle = 'alert-error';
+      $scope.isError = true;
+      return;
+    }
+  }
+
+  $scope.clean = function(){
+    $scope.isError = false;
+    $scope.error = '';
+  }
+}
+
 var UserRegisterCtrl = function($scope, $location, $http){
   $scope.$http = $http;
   $scope.$location = $location;

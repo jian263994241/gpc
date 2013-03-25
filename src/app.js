@@ -59,6 +59,14 @@ app.map({
       get:        userOperator.render,
       post:       userOperator.login
     },
+    'forgot':{
+      get:        userOperator.render,
+      post:       userOperator.requestResetPassword,
+      '/:id':{
+        get:      userOperator.render,
+        post:     userOperator.reset
+      }
+    },
     'logout':{
       get:        userOperator.logout
     },

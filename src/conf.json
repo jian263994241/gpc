@@ -1,4 +1,8 @@
 {
   "admin": "leo-admin",
-  "password": "leo@burnett"
+  "password": "leo@burnett",
+  "admin_email": "leewind19841209@gmail.com",
+  "admin_email_password": "13512172423",
+  "admin_email_host": "smtp.gmail.com",
+  "host": "http://127.0.0.1:3000"
 }

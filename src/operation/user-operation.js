@@ -3,7 +3,9 @@
  * @version Beta 1.1
  */
 
- // Declare required lib
+// Declare required lib
+var path            = require("path");
+var fs              = require("fs");
 var userCenter      = require('../models/user-center');
 var UserExistError  = require('../models/error/user-exist-error');
 // var projectMgr      = require('../models/project-manager');
@@ -31,6 +33,8 @@ UserOperation.render = function(req, res){
     case '/home':
       if (userCenter.isLogin(req.session.user)) return res.render('main');
       else return res.redirect('/login');
+    case '/forgot':
+
     default:
       return res.render('main');
   }
@@ -113,4 +117,45 @@ UserOperation.logout = function(req, res){
   req.session.destroy(function(){
     res.json({success: true, redirect:'/'});
   });
+}
+
+UserOperation.requestResetPassword = function(req, res){
+  var email = req.body['email'];
+  if (!email) return res.json({error: 'Empty email'});
+
+  var filename = path.resolve(__dirname, '../conf.json');
+  path.exists(filename, function(exists){
+    if (exists) {
+      var queryCallback = function(err){
+        if (err) return res.json({'error': 'No such user'});
+        else return res.json({'success': 'Send reset link to your email, please check!'});
+      }
+
+      var readFileCallback = function(err, file) {    
+        if (!err) {
+          var conf = JSON.parse(file);
+          userCenter.getResetLink(email, conf, queryCallback);
+        }else {
+          console.error(err.stack);
+          return res.json({'error': 'email server not work temp'});
+        }
+      }
+      
+      fs.readFile(filename, "binary", readFileCallback);
+    };
+  });
+}
+
+UserOperation.reset = function(req, res){
+  var id = req.params.id;
+  var password = req.body['password'];
+
+  if (!id || !password) return res.json({'error': 'Invalid request parameters!'});
+
+  var callback = function(err){
+    if (err) return res.json({'error': 'Fail to reset the password'});
+    else return res.json({'redirect': '/login', 'success': true});
+  }
+
+  userCenter.reset(id, password, callback);
 }
