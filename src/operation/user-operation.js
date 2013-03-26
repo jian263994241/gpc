@@ -8,7 +8,6 @@ var path            = require("path");
 var fs              = require("fs");
 var userCenter      = require('../models/user-center');
 var UserExistError  = require('../models/error/user-exist-error');
-// var projectMgr      = require('../models/project-manager');
 
 var UserOperation = exports = module.exports = {};
 
@@ -119,6 +118,14 @@ UserOperation.logout = function(req, res){
   });
 }
 
+/**
+ * [POST] Request user password reset link
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 UserOperation.requestResetPassword = function(req, res){
   var email = req.body['email'];
   if (!email) return res.json({error: 'Empty email'});
@@ -146,6 +153,14 @@ UserOperation.requestResetPassword = function(req, res){
   });
 }
 
+/**
+ * [POST] Reset user password
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 UserOperation.reset = function(req, res){
   var id = req.params.id;
   var password = req.body['password'];

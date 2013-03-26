@@ -113,7 +113,6 @@ UserCenter.isLogin = function(user){
 }
 
 /**
- * 
  * User register
  *
  * @param {String} username
@@ -132,6 +131,14 @@ UserCenter.register = function(username, password, email, fn){
   });
 }
 
+/**
+ * Get user password reset link
+ *
+ * @param {String} email
+ * @param {JSON} config
+ * @param {Function} callback fn(err)
+ * @api public
+ */
 UserCenter.getResetLink = function(email, config, fn){
   var callback = function(err, data){
     if (err || !data || (data && data.length ==0)) return fn(err || new Error());
@@ -151,13 +158,21 @@ UserCenter.getResetLink = function(email, config, fn){
       subject: "[GPC]Reset your password"
     }, function(err, message){
       console.log(err || message);
-      fn(err);
+      return fn(err);
     });
   }
 
   userDataMgr.query({email:email}, callback);
 }
 
+/**
+ * Reset user password
+ *
+ * @param {String} user_id
+ * @param {String} password
+ * @param {Function} callback fn(err)
+ * @api public
+ */
 UserCenter.reset = function(id, password, fn){
   UserCenter.hash(password, function(err, salt, hash){
     if (err) return fn(err);
