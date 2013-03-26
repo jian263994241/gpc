@@ -229,7 +229,7 @@ var UserRegisterCtrl = function($scope, $location, $http){
   }
 }
 
-var UserHomeCtrl = function($scope, $route, $location, $http){
+var UserHomeCtrl = function($scope, $route, $location, $http, $timeout){
   $scope.$location = $location;
   $scope.$http = $http;
   $scope.$route = $route;
@@ -245,7 +245,8 @@ var UserHomeCtrl = function($scope, $route, $location, $http){
   }
 
   $scope.refresh =function(){
-    $scope.$route.reload();
+    // $scope.$route.reload();
+    $scope.init();
   }
 
   util.manageLogout($scope, '/logout');

@@ -26,9 +26,9 @@
           </div>
           <div class="control-group">
             <div class="controls">
-              <label class="checkbox" ng-show="config.isRemember">
-                <input type="checkbox"> 
-                <span>Remember me -- </span>
+              <label ng-show="config.isRemember">
+                <!-- <input type="checkbox">  -->
+                <!-- <span>Remember me -- </span> -->
                 <a href="/forgot">Forget password</a>
               </label>
               <button type="submit" class="btn btn-primary login-btn" ng-click="submit(user)">{{config.button}}</button>

@@ -102,7 +102,6 @@ app.map({
         },
         '/candidates/:projectId': {
           get:  manageOperator.render,
-          // post: manageOperator.insertCandidateIntoProject,
           '/all':{ 
             get: manageOperator.queryProjectCandidates 
           },

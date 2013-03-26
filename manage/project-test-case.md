@@ -669,6 +669,9 @@ director开始计时，手持设备端Submit按钮可以点击
 
 ******************************
 
+### [Cancel]
+调整，给出Default定义5分，如果没有Score和Comment修改，直接就给出5分的投票。
+
 #### No.TC035
 
 测试模块：导演模块
@@ -692,6 +695,9 @@ director开始计时，手持设备端Submit按钮可以点击
 出现错误提示
 
 ******************************
+
+### [Cancel]
+调整，给出Default定义5分，如果没有Score和Comment修改，直接就给出5分的投票。
 
 #### No.TC036
 
@@ -820,5 +826,182 @@ Submit按钮点击之后，Score和Comment不能再输入，Submit按钮不能�
 期待结果:
 
 正确显示所有的投票结果
+
+******************************
+
+#### No.TC042
+
+测试模块：用户找回密码
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：localhost:3000
+3. 页面跳转到用户登录页面
+4. 点击Forget Password链接
+5. 跳转到找回密码页面
+6. 不输入Email内容直接按Submit按钮
+
+期待结果:
+
+出现错误提示：Please input the information completely
+
+******************************
+
+#### No.TC043
+
+测试模块：用户找回密码
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：localhost:3000
+3. 页面跳转到用户登录页面
+4. 点击Forget Password链接
+5. 跳转到找回密码页面
+6. 输入错误Email格式，按Submit按钮
+
+期待结果:
+
+出现错误提示：Email format error
+
+******************************
+
+#### No.TC044
+
+测试模块：用户找回密码
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：localhost:3000
+3. 页面跳转到用户登录页面
+4. 点击Forget Password链接
+5. 跳转到找回密码页面
+6. 输入错误Email格式，按Submit按钮
+
+期待结果:
+
+出现错误提示：Email format error
+
+******************************
+
+#### No.TC045
+
+测试模块：用户找回密码
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：localhost:3000
+3. 页面跳转到用户登录页面
+4. 点击Forget Password链接
+5. 跳转到找回密码页面
+6. 输入没有注册过的邮箱，按Submit按钮
+
+期待结果:
+
+出现错误提示：No such user
+
+******************************
+
+#### No.TC046
+
+测试模块：用户找回密码
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：localhost:3000
+3. 页面跳转到用户登录页面
+4. 点击Forget Password链接
+5. 跳转到找回密码页面
+6. 输入没有注册过的邮箱，按Submit按钮
+
+期待结果:
+
+出现错误提示：No such user
+
+******************************
+
+#### No.TC047
+
+测试模块：用户找回密码
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：localhost:3000
+3. 页面跳转到用户登录页面
+4. 点击Forget Password链接
+5. 跳转到找回密码页面
+6. 输入注册过的邮箱，按Submit按钮
+
+期待结果:
+
+首先出现状态提示：Sending request to server, wait...，然后会有提示Send reset link to your email, please check!，去邮箱查看有邮件发出，邮件里有链接
+
+******************************
+
+#### No.TC048
+
+测试模块：用户找回密码
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：localhost:3000
+3. 页面跳转到用户登录页面
+4. 点击Forget Password链接
+5. 跳转到找回密码页面
+6. 输入注册过的邮箱，按Submit按钮
+7. 进入邮箱，点击链接，进入到密码重设页面
+8. 不输入密码或只输入一个密码直接提交
+
+期待结果:
+
+出现错误提示Please input the information completely
+
+******************************
+
+#### No.TC049
+
+测试模块：用户找回密码
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：localhost:3000
+3. 页面跳转到用户登录页面
+4. 点击Forget Password链接
+5. 跳转到找回密码页面
+6. 输入注册过的邮箱，按Submit按钮
+7. 进入邮箱，点击链接，进入到密码重设页面
+8. 输入不同密码
+
+期待结果:
+
+出现错误提示：Please confirm the repeated password
+
+******************************
+
+#### No.TC050
+
+测试模块：用户找回密码
+
+测试步骤：
+
+1. 先后启动Database Server和NodeJS Server
+2. 在浏览器中输入地址：localhost:3000
+3. 页面跳转到用户登录页面
+4. 点击Forget Password链接
+5. 跳转到找回密码页面
+6. 输入注册过的邮箱，按Submit按钮
+7. 进入邮箱，点击链接，进入到密码重设页面
+8. 输入两次相同的密码
+
+期待结果:
+
+出现提示：Reset Success. Please wait for redirect!，然后重定向到登录页面
 
 ******************************

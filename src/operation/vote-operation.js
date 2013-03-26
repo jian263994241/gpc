@@ -74,11 +74,16 @@ VoteOperation.render = function(req, res){
  * @api public
  */
 VoteOperation.accessedProject = function(req, res){
+  console.log('VoteOperation.accessedProject');
   if (req.session.user) {
     var projects = new Array();
     _.each(projectMgr.accessQueue, function(el, index, list){
       projects.push(el.project);
     });
+
+    console.log('VoteOperation.projects****************************');
+    console.log(projects);
+    
     res.json({projects: projects});
   };
 }

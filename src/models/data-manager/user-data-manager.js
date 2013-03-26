@@ -3,7 +3,8 @@
  * @version Beta 1.1
  */
 var dataMgr         = require('./data-manager');
-var DataExistError  = require('../error/data-exist-error');
+var UserExistError  = require('../error/user-exist-error');
+
 var events          = require('events');
 var emitter         = new events.EventEmitter();
 
@@ -67,7 +68,7 @@ UserDataManager.add = function(user, fn){
     collection.find({username: user.username}).toArray(function(err, data){
       if (err) trigger(err);
       else if(data.concat().length>0)
-        return trigger(new DataExistError());
+        return trigger(new UserExistError());
       else{
         user.candidates = new Array();
         var insertCallback = function(err, records){
