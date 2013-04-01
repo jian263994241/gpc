@@ -23,7 +23,7 @@
         <span class="label label-info" id="project-title">Project Title: {{project.name}}</span>
       </h4>
       <h4>Candidate List</h4>
-      <table class="table table-bordered">
+      <table class="table">
         <thead>
           <tr>
             <th>title</th>
@@ -42,7 +42,7 @@
             <td>{{candidate.source}}</td>
             <td>{{candidate.intro}}</td>
             <td>
-              <a href="" class="btn" ng-click="delete(candidate)"><i class="icon icon-remove"></i>Delete</a>
+              <a href="" class="btn btn-small" ng-click="delete(candidate)"><i class="icon icon-remove"></i></a>
             </td>
           </tr>
         </tbody>

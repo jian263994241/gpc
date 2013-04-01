@@ -19,26 +19,26 @@
     </div>
     <div id="candidate-list">
       <h4>Candidate List</h4>
-      <table class="table table-bordered">
+      <table class="table">
         <thead>
           <tr>
-            <th>title</th>
-            <th>auth</th>
-            <th>type</th>
-            <th>source</th>
-            <th>introduction</th>
-            <th>option</th>
+            <th >title</th>
+            <th >auth</th>
+            <th >type</th>
+            <th >source</th>
+            <th >introduction</th>
+            <th >option</th>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="candidate in candidates">
-            <td>{{candidate.title}}</td>
-            <td>{{candidate.author}}</td>
-            <td>{{candidate.type}}</td>
-            <td>{{candidate.source}}</td>
-            <td>{{candidate.intro}}</td>
-            <td>
-              <a href="" class="btn" ng-click="delete(candidate)"><i class="icon icon-remove"></i>Delete</a>
+            <td >{{candidate.title}}</td>
+            <td >{{candidate.author}}</td>
+            <td >{{candidate.type}}</td>
+            <td >{{candidate.source}}</td>
+            <td >{{candidate.intro}}</td>
+            <td >
+              <a href="" class="btn btn-small" ng-click="delete(candidate)"><i class="icon icon-remove"></i></a>
             </td>
           </tr>
         </tbody>
@@ -52,6 +52,11 @@
     <h3 id="candidate-modal-label">New Candidate</h3>
   </div>
   <div class="modal-body">
+    <style type="text/css">
+      input[type='file']{
+        display: none;
+      }
+    </style>
     <form>
         <label for="">Candidate title</label>
         <input type="text" ng-model="candidate.title" class="span4" ng-mousedown="clean()" required>
@@ -61,14 +66,51 @@
         <select ng-model="candidate.type" class="span4" ng-options="option.value as option.name for option in type" >
         </select>
         <label for="">Source</label>
-        <input type="text" ng-model="candidate.source" class="span4" ng-mousedown="clean()" required>
+        <!-- <input type="text" ng-model="candidate.source" class="span4" ng-mousedown="clean()" required> -->
+        <div>
+          <label>
+            <a href="#" class="btn btn-info" ng-show="!isUploadFile" id="btn-upload-file" ng-click="toogleUploadFileBtn()">Select file to upload</a>
+            <a href="#" class="btn btn-success" ng-show="!isAddExternalFile" id="btn-add-external-file" ng-click="toogleAddExternalFileBtn()">Add external file url</a>
+          </label>
+
+          <div ng-show="isAddExternalFile">
+            <hr>
+            <input type="text" ng-model="candidate.source" class="span4" ng-mousedown="clean()" ng-show="isAddExternalFile" id="filePath" required>
+          </div>
+
+          <div ng-show="isUploadFile">
+            <hr>
+            <div class="control-group">
+              <div class="controls">
+                <a href="#" class="btn btn-info" id="btn-select-file" ng-click="selectFile()">Select File</a>
+                <input type="file" name="files" id="form-upload-container">
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="fileSelectedName">Selected File Name</label>
+              <div class="controls">
+                <label name="fileSelectedName" id="fileSelectedName"></label>
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="controls">
+                <a id="btn-save" class="btn btn-primary" ng-click="uploadFile(candidate)">Upload</a>
+              </div>
+            </div>
+            <div class="progress" >
+              <div class="bar" id="progressbar"></div>
+            </div>
+          </div>
+
+        </div>
+        <br>
         <label for="">Introduction</label>
         <textarea cols="30" rows="3" ng-model="candidate.intro" class="span4" required></textarea>
         <label class="alert alert-error login-error" ng-show="isError">{{error}}</label>
       </form>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-primary" type="submit" ng-click="save()">Save</button>
+    <button class="btn btn-primary" type="submit" ng-click="save(candidate)">Save</button>
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
   </div>
 </div>

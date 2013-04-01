@@ -364,6 +364,8 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
     {name: "image", value: "image"},
     {name: "video", value: "video"},
   ]
+  $scope.isUploadFile = false;
+  $scope.isAddExternalFile = false;
 
   $scope.config = {
     project: '',
@@ -385,16 +387,76 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
       error(function(data, status, headers, config){
 
       });
+
+    $('#form-upload-container').on('change', function(){
+      $('#fileSelectedName').text($('#form-upload-container')[0].files[0].name);
+    });
   }
 
-  $scope.save = function(){
-    if (!$scope.candidate || !$scope.candidate.author || !$scope.candidate.source || !$scope.candidate.title || !$scope.candidate.type) {
+  $scope.toogleUploadFileBtn = function(){
+    $scope.isUploadFile = !$scope.isUploadFile;
+    $scope.isAddExternalFile = false;
+  }
+
+  $scope.toogleAddExternalFileBtn = function(){
+    $scope.isAddExternalFile = !$scope.isAddExternalFile;
+    $scope.isUploadFile = false;
+  }
+
+  $scope.selectFile = function(){
+    $('#form-upload-container').click();
+  }
+
+  $scope.uploadFile = function(candidate){
+    var fd = new FormData();
+    fd.append('files', $('#form-upload-container')[0].files[0]);
+
+    $.ajax({
+      url: '/upload',
+      type: 'post',
+      xhr: function(){
+        sXHR = $.ajaxSettings.xhr();
+        if(sXHR.upload){
+          sXHR.upload.addEventListener('progress',function(evt){
+            if (evt.lengthComputable) {
+              var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+              $('#progressbar').css('width', percentComplete+'%');
+            }
+            else {
+              // console.log('unable to compute');
+            }
+          }, false);
+        }
+        return sXHR;
+      },
+      data: fd,
+      cache: false,
+      contentType: false,
+      processData: false,
+      error: function(data, textStatus, jqXHR){
+        alert('upload error');
+      },
+      success: function(data, textStatus, jqXHR){
+        $('#filePath').val(data.complete);
+        candidate.source = new String(data.complete);
+        $scope.isUploadFile = false;
+        $scope.isAddExternalFile = true;
+        $scope.$apply();
+      }
+    });
+  }
+
+  $scope.save = function(candidate){
+
+    console.log(candidate);
+
+    if (!candidate || !candidate.author || !candidate.source || !candidate.title || !candidate.type) {
       $scope.isError = true;
       $scope.error = 'Please input candidate author, source type, source and title';
       return;
     };
 
-    $scope.$http.post('/management/candidate', {candidate: $scope.candidate}).
+    $scope.$http.post('/management/candidate', {candidate: candidate}).
       success(function(data, status, headers, config){
         if (data.success) {
           $scope.$route.reload();

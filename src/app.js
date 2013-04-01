@@ -79,6 +79,9 @@ app.map({
         post:     voteOperator.accessedProject
       }
     },
+    'upload':{
+      post:       manageOperator.upload
+    },
     'management':{
       get:        manageOperator.render,
       '/login': {

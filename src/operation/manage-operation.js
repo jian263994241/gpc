@@ -22,6 +22,7 @@ var mgr = {
 
 var ManageOperation = exports = module.exports = {};
 var admin, passwd;
+var EPLOAD_PATH = '/uploads/';
 
 /**
  * Obtain the admin name and passwd for management login
@@ -336,4 +337,28 @@ ManageOperation.insertCandidateIntoProject = function(req, res){
   }else{
     res.json({error: 'Lost submitted data'});
   }
+}
+
+ManageOperation.upload = function(req, res){
+  var uploadFile = req.files.files
+  if (req.files.length > 0) {
+    uploadFile = req.files.files[0];
+  };
+  moveUploadFile(uploadFile, function(err){
+    if (err) return res.json({error: 'Can not upload!'});
+    // console.log(req.files);
+    return res.json({complete: EPLOAD_PATH+uploadFile.name});
+  });
+}
+
+function moveUploadFile (file, fn) {
+  var tmp = file.path;
+  var target = path.join(__dirname, '../public/uploads/'+file.name);
+  fs.rename(tmp, target, function(err){
+    if (err) fn(err);
+    fs.unlink(tmp, function(){
+      if (err) fn(err);
+      fn();
+    });
+  });
 }
