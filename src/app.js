@@ -36,7 +36,8 @@ app.configure(function(){
   app.set('view engine', 'ejs');
   app.use(express.favicon());
   app.use(express.logger('dev'));
-  app.use(express.bodyParser());
+  //app.use(express.bodyParser());
+  app.use(express.bodyParser({uploadDir:'./public/uploads'}));
   app.use(express.methodOverride());
   app.use(express.cookieParser('leobrunett_gpc'));
   app.use(express.session());

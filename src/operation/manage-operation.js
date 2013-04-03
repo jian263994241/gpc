@@ -356,6 +356,8 @@ ManageOperation.upload = function(req, res){
 function moveUploadFile (file, fn) {
   var tmp = file.path;
   var target = path.join(__dirname, '../public/uploads/'+file.name);
+  console.log(tmp);
+  console.log(target);
   fs.rename(tmp, target, function(err){
     if (err) fn(err);
     fs.unlink(tmp, function(){

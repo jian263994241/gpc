@@ -4,5 +4,5 @@
   "admin_email": "leewind19841209@gmail.com",
   "admin_email_password": "13512172423",
   "admin_email_host": "smtp.gmail.com",
-  "host": "http://127.0.0.1:3000"
+  "host": "http://lbvmstaging1.hk.leoburnett.com:8080"
 }
