@@ -437,6 +437,7 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
         alert('upload error');
       },
       success: function(data, textStatus, jqXHR){
+        console.log(data);
         $('#filePath').val(data.complete);
         // candidate.source = new String(data.complete);
         $scope.isUploadFile = false;
