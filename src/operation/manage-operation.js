@@ -341,6 +341,7 @@ ManageOperation.insertCandidateIntoProject = function(req, res){
 
 ManageOperation.upload = function(req, res){
   var uploadFile = req.files.files
+  console.log(uploadFile);
   if (req.files.length > 0) {
     uploadFile = req.files.files[0];
   };
