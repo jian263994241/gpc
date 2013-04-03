@@ -346,6 +346,7 @@ ManageOperation.upload = function(req, res){
     uploadFile = req.files.files[0];
   };
   moveUploadFile(uploadFile, function(err){
+    console.log(err);
     if (err) return res.json({error: 'Can not upload!'});
     // console.log(req.files);
     return res.json({complete: EPLOAD_PATH+uploadFile.name});
