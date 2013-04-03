@@ -423,7 +423,7 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
               $('#progressbar').css('width', percentComplete+'%');
             }
             else {
-              // console.log('unable to compute');
+              alert('unable to compute!');
             }
           }, false);
         }
@@ -437,9 +437,7 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
         alert('upload error');
       },
       success: function(data, textStatus, jqXHR){
-        console.log(data);
         $('#filePath').val(data.complete);
-        // candidate.source = new String(data.complete);
         $scope.isUploadFile = false;
         $scope.isAddExternalFile = true;
         $scope.$apply();
@@ -448,8 +446,6 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
   }
 
   $scope.save = function(candidate){
-
-    console.log(candidate);
     if (candidate) {
       candidate.source = $('#filePath').val();
     };
@@ -529,7 +525,6 @@ var ManageUserCtrl = function($scope, $route, $location, $http){
   }
 
   $scope.delete = function(user){
-    console.log(user);
     $scope.$http.delete('/management/user/'+user._id).
       success(function(data, status, headers, config){
         if (data.success) {
@@ -700,7 +695,6 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
   }
 
   $scope.query = function(){
-    console.log('$scope.query');
     $scope.$http.post('/director/exec', {action: 'query', voted: $scope.voted}, {timeout: 9999999999}).
     success(function(data, status, headers, config){
       if (data.redirect) {

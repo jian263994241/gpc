@@ -339,25 +339,42 @@ ManageOperation.insertCandidateIntoProject = function(req, res){
   }
 }
 
+/**
+ * Upload File to server
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api public
+ */
 ManageOperation.upload = function(req, res){
+  if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
+
   var uploadFile = req.files.files
   console.log(uploadFile);
   if (req.files.length > 0) {
     uploadFile = req.files.files[0];
   };
   moveUploadFile(uploadFile, function(err){
-    console.log(err);
-    if (err) return res.json({error: 'Can not upload!'});
-    // console.log(req.files);
+    if (err) {
+      console.error(err.stack);
+      return res.json({error: 'Can not upload!'});
+    }
     return res.json({complete: EPLOAD_PATH+uploadFile.name});
   });
 }
 
+/**
+ * Move upload file from tmp to upload
+ *
+ * @param{Request}
+ * @param{Response}
+ *
+ * @api private
+ */
 function moveUploadFile (file, fn) {
   var tmp = file.path;
   var target = path.join(__dirname, '../public/uploads/'+file.name);
-  console.log(tmp);
-  console.log(target);
   fs.rename(tmp, target, function(err){
     if (err) fn(err);
     fs.unlink(tmp, function(){
