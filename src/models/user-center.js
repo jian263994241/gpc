@@ -17,6 +17,8 @@ var len = 128;
 // Iterations. ~300ms
 var iterations = 12000;
 
+var pass = require('pwd');
+
 var emailServer = require('emailjs');
 var ObjectID    = require('mongodb').ObjectID;
 var userDataMgr = require('./data-manager/user-data-manager');
@@ -36,22 +38,31 @@ var UserCenter = exports = module.exports = {};
  * @param {Function} callback
  * @api private
  */
-UserCenter.hash = function (pwd, salt, fn) {
-  if (3 == arguments.length) {
-    crypto.pbkdf2(pwd, salt, iterations, len, fn);
-  } else {
-    fn = salt;
-    crypto.randomBytes(len, function(err, salt){
-      if (err) return fn(err);
-      salt = salt.toString('base64');
+// UserCenter.hash = function (pwd, salt, fn) {
+//   if (3 == arguments.length) {
+//     crypto.pbkdf2(pwd, salt, iterations, len, fn);
+//   } else {
+//     fn = salt;
+//     crypto.randomBytes(len, function(err, salt){
+//       if (err) return fn(err);
+//       salt = salt.toString('base64');
 
-      var callback = function(err, hash){
-        if (err) return fn(err);
-        fn(null, salt, hash);
-      }
-      crypto.pbkdf2(pwd, salt, iterations, len, callback);
-    });
+//       var callback = function(err, hash){
+//         if (err) return fn(err);
+//         fn(null, salt, hash);
+//       }
+//       crypto.pbkdf2(pwd, salt, iterations, len, callback);
+//     });
+//   }
+// }
+UserCenter.hash = function(pwd, salt, fn){
+
+  if (salt) {
+    pass.hash(pwd, salt, fn);
+  }else{
+    pass.hash(pwd, fn);
   }
+
 }
 
 /**
@@ -122,7 +133,7 @@ UserCenter.isLogin = function(user){
  * @api public
  */
 UserCenter.register = function(username, password, email, fn){
-  UserCenter.hash(password, function(err, salt, hash){
+  UserCenter.hash(password, null, function(err, salt, hash){
     if (err) return fn(err);
     var callback = function(err){
       fn(err, {username: username, password: hash, salt: salt});
