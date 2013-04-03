@@ -438,7 +438,7 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
       },
       success: function(data, textStatus, jqXHR){
         $('#filePath').val(data.complete);
-        candidate.source = new String(data.complete);
+        // candidate.source = new String(data.complete);
         $scope.isUploadFile = false;
         $scope.isAddExternalFile = true;
         $scope.$apply();
@@ -449,6 +449,9 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
   $scope.save = function(candidate){
 
     console.log(candidate);
+    if (candidate) {
+      candidate.source = $('#filePath').val();
+    };
 
     if (!candidate || !candidate.author || !candidate.source || !candidate.title || !candidate.type) {
       $scope.isError = true;
