@@ -77,11 +77,9 @@ UserCenter.hash = function(pwd, salt, fn){
  */
 UserCenter.authenticate = function(input, pass, salt, fn){
   UserCenter.hash(input, salt, function(err, hash){
-    console.log('*************************************');
-    console.log(pass);
-    console.log(hash);
     if (err) return fn(err);
-    if (pass == hash) return fn(null, true);
+    // if (pass == hash) return fn(null, true);
+    if (pass == hash || pass.buffer.toString() == hash.toString()) return fn(null, true);
 
     return fn(new InvalidPasswordError());
   });
