@@ -3,6 +3,6 @@
   "password": "leo@burnett",
   "admin_email": "leewind19841209@gmail.com",
   "admin_email_password": "13512172423",
-  "admin_email_host": "smtp.gmail.com",
+  "admin_email_host": "http://lbvmstaging1.hk.leoburnett.com",
   "host": "http://lbvmstaging1.hk.leoburnett.com:8080"
 }
