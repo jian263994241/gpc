@@ -1,8 +1,8 @@
 {
   "admin": "leo-admin",
   "password": "leo@burnett",
-  "admin_email": "leewind19841209@gmail.com",
-  "admin_email_password": "13512172423",
-  "admin_email_host": "smtp.gmail.com",
+  "admin_email": "chunmin.li@sh.leoburnett.com",
+  "admin_email_password": "Lee@2013",
+  "admin_email_host": "smtp.publicisgroupe.net",
   "host": "http://lbvmstaging1.hk.leoburnett.com:8080"
 }
