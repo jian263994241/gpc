@@ -3,13 +3,16 @@
  * @version Beta 1.1
  */
 
-var dataMgr   = require('./data-manager');
+var DataMgr   = require('./data-manager');
 var ObjectID  = require('mongodb').ObjectID;
 var events    = require('events');
 var emitter   = new events.EventEmitter();
+var util      = require('util');
 
-var MarkDataManager = exports = module.exports = {};
-MarkDataManager.key = dataMgr.COLLECTION_MARK;
+var MarkDataManager = module.exports = function(config){
+  DataMgr.call(this, config);
+}
+util.inherits(MarkDataManager, DataMgr);
 
 /**
  * Query specified mark from GPC_DB.marks
@@ -19,29 +22,30 @@ MarkDataManager.key = dataMgr.COLLECTION_MARK;
  *
  * @api public
  */
-MarkDataManager.query = function(mark, fn){
-  var cEvent = 'mark.data.query.error';
-  var cListener = function(err){
-    emitter.removeListener(cEvent, cListener);
-    console.error(err.stack);
-    fn(err);
-    dataMgr.closeDbServer();
-  }
-  emitter.addListener(cEvent, cListener);
-  var trigger = function(err){
-    emitter.emit(cEvent, err);
-  }
+// MarkDataManager.prototype.query = function(mark, fn){
+//   var that = this;
+//   var cEvent = 'mark.data.query.error';
+//   var cListener = function(err){
+//     emitter.removeListener(cEvent, cListener);
+//     console.error(err.stack);
+//     fn(err);
+//     that.closeDbServer();
+//   }
+//   emitter.addListener(cEvent, cListener);
+//   var trigger = function(err){
+//     emitter.emit(cEvent, err);
+//   }
 
-  dataMgr.connectDbServer(MarkDataManager.key, trigger, function(collection){
-    collection.find(mark).toArray(function(err, data){
-      if (err) return trigger(err);
+//   this.connectDbServer(this.COLLECTION_MARK, trigger, function(collection){
+//     collection.find(mark).toArray(function(err, data){
+//       if (err) return trigger(err);
       
-      fn(err, data.concat());
-      emitter.removeListener(cEvent, cListener);
-      dataMgr.closeDbServer();
-    });
-  });
-}
+//       fn(err, data.concat());
+//       emitter.removeListener(cEvent, cListener);
+//       that.closeDbServer();
+//     });
+//   });
+// }
 
 /**
  * Insert mark into GPC_DB.marks
@@ -51,26 +55,27 @@ MarkDataManager.query = function(mark, fn){
  *
  * @api public
  */
-MarkDataManager.add = function(mark, fn){
+MarkDataManager.prototype.add = function(mark, fn){
+  var that = this;
   var cEvent = 'mark.data.add.error';
   var cListener = function(err){
     console.error(err.stack);
     fn(err);
     emitter.removeListener(cEvent, cListener);
-    dataMgr.closeDbServer();
+    that.closeDbServer();
   }
   emitter.addListener(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }
 
-  dataMgr.connectDbServer(MarkDataManager.key, trigger, function(collection){
+  this.connectDbServer(this.COLLECTION_MARK, trigger, function(collection){
     var saveCallback = function(err){
       if (err) return trigger(err);
       
       fn(err);
       emitter.removeListener(cEvent, cListener);
-      dataMgr.closeDbServer();
+      that.closeDbServer();
     }
 
     var insertCallback = function(err){
@@ -78,7 +83,7 @@ MarkDataManager.add = function(mark, fn){
       
       fn(err);
       emitter.removeListener(cEvent, cListener);
-      dataMgr.closeDbServer();
+      that.closeDbServer();
     }
 
     collection.find({candidate: mark.candidate, project: mark.project}).toArray(function(err, data){
@@ -101,26 +106,27 @@ MarkDataManager.add = function(mark, fn){
  *
  * @api public
  */
-MarkDataManager.remove = function(mark, fn){
-  var cEvent = 'mark.data.remove.error';
-  var cListener = function(err){
-    console.error(err.stack);
-    fn(err);
-    emitter.removeListener(cEvent, cListener);
-    dataMgr.closeDbServer();
-  }
-  emitter.addListener(cEvent, cListener);
-  var trigger = function(err){
-    emitter.emit(cEvent, err);
-  }
+// MarkDataManager.prototype.remove = function(mark, fn){
+//   var that = this;
+//   var cEvent = 'mark.data.remove.error';
+//   var cListener = function(err){
+//     console.error(err.stack);
+//     fn(err);
+//     emitter.removeListener(cEvent, cListener);
+//     that.closeDbServer();
+//   }
+//   emitter.addListener(cEvent, cListener);
+//   var trigger = function(err){
+//     emitter.emit(cEvent, err);
+//   }
 
-  dataMgr.connectDbServer(MarkDataManager.key, trigger, function(collection){
-    collection.remove(mark, false, function(err){
-      if (err) return trigger(err);
+//   this.connectDbServer(this.COLLECTION_MARK, trigger, function(collection){
+//     collection.remove(mark, false, function(err){
+//       if (err) return trigger(err);
 
-      fn(err);
-      emitter.removeListener(cEvent, cListener);
-      dataMgr.closeDbServer();
-    });
-  });
-}
+//       fn(err);
+//       emitter.removeListener(cEvent, cListener);
+//       that.closeDbServer();
+//     });
+//   });
+// }

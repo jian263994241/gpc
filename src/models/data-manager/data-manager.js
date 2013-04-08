@@ -2,33 +2,31 @@
  * @author Michael.Lee(leewind19841209@gamil.com)
  * @version Beta 1.1
  */
-const DB_SERVER_HOST = '127.0.0.1';
-const DB_SERVER_PORT = 27017;
-const DB_NAME        = 'GPC_DB';
-const ERROR_SIGN     = 'error';
-
+var path    = require("path");
+var fs      = require('fs');
 var mongodb = require('mongodb');
 var events  = require('events');
 var emitter = new events.EventEmitter();
 
-var DataManager = exports = module.exports = {};
-
-DataManager.COLLECTION_USER      = COLLECTION_USER      = 'users';
-DataManager.COLLECTION_CANDIDATE = COLLECTION_CANDIDATE = 'candidates';
-DataManager.COLLECTION_PROJECT   = COLLECTION_PROJECT   = 'projects';
-DataManager.COLLECTION_MARK      = COLLECTION_MARK      = 'marks';
-DataManager.ERROR_SIGN                                  = ERROR_SIGN;
-
-var dbCollections = [COLLECTION_USER, COLLECTION_CANDIDATE, COLLECTION_PROJECT, COLLECTION_MARK];
+var DataManager = module.exports = function(conf){
+  this.COLLECTION_USER      = 'users';
+  this.COLLECTION_CANDIDATE = 'candidates';
+  this.COLLECTION_PROJECT   = 'projects';
+  this.COLLECTION_MARK      = 'marks';
+  this.ERROR_SIGN           = conf.error_mark;
+  this.DB_NAME              = conf.db_name;
+  this.DB_SERVER_HOST       = conf.db_server_host;
+  this.DB_SERVER_PORT       = conf.db_server_port;  
+}
 
 /**
  * Create MongoDB client object
  *
  * @api public
  */
-DataManager.createDbServer = function(){
-  return mongoServer = new mongodb.Server(DB_SERVER_HOST, DB_SERVER_PORT, {});
-}
+DataManager.prototype.createDbServer = function() {
+  return new mongodb.Server(this.DB_SERVER_HOST, this.DB_SERVER_PORT, {});
+};
 
 /**
  * Close MongoDB client object
@@ -37,9 +35,9 @@ DataManager.createDbServer = function(){
  *
  * @api public
  */
-DataManager.closeDbServer = function(mongoServer){
+DataManager.prototype.closeDbServer = function(mongoServer) {
   if (mongoServer) mongoServer.close();
-}
+};
 
 /**
  * Create MongoDB client object
@@ -48,9 +46,9 @@ DataManager.closeDbServer = function(mongoServer){
  *
  * @api public
  */
-DataManager.createDbConnector = function(mongoServer){
-  return new mongodb.Db(DB_NAME, mongoServer, {w: 1});
-}
+DataManager.prototype.createDbConnector = function(mongoServer) {
+  return new mongodb.Db(this.DB_NAME, mongoServer, {w: 1});
+};
 
 /**
  * Connect MongoDB Server
@@ -59,13 +57,14 @@ DataManager.createDbConnector = function(mongoServer){
  *
  * @api public
  */
-DataManager.connectDbServer = function(key, trigger, fn){
-  var mongoServer = DataManager.createDbServer();
-  var dbConnector = DataManager.createDbConnector(mongoServer);
+DataManager.prototype.connectDbServer = function(key, trigger, fn){
+  var mongoServer = this.createDbServer();
+  var dbConnector = this.createDbConnector(mongoServer);
 
+  var that = this;
   dbConnector.open(function(err, db){
     if(err || !db) return trigger(err);
-    else return DataManager.fetchCollection(db, key, trigger, fn);
+    else return that.fetchCollection(db, key, trigger, fn);
   });
 }
 
@@ -77,9 +76,87 @@ DataManager.connectDbServer = function(key, trigger, fn){
  *
  * @api public
  */
-DataManager.fetchCollection = function(db, key, trigger, fn){
+DataManager.prototype.fetchCollection = function(db, key, trigger, fn){
   db.collection(key, function(err, collection){
     if (err) return trigger(err);
     else return fn(collection);
   });
 }
+
+DataManager.prototype.query = function(custom_event, params, fn) {
+  var that = this;
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(custom_event, cListener);
+    that.closeDbServer();
+  }
+  emitter.addListener(custom_event, cListener);
+  var trigger = function(err){
+    emitter.emit(custom_event, err);
+  }
+
+  this.connectDbServer(this.COLLECTION_USER, trigger, function(collection){
+    collection.find(params).toArray(function(err, data){
+      if (err) return trigger(err);
+      
+      fn(err, data.concat());
+      emitter.removeListener(custom_event, cListener);
+      that.closeDbServer();
+    });
+  });
+};
+
+DataManager.prototype.add = function(data, fn) {
+  // overload by other sub class
+};
+
+DataManager.prototype.update = function(custom_event, old, new, fn) {
+  var that = this;
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(custom_event, cListener);
+    that.closeDbServer();
+  }
+  emitter.addListener(custom_event, cListener);
+  var trigger = function(err){
+    emitter.emit(custom_event, err);
+  }
+
+  this.connectDbServer(this.COLLECTION_USER, trigger, function(collection){
+    collection.update(old, {$set: new}, {multi: true}, function(err){
+      if (err) trigger(err);
+      
+      fn(err);
+      emitter.removeListener(custom_event, cListener);
+      that.closeDbServer();
+      return;
+    });
+  });
+};
+
+DataManager.prototype.remove = function(custom_event, params, fn) {
+  var that = this
+  var cListener = function(err){
+    console.error(err.stack);
+    fn(err);
+    emitter.removeListener(custom_event, cListener);
+    that.closeDbServer();
+  }
+  emitter.addListener(custom_event, cListener);
+  var trigger = function(err){
+    emitter.emit(custom_event, err);
+  }
+
+  this.connectDbServer(this.COLLECTION_USER, trigger, function(collection){
+    collection.remove(params, false, function(err){
+      if (err) trigger(err);
+
+      fn(err);
+      emitter.removeListener(custom_event, cListener);
+      that.closeDbServer();
+      return;
+    });
+  });
+};
