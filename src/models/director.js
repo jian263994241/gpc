@@ -7,7 +7,6 @@
 var projectDataMgr    = require('./data-manager/project-data-manager');
 var candidateDataMgr  = require('./data-manager/candidate-data-manager');
 var markDataMgr       = require('./data-manager/mark-data-manager');
-// var projectMgr        = require('./project-manager');
 var _                 = require('underscore');
 
 var Status            = require('./status');

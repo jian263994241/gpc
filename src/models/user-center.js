@@ -17,8 +17,6 @@ var len = 128;
 // Iterations. ~300ms
 var iterations = 12000;
 
-var pass = require('pwd');
-
 var emailServer = require('emailjs');
 var ObjectID    = require('mongodb').ObjectID;
 var userDataMgr = require('./data-manager/user-data-manager');
@@ -38,31 +36,21 @@ var UserCenter = exports = module.exports = {};
  * @param {Function} callback
  * @api private
  */
-// UserCenter.hash = function (pwd, salt, fn) {
-//   if (3 == arguments.length) {
-//     crypto.pbkdf2(pwd, salt, iterations, len, fn);
-//   } else {
-//     fn = salt;
-//     crypto.randomBytes(len, function(err, salt){
-//       if (err) return fn(err);
-//       salt = salt.toString('base64');
-
-//       var callback = function(err, hash){
-//         if (err) return fn(err);
-//         fn(null, salt, hash);
-//       }
-//       crypto.pbkdf2(pwd, salt, iterations, len, callback);
-//     });
-//   }
-// }
-UserCenter.hash = function(pwd, salt, fn){
-
+UserCenter.hash = function (pwd, salt, fn) {
   if (salt) {
-    pass.hash(pwd, salt, fn);
-  }else{
-    pass.hash(pwd, fn);
-  }
+    crypto.pbkdf2(pwd, salt, iterations, len, fn);
+  } else {
+    crypto.randomBytes(len, function(err, salt){
+      if (err) return fn(err);
+      salt = salt.toString('base64');
 
+      var callback = function(err, hash){
+        if (err) return fn(err);
+        fn(null, salt, hash);
+      }
+      crypto.pbkdf2(pwd, salt, iterations, len, callback);
+    });
+  }
 }
 
 /**
@@ -78,7 +66,6 @@ UserCenter.hash = function(pwd, salt, fn){
 UserCenter.authenticate = function(input, pass, salt, fn){
   UserCenter.hash(input, salt, function(err, hash){
     if (err) return fn(err);
-    // if (pass == hash) return fn(null, true);
     if (pass == hash || pass.buffer.toString() == hash.toString()) return fn(null, true);
 
     return fn(new InvalidPasswordError());
@@ -167,7 +154,8 @@ UserCenter.getResetLink = function(email, config, fn){
       text: config["host"]+"/forgot/"+userInfo._id,
       from: config["admin_email"],
       to: email,
-      subject: "[GPC]Reset your password"
+      subject: "[GPC]Reset your password",
+      attachment: [{data:'<html><a href="'+config["host"]+"/forgot/"+userInfo._id+'">Click Link to reset password</a></html>', alternative:true}]
     }, function(err, message){
       console.log(err || message);
       return fn(err);
@@ -186,7 +174,7 @@ UserCenter.getResetLink = function(email, config, fn){
  * @api public
  */
 UserCenter.reset = function(id, password, fn){
-  UserCenter.hash(password, function(err, salt, hash){
+  UserCenter.hash(password, null, function(err, salt, hash){
     if (err) return fn(err);
 
     userDataMgr.update({_id: new ObjectID(id)}, {password: hash, salt: salt}, fn);

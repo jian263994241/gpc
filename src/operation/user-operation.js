@@ -162,6 +162,10 @@ UserOperation.requestResetPassword = function(req, res){
  * @api public
  */
 UserOperation.reset = function(req, res){
+
+  console.log('***********************************');
+  console.log('UserOperation.reset');
+
   var id = req.params.id;
   var password = req.body['password'];
 
