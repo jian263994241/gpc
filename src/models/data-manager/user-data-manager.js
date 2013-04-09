@@ -51,7 +51,7 @@ UserDataManager.prototype.add = function(user, fn){
 
   this.connectDbServer(this.COLLECTION_USER, trigger, function(collection){
     collection.find({username: user.username}).toArray(function(err, data){
-      if (err) trigger(err);
+      if (err) return trigger(err);
       else if(data.concat().length>0)
         return trigger(new UserExistError());
       else{
