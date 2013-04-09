@@ -12,7 +12,7 @@ var util            = require('util');
 var CandidateDataManager = module.exports = function(config){
   this.call(this, config);
 }
-util.inherts(CandidateDataManager, DataMgr);
+util.inherits(CandidateDataManager, DataMgr);
 
 /**
  * Query specified candidates from GPC_DB.candidates

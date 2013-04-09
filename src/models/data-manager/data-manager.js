@@ -128,7 +128,7 @@ DataManager.prototype.add = function(data, fn) {
   // overload by other sub class
 };
 
-DataManager.prototype.update = function(custom_event, old, new, fn) {
+DataManager.prototype.update = function(custom_event, old_data, new_data, fn) {
   var that = this;
   var cListener = function(err){
     console.error(err.stack);
@@ -142,7 +142,7 @@ DataManager.prototype.update = function(custom_event, old, new, fn) {
   }
 
   this.connectDbServer(this.COLLECTION_USER, trigger, function(collection){
-    collection.update(old, {$set: new}, {multi: true}, function(err){
+    collection.update(old_data, {$set: new_data}, {multi: true}, function(err){
       if (err) trigger(err);
       
       fn(err);
