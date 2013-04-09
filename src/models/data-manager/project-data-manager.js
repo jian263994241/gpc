@@ -15,8 +15,6 @@ var ProjectDataManager = module.exports = function(config){
   this.key = this.COLLECTION_PROJECT;
 }
 util.inherits(ProjectDataManager, DataMgr);
-// var ProjectDataManager = exports = module.exports = {};
-// this.COLLECTION_PROJECT = dataMgr.COLLECTION_PROJECT;
 
 /**
  * Query specified projects from GPC_DB.projects
@@ -26,30 +24,6 @@ util.inherits(ProjectDataManager, DataMgr);
  *
  * @api public
  */
-// ProjectDataManager.prototype.query = function(project, fn){
-//   var that = this;
-//   var cEvent = 'project.data.query.error';
-//   var cListener = function(err){
-//     emitter.removeListener(cEvent, cListener);
-//     console.error(err.stack);
-//     fn(err);
-//     that.closeDbServer();
-//   }
-//   emitter.addListener(cEvent, cListener);
-//   var trigger = function(err){
-//     emitter.emit(cEvent, err);
-//   }
-
-//   this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection){
-//     collection.find(project).toArray(function(err, data){
-//       if (err) return trigger(err);
-      
-//       fn(err, data.concat());
-//       emitter.removeListener(cEvent, cListener);
-//       this.closeDbServer();
-//     });
-//   });
-// }
 ProjectDataManager.prototype.query = function(project, fn) {
   var cEvent = 'project.data.query.error';
   DataMgr.prototype.query.call(this, cEvent, project, fn);
@@ -96,29 +70,6 @@ ProjectDataManager.prototype.add = function(project, fn){
   });
 }
 
-// ProjectDataManager.update = function(project, data, fn){
-//   var cEvent = 'project.data.update.error';
-//   var cListener = function(err){
-//     console.error(err.stack);
-//     fn(err);
-//     emitter.removeListener(cEvent, cListener);
-//     dataMgr.closeDbServer();
-//   }
-//   emitter.addListener(cEvent, cListener);
-//   var trigger = function(err){
-//     emitter.emit(cEvent, err);
-//   }
-
-//   dataMgr.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection){
-//     collection.update(project, {$set: data}, {multi: true}, function(err){
-//       if (err) return trigger(err);
-      
-//       fn(err);
-//       emitter.removeListener(cEvent, cListener);
-//       dataMgr.closeDbServer();
-//     });
-//   });
-// }
 ProjectDataManager.prototype.update = function(project, data, fn) {
   var cEvent = 'project.data.update.error';
   DataMgr.prototype.update.call(this, cEvent, project, dataMgr, fn);
@@ -132,29 +83,6 @@ ProjectDataManager.prototype.update = function(project, data, fn) {
  *
  * @api public
  */
-// ProjectDataManager.remove = function(project, fn){
-//   var cEvent = 'project.data.remove.error';
-//   var cListener = function(err){
-//     console.error(err.stack);
-//     fn(err);
-//     emitter.removeListener(cEvent, cListener);
-//     dataMgr.closeDbServer();
-//   }
-//   emitter.addListener(cEvent, cListener);
-//   var trigger = function(err){
-//     emitter.emit(cEvent, err);
-//   }
-
-//   dataMgr.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection){
-//     collection.remove(project, false, function(err){
-//       if (err) return trigger(err);
-
-//       fn(err);
-//       emitter.removeListener(cEvent, cListener);
-//       dataMgr.closeDbServer();
-//     });
-//   });
-// }
 ProjectDataManager.prototype.remove = function(project, fn) {
   var cEvent = 'project.data.remove.error';
   DataMgr.prototype.remove.call(this, cEvent, project, fn);

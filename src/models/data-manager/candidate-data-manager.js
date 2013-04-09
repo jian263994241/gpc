@@ -23,30 +23,6 @@ util.inherits(CandidateDataManager, DataMgr);
  *
  * @api public
  */
-// CandidateDataManager.prototype.query = function(candidate, fn){
-//   var that = this;
-//   var cEvent = 'candidate.data.query.error';
-//   var cListener = function(err){
-//     emitter.removeListener(cEvent, cListener);
-//     console.error(err.stack);
-//     fn(err);
-//     that.closeDbServer();
-//   }
-//   emitter.addListener(cEvent, cListener);
-//   var trigger = function(err){
-//     emitter.emit(cEvent, err);
-//   }
-
-//   this.connectDbServer(this.COLLECTION_CANDIDATE, trigger, function(collection){
-//     collection.find(candidate).toArray(function(err, data){
-//       if (err) trigger(err);
-      
-//       fn(err, data.concat());
-//       emitter.removeListener(cEvent, cListener);
-//       that.closeDbServer();
-//     });
-//   });
-// }
 CandidateDataManager.prototype.query = function(candidate, fn) {
   var cEvent = 'candidate.data.query.error';
   DataMgr.prototype.query.call(this, cEvent, candidate, fn);
@@ -102,29 +78,6 @@ CandidateDataManager.prototype.add = function(candidate, fn){
  *
  * @api public
  */
-// CandidateDataManager.prototype.update = function(candidate, data, fn){
-//   var that = this;
-//   var cEvent = 'candidate.data.update.error';
-//   var cListener = function(err){
-//     console.error(err.stack);
-//     fn(err);
-//     emitter.removeListener(cEvent, cListener);
-//     that.closeDbServer();
-//   }
-//   emitter.addListener(cEvent, cListener);
-//   var trigger = function(err){
-//     emitter.emit(cEvent, err);
-//   }
-//   this.connectDbServer(this.COLLECTION_CANDIDATE, trigger, function(collection){
-//     collection.update(candidate, {$set: data}, {multi: true}, function(err){
-//       if (err) return trigger(err);
-      
-//       fn(err);
-//       emitter.removeListener(cEvent, cListener);
-//       that.closeDbServer();
-//     });
-//   });
-// }
 CandidateDataManager.prototype.update = function(candidate, data, fn) {
   var cEvent = 'candidate.data.update.error';
   DataMgr.prototype.update.call(this, cEvent, candidate, data, fn);
@@ -138,30 +91,6 @@ CandidateDataManager.prototype.update = function(candidate, data, fn) {
  *
  * @api public
  */
-// CandidateDataManager.prototype.remove = function(candidate, fn){
-//   var that = this;
-//   var cEvent = 'candidate.data.remove.error';
-//   var cListener = function(err){
-//     console.error(err.stack);
-//     fn(err);
-//     emitter.removeListener(cEvent, cListener);
-//     that.closeDbServer();
-//   }
-//   emitter.addListener(cEvent, cListener);
-//   var trigger = function(err){
-//     emitter.emit(cEvent, err);
-//   }
-
-//   this.connectDbServer(this.COLLECTION_CANDIDATE, trigger, function(collection){
-//     collection.remove(candidate, false, function(err){
-//       if (err) return trigger(err);
-
-//       fn(err);
-//       emitter.removeListener(cEvent, cListener);
-//       that.closeDbServer();
-//     });
-//   });
-// }
 CandidateDataManager.prototype.remove = function(candidate, fn) {
   var cEvent = 'candidate.data.remove.error';
   DataMgr.prototype.remove.call(this, cEvent, candidate, fn);

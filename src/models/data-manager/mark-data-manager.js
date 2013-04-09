@@ -23,30 +23,6 @@ util.inherits(MarkDataManager, DataMgr);
  *
  * @api public
  */
-// MarkDataManager.prototype.query = function(mark, fn){
-//   var that = this;
-//   var cEvent = 'mark.data.query.error';
-//   var cListener = function(err){
-//     emitter.removeListener(cEvent, cListener);
-//     console.error(err.stack);
-//     fn(err);
-//     that.closeDbServer();
-//   }
-//   emitter.addListener(cEvent, cListener);
-//   var trigger = function(err){
-//     emitter.emit(cEvent, err);
-//   }
-
-//   this.connectDbServer(this.COLLECTION_MARK, trigger, function(collection){
-//     collection.find(mark).toArray(function(err, data){
-//       if (err) return trigger(err);
-      
-//       fn(err, data.concat());
-//       emitter.removeListener(cEvent, cListener);
-//       that.closeDbServer();
-//     });
-//   });
-// }
 MarkDataManager.prototype.query = function(mark, fn) {
   var cEvent = 'mark.data.query.error';
   DataMgr.prototype.query.call(this, cEvent, mark, fn);
@@ -111,30 +87,6 @@ MarkDataManager.prototype.add = function(mark, fn){
  *
  * @api public
  */
-// MarkDataManager.prototype.remove = function(mark, fn){
-//   var that = this;
-//   var cEvent = 'mark.data.remove.error';
-//   var cListener = function(err){
-//     console.error(err.stack);
-//     fn(err);
-//     emitter.removeListener(cEvent, cListener);
-//     that.closeDbServer();
-//   }
-//   emitter.addListener(cEvent, cListener);
-//   var trigger = function(err){
-//     emitter.emit(cEvent, err);
-//   }
-
-//   this.connectDbServer(this.COLLECTION_MARK, trigger, function(collection){
-//     collection.remove(mark, false, function(err){
-//       if (err) return trigger(err);
-
-//       fn(err);
-//       emitter.removeListener(cEvent, cListener);
-//       that.closeDbServer();
-//     });
-//   });
-// }
 MarkDataManager.prototype.remove = function(mark, fn) {
   var cEvent = 'mark.data.remove.error';
   DataMgr.prototype.remove.call(this, cEvent, mark, fn);
