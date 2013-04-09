@@ -5,12 +5,12 @@
 
 // Declare required lib
 var _           = require('underscore');
-var markDataMgr = require('./data-manager/mark-data-manager');
+var MarkDataMgr = require('./data-manager/mark-data-manager');
 var AuthError   = require('./error/thread-lock-error');
 
-/**
- *  Class Marker
- */
+// Init
+var markDataMgr = new MarkDataMgr();
+
 function Marker(params){
   this.candidate = params.candidate;
   this.project = params.project;

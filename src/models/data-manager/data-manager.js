@@ -21,6 +21,7 @@ var DataManager = module.exports = function(){
   this.COLLECTION_CANDIDATE = 'candidates';
   this.COLLECTION_PROJECT   = 'projects';
   this.COLLECTION_MARK      = 'marks';
+  this.key = null;
 
   var that = this;
   readFile(function(err, file){
@@ -113,7 +114,8 @@ DataManager.prototype.query = function(custom_event, params, fn) {
     emitter.emit(custom_event, err);
   }
 
-  this.connectDbServer(this.COLLECTION_USER, trigger, function(collection){
+  if (!this.key) return trigger(new Error());
+  this.connectDbServer(this.key, trigger, function(collection){
     collection.find(params).toArray(function(err, data){
       if (err) return trigger(err);
       
@@ -141,7 +143,8 @@ DataManager.prototype.update = function(custom_event, old_data, new_data, fn) {
     emitter.emit(custom_event, err);
   }
 
-  this.connectDbServer(this.COLLECTION_USER, trigger, function(collection){
+  if (!this.key) return trigger(new Error());
+  this.connectDbServer(this.key, trigger, function(collection){
     collection.update(old_data, {$set: new_data}, {multi: true}, function(err){
       if (err) trigger(err);
       
@@ -166,7 +169,8 @@ DataManager.prototype.remove = function(custom_event, params, fn) {
     emitter.emit(custom_event, err);
   }
 
-  this.connectDbServer(this.COLLECTION_USER, trigger, function(collection){
+  if (!this.key) return trigger(new Error());
+  this.connectDbServer(this.key, trigger, function(collection){
     collection.remove(params, false, function(err){
       if (err) trigger(err);
 

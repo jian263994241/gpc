@@ -12,6 +12,7 @@ var util            = require('util');
 
 var ProjectDataManager = module.exports = function(config){
   DataMgr.call(this, config);
+  this.key = this.COLLECTION_PROJECT;
 }
 util.inherits(ProjectDataManager, DataMgr);
 // var ProjectDataManager = exports = module.exports = {};
@@ -207,6 +208,7 @@ ProjectDataManager.prototype.insertCandidate = function(project, candidateId, fn
  * @see http://mongodb.github.com/node-mongodb-native/api-articles/nodekoarticle1.html
  */
 ProjectDataManager.prototype.removeCandidate = function(project, candidateId, fn){
+  var that = this;
   var cEvent = 'project.data.remove.candidate.error';
   var cListener = function(err){
     console.error(err.stack);

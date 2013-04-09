@@ -9,18 +9,22 @@ var path  = require("path");
 var fs    = require("fs");
 var ObjectID = require('mongodb').ObjectID;
 
-var projectDataMgr = require('../models/data-manager/project-data-manager');
-var candidateDataMgr = require('../models/data-manager/candidate-data-manager');
-var userDataMgr = require('../models/data-manager/user-data-manager');
+var ProjectDataMgr = require('../models/data-manager/project-data-manager');
+var CandidateDataMgr = require('../models/data-manager/candidate-data-manager');
+var UserDataMgr = require('../models/data-manager/user-data-manager');
 var DataExistError = require('../models/error/data-exist-error');
 
+var ManageOperation = exports = module.exports = {};
+
+var projectDataMgr    = new ProjectDataMgr();
+var candidateDataMgr  = new CandidateDataMgr();
+var userDataMgr       = new UserDataMgr();
 var mgr = {
   'project': projectDataMgr,
   'candidate': candidateDataMgr,
   'user': userDataMgr
 }
 
-var ManageOperation = exports = module.exports = {};
 var admin, passwd;
 var EPLOAD_PATH = '/uploads/';
 

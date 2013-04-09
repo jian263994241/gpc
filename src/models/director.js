@@ -4,9 +4,9 @@
  */
 
 // Declare required lib
-var projectDataMgr    = require('./data-manager/project-data-manager');
-var candidateDataMgr  = require('./data-manager/candidate-data-manager');
-var markDataMgr       = require('./data-manager/mark-data-manager');
+var ProjectDataMgr    = require('./data-manager/project-data-manager');
+var CandidateDataMgr  = require('./data-manager/candidate-data-manager');
+var MarkDataMgr       = require('./data-manager/mark-data-manager');
 var _                 = require('underscore');
 
 var Status            = require('./status');
@@ -19,9 +19,11 @@ var UnknownError      = require('./error/unknown-error');
 var NoStatusError     = require('./error/no-status-error');
 var StatusError       = require('./error/status-error');
 
-/**
- * Class Director
- */
+// Init
+var projectDataMgr    = new ProjectDataMgr();
+var candidateDataMgr  = new CandidateDataMgr();
+var markDataMgr       = new MarkDataMgr();
+
 function Director (project) {
   this.source = new Array();
   this.curCandidate = null;

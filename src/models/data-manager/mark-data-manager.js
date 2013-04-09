@@ -11,6 +11,7 @@ var util      = require('util');
 
 var MarkDataManager = module.exports = function(config){
   DataMgr.call(this, config);
+  this.key = this.COLLECTION_MARK;
 }
 util.inherits(MarkDataManager, DataMgr);
 

@@ -5,10 +5,9 @@
 
  // Declare required lib
 var _                   = require('underscore');
-
 var projectMgr          = require('../models/project-manager');
-var userCenter          = require('../models/user-center');
 var ProjectExistError   = require('../models/error/project-exist-error');
+var userCenter          = require('../models/user-center');
 
 // Director action definition
 var DirectorAction = {

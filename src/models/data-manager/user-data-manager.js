@@ -10,6 +10,7 @@ var util            = require('util');
 
 var UserDataManager = module.exports = function(config){
   DataMgr.call(this, config);
+  this.key = this.COLLECTION_USER;
 }
 util.inherits(UserDataManager, DataMgr);
 
@@ -47,7 +48,7 @@ util.inherits(UserDataManager, DataMgr);
 // }
 UserDataManager.prototype.query = function(user, fn) {
   var cEvent = 'user.data.query.error';
-  DataMgr.prototype.query.call(this, user, fn);
+  DataMgr.prototype.query.call(this, cEvent, user, fn);
 };
 
 /**
@@ -129,7 +130,7 @@ UserDataManager.prototype.add = function(user, fn){
 // }
 UserDataManager.prototype.update = function(user, data, fn) {
   var cEvent = 'user.data.update.error';
-  DataMgr.prototype.update.call(this, user, data, fn);
+  DataMgr.prototype.update.call(this, cEvent, user, data, fn);
 };
 
 /**
@@ -167,5 +168,5 @@ UserDataManager.prototype.update = function(user, data, fn) {
 // }
 UserDataManager.prototype.remove = function(user, fn) {
   var cEvent = 'user.data.remove.error';
-  DataMgr.prototype.remove(cEvent, user, fn);
+  DataMgr.prototype.remove.call(this, cEvent, user, fn);
 };

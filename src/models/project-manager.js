@@ -8,11 +8,13 @@ var Director            = require('./director');
 var ProjectExistError   = require('./error/project-exist-error');
 var ProjectNoExistError = require('./error/project-no-exist-error');
 
-var projectDataMgr      = require('./data-manager/project-data-manager');
+var ProjectDataMgr      = require('./data-manager/project-data-manager');
 var _                   = require('underscore');
 
 // Declare namespace ProjectMgr
 var ProjectMgr = exports = module.exports = {};
+
+var projectDataMgr      = new ProjectDataMgr();
 
 // Store all working director
 ProjectMgr.accessQueue = new Array();

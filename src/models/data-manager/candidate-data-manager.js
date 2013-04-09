@@ -10,7 +10,8 @@ var emitter         = new events.EventEmitter();
 var util            = require('util');
 
 var CandidateDataManager = module.exports = function(config){
-  this.call(this, config);
+  DataMgr.call(this, config);
+  this.key = this.COLLECTION_CANDIDATE;
 }
 util.inherits(CandidateDataManager, DataMgr);
 

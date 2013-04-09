@@ -19,13 +19,14 @@ var iterations = 12000;
 
 var emailServer = require('emailjs');
 var ObjectID    = require('mongodb').ObjectID;
-var userDataMgr = require('./data-manager/user-data-manager');
+var UserDataMgr = require('./data-manager/user-data-manager');
 
 var InvalidPasswordError  = require('./error/invalid-password-error');
 var NoUserError           = require('./error/no-user-error');
 
 // Declare namespace UserCenter
 var UserCenter = exports = module.exports = {};
+var userDataMgr = new UserDataMgr();
 
 /**
  * Hashes a password with optional `salt`, otherwise
