@@ -49,6 +49,10 @@ util.inherits(ProjectDataManager, DataMgr);
 //     });
 //   });
 // }
+ProjectDataManager.prototype.query = function(project, fn) {
+  var cEvent = 'project.data.query.error';
+  DataMgr.prototype.query.call(this, cEvent, project, fn);
+};
 
 /**
  * Insert project into GPC_DB.projects
@@ -114,6 +118,10 @@ ProjectDataManager.prototype.add = function(project, fn){
 //     });
 //   });
 // }
+ProjectDataManager.prototype.update = function(project, data, fn) {
+  var cEvent = 'project.data.update.error';
+  DataMgr.prototype.update.call(this, cEvent, project, dataMgr, fn);
+};
 
 /**
  * Remove project from GPC_DB.projects
@@ -146,6 +154,10 @@ ProjectDataManager.prototype.add = function(project, fn){
 //     });
 //   });
 // }
+ProjectDataManager.prototype.remove = function(project, fn) {
+  var cEvent = 'project.data.remove.error';
+  DataMgr.prototype.remove.call(this, cEvent, project, fn);
+};
 
 /**
  * Insert candidateId into specified project in GPC_DB.projects

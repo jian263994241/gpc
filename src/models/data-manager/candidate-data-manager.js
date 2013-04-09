@@ -46,6 +46,10 @@ util.inherts(CandidateDataManager, DataMgr);
 //     });
 //   });
 // }
+CandidateDataManager.prototype.query = function(candidate, fn) {
+  var cEvent = 'candidate.data.query.error';
+  DataMgr.prototype.query.call(this, cEvent, candidate, fn);
+};
 
 /**
  * Insert candidate into GPC_DB.candidates
@@ -120,6 +124,10 @@ CandidateDataManager.prototype.add = function(candidate, fn){
 //     });
 //   });
 // }
+CandidateDataManager.prototype.update = function(candidate, data, fn) {
+  var cEvent = 'candidate.data.update.error';
+  DataMgr.prototype.update.call(this, cEvent, candidate, data, fn);
+};
 
 /**
  * Remove candidate from GPC_DB.candidates
@@ -153,3 +161,7 @@ CandidateDataManager.prototype.add = function(candidate, fn){
 //     });
 //   });
 // }
+CandidateDataManager.prototype.remove = function(candidate, fn) {
+  var cEvent = 'candidate.data.remove.error';
+  DataMgr.prototype.remove.call(this, cEvent, candidate, fn);
+};

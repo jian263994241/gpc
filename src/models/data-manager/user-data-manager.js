@@ -45,6 +45,10 @@ util.inherits(UserDataManager, DataMgr);
 //     });
 //   });
 // }
+UserDataManager.prototype.query = function(user, fn) {
+  var cEvent = 'user.data.query.error';
+  DataMgr.prototype.query.call(this, user, fn);
+};
 
 /**
  * Insert user into GPC_DB.users
@@ -123,6 +127,10 @@ UserDataManager.prototype.add = function(user, fn){
 //     });
 //   });
 // }
+UserDataManager.prototype.update = function(user, data, fn) {
+  var cEvent = 'user.data.update.error';
+  DataMgr.prototype.update.call(this, user, data, fn);
+};
 
 /**
  * Remove user from GPC_DB.users
@@ -157,3 +165,7 @@ UserDataManager.prototype.add = function(user, fn){
 //     });
 //   });
 // }
+UserDataManager.prototype.remove = function(user, fn) {
+  var cEvent = 'user.data.remove.error';
+  DataMgr.prototype.remove(cEvent, user, fn);
+};

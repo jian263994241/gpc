@@ -46,6 +46,10 @@ util.inherits(MarkDataManager, DataMgr);
 //     });
 //   });
 // }
+MarkDataManager.prototype.query = function(mark, fn) {
+  var cEvent = 'mark.data.query.error';
+  DataMgr.prototype.query.call(this, cEvent, mark, fn);
+};
 
 /**
  * Insert mark into GPC_DB.marks
@@ -130,3 +134,7 @@ MarkDataManager.prototype.add = function(mark, fn){
 //     });
 //   });
 // }
+MarkDataManager.prototype.remove = function(mark, fn) {
+  var cEvent = 'mark.data.remove.error';
+  DataMgr.prototype.remove.call(this, cEvent, mark, fn);
+};
