@@ -8,15 +8,32 @@ var mongodb = require('mongodb');
 var events  = require('events');
 var emitter = new events.EventEmitter();
 
-var DataManager = module.exports = function(conf){
+function readFile(fn) {
+  var filename = path.resolve(__dirname, '../../conf.json');
+  path.exists(filename, function(exists){
+    if (exists) fs.readFile(filename, "binary", fn);
+    else fn(new Error());
+  });
+}
+
+var DataManager = module.exports = function(){
   this.COLLECTION_USER      = 'users';
   this.COLLECTION_CANDIDATE = 'candidates';
   this.COLLECTION_PROJECT   = 'projects';
   this.COLLECTION_MARK      = 'marks';
-  this.ERROR_SIGN           = conf.error_mark;
-  this.DB_NAME              = conf.db_name;
-  this.DB_SERVER_HOST       = conf.db_server_host;
-  this.DB_SERVER_PORT       = conf.db_server_port;  
+
+  var that = this;
+  readFile(function(err, file){
+    if (!err && file) {
+      var conf = JSON.parse(file);
+      that.ERROR_SIGN           = conf.error_mark;
+      that.DB_NAME              = conf.db_name;
+      that.DB_SERVER_HOST       = conf.db_server_host;
+      that.DB_SERVER_PORT       = conf.db_server_port; 
+    }else{
+      console.error(err.stack);
+    }
+  });
 }
 
 /**
