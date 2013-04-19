@@ -140,7 +140,7 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
 
   function generateCode(){
     var num = Math.random();
-    return num*100000000.toFixed(0);
+    return (num*100000000).toFixed(0);
   }
 
   $scope.getId = function(){
