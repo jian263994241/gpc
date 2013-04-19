@@ -126,7 +126,10 @@ UserOperation.requestVerifiedCode = function(req, res){
   var id = req.params.id;
 
   if (id && id.length == 8) {
-    var captcha = ccap();
+    var captcha = ccap({
+      width: 125,
+      height: 30
+    });
     var codes = captcha.get();
     UserOperation.resetQueue = _.reject(UserOperation.resetQueue, function(item){ return item.id == id; });
     UserOperation.resetQueue.push({ id: id, code: codes[0] });

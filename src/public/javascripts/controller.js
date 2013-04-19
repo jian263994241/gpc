@@ -151,6 +151,7 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
 
   $scope.submit = function(user){
     if (user && user.email) {
+      user.id = $scope.id;
       if (!util.checkEmailInput(user.email)) {
         $scope.error = 'Email format error';
         $scope.alertStyle = 'alert-error';
