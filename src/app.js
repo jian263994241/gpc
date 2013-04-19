@@ -59,6 +59,9 @@ app.map({
       get:        userOperator.render,
       post:       userOperator.login
     },
+    'code/:id':{
+      get:        userOperator.requestVerifiedCode
+    },
     'forgot':{
       get:        userOperator.render,
       post:       userOperator.requestResetPassword,

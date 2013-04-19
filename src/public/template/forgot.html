@@ -19,6 +19,9 @@
             <span class="add-on"><i class="icon-envelope"></i></span>
             <input type="text" ng-model="user.email" ng-mousedown="clean()">
           </div>
+          <div class="input-prepend">
+            <img src="/code/12345678" alt="">
+          </div>
           <button type="submit" class="btn btn-primary register-btn" ng-click="submit(user)">Submit</button>
 
           <label class="alert register-error" ng-class="alertStyle" ng-show="isError">{{error}}</label>

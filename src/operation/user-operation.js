@@ -6,10 +6,14 @@
 // Declare required lib
 var path            = require("path");
 var fs              = require("fs");
+var ccap            = require("ccap");
+var _               = require('underscore');
 var userCenter      = require('../models/user-center');
 var UserExistError  = require('../models/error/user-exist-error');
 
 var UserOperation = exports = module.exports = {};
+
+UserOperation.resetQueue = [];
 
 /**
  * [GET] User Login/Register/Logout view controller
@@ -118,6 +122,20 @@ UserOperation.logout = function(req, res){
   });
 }
 
+UserOperation.requestVerifiedCode = function(req, res){
+  var id = req.params.id;
+
+  if (id && id.length == 8) {
+    var codes = ccap.get();
+    UserOperation.resetQueue = _.reject(UserOperation.resetQueue, function(item){ return item.id == id; });
+    UserOperation.resetQueue.push({ id: id, code: codes[0] });
+    return res.send(codes[1]);
+  }else{
+    return res.send();
+  }
+  
+}
+
 /**
  * [POST] Request user password reset link
  *
@@ -127,8 +145,10 @@ UserOperation.logout = function(req, res){
  * @api public
  */
 UserOperation.requestResetPassword = function(req, res){
+  var id = req.body['id'];
   var email = req.body['email'];
   if (!email) return res.json({error: 'Empty email'});
+  if (!id || id.length != 8) return res.json({error; 'Error id'});
 
   var filename = path.resolve(__dirname, '../conf.json');
   path.exists(filename, function(exists){
