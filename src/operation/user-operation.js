@@ -148,8 +148,20 @@ UserOperation.requestVerifiedCode = function(req, res){
 UserOperation.requestResetPassword = function(req, res){
   var id = req.body['id'];
   var email = req.body['email'];
+  var code = req.body['code'];
   if (!email) return res.json({error: 'Empty email'});
   if (!id || id.length != 8) return res.json({error: 'Error id'});
+
+  var records = _.filter(UserOperation.resetQueue, function(item){
+    return item.id == id;
+  });
+
+  if (records.length == 0) return res.json({'error': 'Verified Code Error'});
+  var verifiedCodeItem = _.filter(records, function(item){
+    return item.code == code;
+  });
+
+  if (verifiedCodeItem.length == 0) return res.json({'error': 'Verified Code Error'});
 
   var filename = path.resolve(__dirname, '../conf.json');
   path.exists(filename, function(exists){
