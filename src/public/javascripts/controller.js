@@ -144,7 +144,8 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
   }
 
   $scope.getId = function(){
-    $scope.image = generateCode();
+    var id  = generateCode();
+    $scope.image = '/code/'+id;
   }
 
   $scope.submit = function(user){
