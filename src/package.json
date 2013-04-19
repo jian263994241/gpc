@@ -11,7 +11,6 @@
     "ejs": "*",
     "underscore": "1.4.x",
     "mongodb": "1.2.x",
-    "emailjs": "0.3.x",
-    "ccap": "0.3.x"
+    "emailjs": "0.3.x"
   }
 }
