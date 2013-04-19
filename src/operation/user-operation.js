@@ -148,7 +148,7 @@ UserOperation.requestResetPassword = function(req, res){
   var id = req.body['id'];
   var email = req.body['email'];
   if (!email) return res.json({error: 'Empty email'});
-  if (!id || id.length != 8) return res.json({error; 'Error id'});
+  if (!id || id.length != 8) return res.json({error: 'Error id'});
 
   var filename = path.resolve(__dirname, '../conf.json');
   path.exists(filename, function(exists){
