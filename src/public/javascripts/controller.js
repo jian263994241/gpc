@@ -138,6 +138,15 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
   $scope.$isError = false;
   $scope.error = '';
 
+  function generateCode(){
+    var num = Math.random();
+    return num*100000000.toFixed(0);
+  }
+
+  $scope.getId = function(){
+    $scope.image = generateCode();
+  }
+
   $scope.submit = function(user){
     if (user && user.email) {
       if (!util.checkEmailInput(user.email)) {

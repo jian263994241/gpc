@@ -1,4 +1,4 @@
-<article class="container register-panel">
+<article class="container register-panel" ng-init="getId()">
   <header class="row">
     <a href="/login" class="btn btn-success btn-right">Login</a>
   </header>
@@ -20,7 +20,8 @@
             <input type="text" ng-model="user.email" ng-mousedown="clean()">
           </div>
           <div class="input-prepend">
-            <img src="/code/12345678" alt="">
+            <img ng-src="image" >
+            <button class="btn btn-primary" ng-click="getId()">Refresh</button>
           </div>
           <button type="submit" class="btn btn-primary register-btn" ng-click="submit(user)">Submit</button>
 
