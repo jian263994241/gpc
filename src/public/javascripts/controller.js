@@ -145,6 +145,7 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
 
   $scope.getId = function(){
     var id  = generateCode();
+    $scope.id = id;
     $scope.image = '/code/'+id;
   }
 
@@ -152,6 +153,13 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
     if (user && user.email) {
       if (!util.checkEmailInput(user.email)) {
         $scope.error = 'Email format error';
+        $scope.alertStyle = 'alert-error';
+        $scope.isError = true;
+        return;
+      };
+
+      if (!user.id || !user.code) {
+        $scope.error = 'Verified code input error';
         $scope.alertStyle = 'alert-error';
         $scope.isError = true;
         return;
