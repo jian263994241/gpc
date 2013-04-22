@@ -101,6 +101,25 @@ DataManager.prototype.fetchCollection = function(db, key, trigger, fn){
   });
 }
 
+DataManager.prototype.exportFile = function(path, fn) {
+  var mongoServer = this.createDbServer();
+  var dbConnector = this.createDbConnector(mongoServer);
+
+  var that = this;
+  dbConnector.open(function(err, db){
+    if(err || !db) return trigger(err);
+    else {
+      var gs = new mongodb.GridStore(db, 'data.txt', 'w', {'metadata': 'text/plain'});
+      gs.open(function(err, store){
+        gs.writeFile(path+'data.txt', function(err, doc){
+          if (!err) console.log('write file success');
+          else console.error('write file error');
+        });
+      })
+    };
+  });
+};
+
 DataManager.prototype.query = function(custom_event, params, fn) {
   var that = this;
   var cListener = function(err){
