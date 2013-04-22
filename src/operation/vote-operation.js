@@ -273,8 +273,10 @@ VoteOperation.query = function(req, res){
   console.log('director.status: '+director.status);
   console.log('director.curCandidate: '+director.curCandidate);
 
-  if (director.status == status) director.queue.push(res);
-  else res.json({status: director.status, candidate: director.curCandidate});
+  if (director.status == status) {
+    director.queue.push(res);
+    VoteOperation.syncVoted(director);
+  }else res.json({status: director.status, candidate: director.curCandidate});
 }
 
 /**
