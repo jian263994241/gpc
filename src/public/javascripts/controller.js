@@ -752,6 +752,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
           $scope.voted = 0;
           $scope.isStart = true;
           $scope.time = 0;
+          $scope.users = [];
           $timeout($scope.timer, 1000);
           $scope.isEnd = false;
           $scope.lock = true;
