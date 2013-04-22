@@ -724,7 +724,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
 
       if (data.voted) {
         $scope.voted = data.voted;
-        $scope.users = data.users;
+        $scope.users = data.list;
       };
 
       $scope.handle = setTimeout($scope.query, 1000);
