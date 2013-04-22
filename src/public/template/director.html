@@ -24,6 +24,10 @@
         <h6 class="timer">{{voted}} people</h6>
         <h4>Timmer</h4>
         <h6 class="timer">{{time}}s</h6>
+        <h4>People Voting Status</h4>
+        <h4 ng-repeat="user in users">
+          <span class="vote-{{user.status}}">{{user.name}}</span>
+        </h4>
       </div>
     </nav>
     <div class="span9">

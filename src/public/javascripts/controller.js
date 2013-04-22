@@ -695,6 +695,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
   $scope.lock = false;
   $scope.voted = 0;
   $scope.handle = null;
+  $scope.users = [];
 
   $scope.setCandidate = function(data){
     $scope.project = data.project;
@@ -723,6 +724,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
 
       if (data.voted) {
         $scope.voted = data.voted;
+        $scope.users = data.users;
       };
 
       $scope.handle = setTimeout($scope.query, 1000);

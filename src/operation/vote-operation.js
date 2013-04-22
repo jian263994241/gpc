@@ -311,7 +311,29 @@ VoteOperation.collect = function(req, res){
 VoteOperation.syncVoted = function(director){
   if (director.operator) {
     var people = director.marker ? director.marker.marks.length: 0;
-    director.operator.json({voted: people});
+    var users = [];
+
+    for (var i = 0; i < director.queue.length; i++) {
+      var user = director.queue[i].req.session.user;
+      users.push({
+        username: user.username,
+        status: false
+      })
+    };
+
+    if (people > 0) {
+      for (var i = 0; i < director.marker.marks.length; i++) {
+        var voted = director.marker.marks[i];
+        for (var i = 0; i < users.length; i++) {
+          if(users[i].username == voted.username){
+            users[i].status = true;
+            break;
+          }
+        };
+      };
+    };
+
+    director.operator.json({voted: people, list: users});
     director.operator = null;
   };
 }
