@@ -3,7 +3,7 @@
   "password": "leo@burnett",
   "admin_email": "chunmin.li@sh.leoburnett.com",
   "admin_email_password": "Lee@2013",
-  "admin_email_host": "smtp.publicisgroupe.net",
+  "admin_email_host": "202.82.250.100",
   "host": "http://lbvmstaging1.hk.leoburnett.com:8080",
   "db_server_host": "127.0.0.1",
   "db_server_port": 27017,
