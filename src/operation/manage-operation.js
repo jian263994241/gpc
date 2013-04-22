@@ -352,8 +352,6 @@ ManageOperation.insertCandidateIntoProject = function(req, res){
  * @api public
  */
 ManageOperation.upload = function(req, res){
-  if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
-
   var uploadFile = req.files.files
   console.log(uploadFile);
   if (req.files.length > 0) {

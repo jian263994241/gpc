@@ -453,7 +453,6 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
       contentType: false,
       processData: false,
       error: function(data, textStatus, jqXHR){
-        console.log(data);
         alert('upload error');
       },
       success: function(data, textStatus, jqXHR){
