@@ -90,6 +90,7 @@ function process(req, res, key, fn){
 
 function exportData (data, res) {
   var buffer = xlsx.build({ worksheets: [{ "name": "project", "data":data }] });
+  
   crypto.randomBytes(16, function(ex, buf){
     var token = buf.toString('hex');
     var filename = path.resolve(__dirname, '../public/files/'+token+'.xlsx');
