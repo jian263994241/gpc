@@ -274,8 +274,13 @@ VoteOperation.query = function(req, res){
   console.log('director.curCandidate: '+director.curCandidate);
 
   if (director.status == status) {
-    director.queue.push(res);
-    VoteOperation.syncVoted(director);
+    if (_.isObject(res.req.session.user)) {
+      _.reject(director.queue, function(record){
+        return record.req.session.user.username == res.req.session.user.username;
+      });
+      director.queue.push(res);
+      VoteOperation.syncVoted(director);
+    };
   }else res.json({status: director.status, candidate: director.curCandidate});
 }
 
@@ -315,24 +320,22 @@ VoteOperation.syncVoted = function(director){
     var people = director.marker ? director.marker.marks.length: 0;
     var users = [];
 
-    for (var i = 0; i < director.queue.length; i++) {
-      var user = director.queue[i].req.session.user;
+    _.each(director.queue, function(res){
+      var user = res.req.session.user;
       users.push({
         username: user.username,
         status: false
-      })
-    };
+      });
+    });
 
     if (people > 0) {
-      for (var i = 0; i < director.marker.marks.length; i++) {
-        var voted = director.marker.marks[i];
-        for (var i = 0; i < users.length; i++) {
-          if(users[i].username == voted.username){
-            users[i].status = true;
-            break;
-          }
-        };
-      };
+      _.each(director.marker.marks, function(record){
+        _.each(users, function(user){
+          if (user.username == record.username) {
+            user.status = true;
+          };
+        });
+      });
     };
 
     director.operator.json({voted: people, list: users});

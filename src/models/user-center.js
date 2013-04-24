@@ -148,7 +148,7 @@ UserCenter.getResetLink = function(email, config, fn){
       user: config["admin_email"],
       password: config["admin_email_password"],
       host: config["admin_email_host"],
-      // ssl: true
+      ssl: true
     });
 
     server.send({
