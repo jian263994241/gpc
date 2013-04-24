@@ -21,6 +21,8 @@
       <h4>
         <span class="label label-info" id="project-id" data-project-id="{{project.id}}">Project Id: {{project.id}}</span>
         <span class="label label-info" id="project-title">Project Title: {{project.name}}</span>
+        <a href="#" class="btn pull-right" ng-click="exportData(project.id)">Import Data</a>
+        <a ng-href="{{file.link}}" class="btn pull-right btn-success" ng-show="isGetFile">{{file.name}}</a>
       </h4>
       <h4>Candidate List</h4>
       <table class="table">

@@ -7,6 +7,8 @@
 var _     = require('underscore');
 var path  = require("path");
 var fs    = require("fs");
+var crypto = require("crypto");
+var xlsx = require("node-xlsx");
 var ObjectID = require('mongodb').ObjectID;
 
 var ProjectDataMgr = require('../models/data-manager/project-data-manager');
@@ -84,6 +86,24 @@ function process(req, res, key, fn){
   }else{
     res.json({error: 'Lost submitted data'});
   }
+}
+
+function exportData (data, res) {
+  var buffer = xlsx.build({ worksheets: [{ "name": "project", "data":data }] });
+  crypto.randomBytes(16, function(ex, buf){
+    var token = buf.toString('hex');
+    var filename = path.resolve(__dirname, '../public/files/'+token+'.xlsx');
+    var callback = function(err){
+      if (err) {
+        console.error(err.stack);
+        res.json({error: 'Fail to export data'});
+      }else {
+        console.log('save success');
+        res.json({link: '/files/'+token+'.xlsx'});
+      }
+    }
+    fs.writeFile(filename, buffer, callback);
+  });
 }
 
 /**
@@ -223,6 +243,18 @@ ManageOperation.remove = function(req, res){
   mgr[module].remove(obj, function(err){
     if (err)  res.json({error: 'Remove '+module+' failed'});
     else  res.json({success: true});
+  });
+}
+
+ManageOperation.exportDataToFile = function(req, res){
+  // if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
+  
+  var id = req.params.id;
+  // obj = {_id: new ObjectID(_id)};
+  obj = {id: id};
+
+  projectDataMgr.query(obj, function(err, records){
+    exportData(records, res);
   });
 }
 

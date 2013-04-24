@@ -96,6 +96,9 @@ app.map({
       '/release':{
         post:     voteOperator.release
       },
+      '/export/:id':{
+        get:     manageOperator.exportDataToFile
+      },
       '/:module': {
         get:      manageOperator.render,
         post:     manageOperator.add,

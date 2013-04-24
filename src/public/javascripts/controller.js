@@ -578,6 +578,27 @@ var ManageProjectCandidatesCtrl = function($scope, $route, $location, $routePara
 
   $scope.candidates = new Array();
   $scope.all = new Array();
+  $scope.file = {
+    link: null,
+    name: ''
+  }
+  $scope.isGetFile = false
+
+  $scope.exportData = function(id){
+    $scope.$http.get('/management/export/'+id).
+      success(function(data, status, headers, config){
+        if (data.error) {
+          alert(data.error);
+        }else{
+          $scope.file.name = 'get file';
+          $scope.file.link = data.link;
+          $scope.isGetFile = true;
+        }
+      }).
+      error(function(data, status, headers, config){
+        alert('export data error');
+      });
+  }
 
   $scope.init = function(){
     $scope.$http.get('/management/project/'+$scope.$routeParams.projectId).
