@@ -14,6 +14,7 @@ var ObjectID = require('mongodb').ObjectID;
 var ProjectDataMgr = require('../models/data-manager/project-data-manager');
 var CandidateDataMgr = require('../models/data-manager/candidate-data-manager');
 var UserDataMgr = require('../models/data-manager/user-data-manager');
+var MarkDataMgr = require('../models/data-manager/mark-data-manager');
 var DataExistError = require('../models/error/data-exist-error');
 
 var ManageOperation = exports = module.exports = {};
@@ -21,6 +22,7 @@ var ManageOperation = exports = module.exports = {};
 var projectDataMgr    = new ProjectDataMgr();
 var candidateDataMgr  = new CandidateDataMgr();
 var userDataMgr       = new UserDataMgr();
+var markDataMgr       = new MarkDataMgr();
 var mgr = {
   'project': projectDataMgr,
   'candidate': candidateDataMgr,
@@ -89,7 +91,7 @@ function process(req, res, key, fn){
 }
 
 function exportData (data, res) {
-  var buffer = xlsx.build({ worksheets: [{ "name": "project", "data":data }] });
+  var buffer = xlsx.build(data);
   
   crypto.randomBytes(16, function(ex, buf){
     var token = buf.toString('hex');
@@ -247,16 +249,82 @@ ManageOperation.remove = function(req, res){
   });
 }
 
+function formatData (obj) {
+  var excel = { worksheets:[{ name: "project", data: [] }] };
+  var body = excel.worksheets[0].data;
+  body.push(["project id", "project name"]);
+  body.push([obj.project.id, obj.project.name]);
+
+  body.push(["candidate title", "candidate author", "candidate introduction", "score"]);
+  _.each(obj.candidates, function(el, index, list){
+    body.push([
+      {value: el.title, formatCode: 'General'},
+      {value: el.author, formatCode: 'General'},
+      {value: el.intro, formatCode: 'General'},
+      {value: el.score, formatCode: 'General'}
+    ]);
+  });
+
+  return excel;
+}
+
 ManageOperation.exportDataToFile = function(req, res){
   // if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
   
   var id = req.params.id;
-  // obj = {_id: new ObjectID(_id)};
   obj = {id: id};
 
-  projectDataMgr.query(obj, function(err, records){
-    exportData(records, res);
-  });
+  var data = {
+    project: {
+      _id: 0,
+      name:'', 
+      id: ''
+    },
+    candidates:[]
+  }
+
+  var queryMarksCallback = function(err, records){
+    console.log(data.candidates);
+    console.log(records);
+    _.each(records, function(el){
+      var found = _.find(data.candidates, function(element){
+        return element._id.toString() == el.candidate.toString();
+      });
+      if (found) {
+        found.score = el.average;
+      }
+    });
+
+    var formattedData = formatData(data);
+    exportData(formattedData, res);
+  }
+
+  var queryCandidatesCallback = function(err, records){
+    var sen = new Array();
+    data.candidates = records;
+
+    _.each(records, function(el){
+      sen.push({candidate: el._id, project: data.project._id});
+    });
+
+    markDataMgr.query({$or: sen}, queryMarksCallback);
+  }
+
+  var queryProjectCallback = function(err, records){
+    var sen = new Array();
+
+    data.project.id = records[0].id;
+    data.project.name = records[0].name;
+    data.project._id = records[0]._id;
+
+    _.each(records[0].candidates, function(el, index, list){
+      sen.push({_id:new ObjectID(el)});
+    });
+
+    candidateDataMgr.query({$or: sen}, queryCandidatesCallback);
+  }
+
+  projectDataMgr.query(obj, queryProjectCallback);
 }
 
 /**
