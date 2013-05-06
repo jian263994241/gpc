@@ -275,7 +275,7 @@ VoteOperation.query = function(req, res){
 
   if (director.status == status) {
     if (_.isObject(res.req.session.user)) {
-      _.reject(director.queue, function(record){
+      director.queue = _.reject(director.queue, function(record){
         return record.req.session.user.username == res.req.session.user.username;
       });
       director.queue.push(res);
