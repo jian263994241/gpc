@@ -6,7 +6,7 @@
 // Declare required lib
 var path            = require("path");
 var fs              = require("fs");
-var ccap            = require("ccap");
+// var ccap            = require("ccap");
 var _               = require('underscore');
 var userCenter      = require('../models/user-center');
 var UserExistError  = require('../models/error/user-exist-error');
@@ -126,8 +126,9 @@ UserOperation.requestVerifiedCode = function(req, res){
   var id = req.params.id;
 
   if (id && id.length == 8) {
-    var captcha = ccap();
-    var codes = captcha.get();
+    // var captcha = ccap();
+    // var codes = captcha.get();
+    var codes = [1111, 1111];
     UserOperation.resetQueue = _.reject(UserOperation.resetQueue, function(item){ return item.id == id; });
     UserOperation.resetQueue.push({ id: id, code: codes[0] });
     return res.send(codes[1]);
