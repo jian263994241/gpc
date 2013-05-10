@@ -7,7 +7,7 @@
 
     <nav class="span3 logo">
       <h2 class="logo-title">GPC</h2>
-      <p class="logo-desc">Vote favorates</p>
+      <p class="logo-desc">Vote your favorates</p>
     </nav>
 
     <div class="span4 register-main">
@@ -24,7 +24,8 @@
             <input type="text" ng-model="user.code" ng-mousedown="clean()">
           </div>
           <div class="input-prepend">
-            <img ng-src="{{image}}" width="125px">
+            <!-- <img ng-src="{{image}}" width="125px"> -->
+            <img src="/image/static_verified_code.png" width="125px">
             <button class="btn btn-primary" ng-click="getId()">Refresh</button>
           </div>
           <button type="submit" class="btn btn-primary register-btn" ng-click="submit(user)">Submit</button>
