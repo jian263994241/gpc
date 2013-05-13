@@ -894,17 +894,16 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
   }
 
   $scope.choices = [
-    {scope: 0, express: '0, oh, God'},
-    {score: 1, express: '1, worthless'},
-    {score: 2, express: '2, too bad'},
-    {score: 3, express: '3, it should be improved'},
-    {score: 4, express: '4, I can accept'},
-    {score: 5, express: '5, just so so'},
-    {score: 6, express: '6, yes'},
-    {score: 7, express: '7, good'},
-    {score: 8, express: '8, nice product'},
-    {score: 9, express: '9, fantastic'},
-    {score: 10, express: '10, oh, God!'}
+    {score: 1, express: "1 Destructive"},
+    {score: 2, express: "2 No Idea"},
+    {score: 3, express: "3 Invisible"},
+    {score: 4, express: "4 I don't know what this brand stands for"},
+    {score: 5, express: "5 I understand the brand's purpose"},
+    {score: 6, express: "6 An intelligent idea"},
+    {score: 7, express: "7 An inspiring idea, beautifully crafted"},
+    {score: 8, express: "8 Changes the way people think and fell"},
+    {score: 9, express: "9 Changes the way people live"},
+    {score: 10, express: "10 Changes the world"}
   ];
 
   $scope.mark.score = $scope.choices[5];
