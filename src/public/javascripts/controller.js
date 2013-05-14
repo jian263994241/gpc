@@ -150,7 +150,7 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
   }
 
   $scope.showRecaptcha = function(){
-    Recaptcha.create("6LcNSuESAAAAABsZWbVlSNq-V6QFtXLfUQCU21Ps", 'recaptcha_div', { theme: "red", callback: Recaptcha.focus_response_field });
+    Recaptcha.create("6Lf1UuESAAAAAM2rzsN4cHNqzloSBVrjCLkVm8BB", 'recaptcha_div', { theme: "red", callback: Recaptcha.focus_response_field });
   }
 
   $scope.submit = function(user){
