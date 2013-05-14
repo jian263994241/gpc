@@ -149,10 +149,6 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
     $scope.image = '/code/'+id;
   }
 
-  $scope.showRecaptcha = function(){
-    Recaptcha.create("6Lf1UuESAAAAAM2rzsN4cHNqzloSBVrjCLkVm8BB", 'recaptcha_div', { theme: "red", callback: Recaptcha.focus_response_field });
-  }
-
   $scope.submit = function(user){
     if (user && user.email) {
       user.id = $scope.id;

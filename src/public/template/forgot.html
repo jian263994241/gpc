@@ -1,4 +1,9 @@
 <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+<script type="text/javascript">
+  function showRecaptcha(){
+    Recaptcha.create("6Lf1UuESAAAAAM2rzsN4cHNqzloSBVrjCLkVm8BB", 'recaptcha_div', { theme: "red", callback: Recaptcha.focus_response_field });
+  }
+</script>
 <article class="container register-panel" ng-init="getId()">
   <header class="row">
     <a href="/login" class="btn btn-success btn-right">Login</a>
@@ -26,7 +31,7 @@
           </div>
           <div class="input-prepend">
             <div id="recaptcha_div"></div>
-            <input type="button" value="Show reCAPTCHA" ng-click="showRecaptcha()"></input>
+            <input type="button" value="Show reCAPTCHA" onclick="showRecaptcha()"></input>
           </div>
           <button type="submit" class="btn btn-primary register-btn" ng-click="submit(user)">Submit</button>
 
