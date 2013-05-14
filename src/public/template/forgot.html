@@ -1,3 +1,4 @@
+<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
 <article class="container register-panel" ng-init="getId()">
   <header class="row">
     <a href="/login" class="btn btn-success btn-right">Login</a>
@@ -24,9 +25,8 @@
             <input type="text" ng-model="user.code" ng-mousedown="clean()">
           </div>
           <div class="input-prepend">
-            <!-- <img ng-src="{{image}}" width="125px"> -->
-            <img src="/image/static_verified_code.png" width="125px">
-            <button class="btn btn-primary" ng-click="getId()">Refresh</button>
+            <div id="recaptcha_div"></div>
+            <input type="button" value="Show reCAPTCHA" ng-click="showRecaptcha()"></input>
           </div>
           <button type="submit" class="btn btn-primary register-btn" ng-click="submit(user)">Submit</button>
 
