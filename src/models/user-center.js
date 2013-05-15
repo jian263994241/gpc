@@ -145,10 +145,10 @@ UserCenter.getResetLink = function(email, config, fn){
 
     var userInfo = data[0];
     var server = emailServer.server.connect({
-      user: config["admin_email"],
-      password: config["admin_email_password"],
+      // user: config["admin_email"],
+      // password: config["admin_email_password"],
       host: config["admin_email_host"],
-      ssl: true
+      // ssl: true
     });
 
     server.send({
