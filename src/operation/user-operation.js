@@ -4,12 +4,12 @@
  */
 
 // Declare required lib
-var path            = require("path");
-var fs              = require("fs");
-// var ccap            = require("ccap");
-var _               = require('underscore');
-var userCenter      = require('../models/user-center');
-var UserExistError  = require('../models/error/user-exist-error');
+var path              = require("path");
+var fs                = require("fs");
+var simple_recaptcha  = require('simple-recaptcha');
+var _                 = require('underscore');
+var userCenter        = require('../models/user-center');
+var UserExistError    = require('../models/error/user-exist-error');
 
 var UserOperation = exports = module.exports = {};
 
@@ -153,38 +153,49 @@ UserOperation.requestResetPassword = function(req, res){
   if (!email) return res.json({error: 'Empty email'});
   if (!id || id.length != 8) return res.json({error: 'Error id'});
 
-  var records = _.filter(UserOperation.resetQueue, function(item){
-    return item.id == id;
-  });
+  // var records = _.filter(UserOperation.resetQueue, function(item){
+  //   return item.id == id;
+  // });
 
-  if (records.length == 0) return res.json({'error': 'Verified Code Error'});
-  var verifiedCodeItem = _.filter(records, function(item){
-    return item.code == code;
-  });
+  // if (records.length == 0) return res.json({'error': 'Verified Code Error'});
+  // var verifiedCodeItem = _.filter(records, function(item){
+  //   return item.code == code;
+  // });
 
-  if (verifiedCodeItem.length == 0) return res.json({'error': 'Verified Code Error'});
+  // if (verifiedCodeItem.length == 0) return res.json({'error': 'Verified Code Error'});
 
-  var filename = path.resolve(__dirname, '../conf.json');
-  path.exists(filename, function(exists){
-    if (exists) {
-      var queryCallback = function(err){
-        if (err) return res.json({'error': 'No such user'});
-        else return res.json({'success': 'Send reset link to your email, please check!'});
-      }
+  var privateKey = '6Lf1UuESAAAAABJDcsv-Yy205yzEl4ekmWKlniCH '; 
+  var ip = req.ip;
+  var challenge = req.body.recaptcha_challenge_field;
+  var response = req.body.recaptcha_response_field;
 
-      var readFileCallback = function(err, file) {    
-        if (!err) {
-          var conf = JSON.parse(file);
-          userCenter.getResetLink(email, conf, queryCallback);
-        }else {
-          console.error(err.stack);
-          return res.json({'error': 'email server not work temp'});
-        }
-      }
-      
-      fs.readFile(filename, "binary", readFileCallback);
-    };
-  });
+  var queryCallback = function(err){
+    if (err) return res.json({'error': 'No such user'});
+    else return res.json({'success': 'Send reset link to your email, please check!'});
+  }
+
+  var readFileCallback = function(err, file) {    
+    if (!err) {
+      var conf = JSON.parse(file);
+      userCenter.getResetLink(email, conf, queryCallback);
+    }else {
+      console.error(err.stack);
+      return res.json({'error': 'email server not work temp'});
+    }
+  }
+
+  var recaptchaVerifiedCallback = function(err){
+    if (err) return res.json({'error': err.message});
+
+    var filename = path.resolve(__dirname, '../conf.json');
+    path.exists(filename, function(exists){
+      if (exists) {
+        fs.readFile(filename, "binary", readFileCallback);
+      };
+    });
+  }
+
+  simple_recaptcha(privateKey, ip, challenge, response, recaptchaVerifiedCallback);
 }
 
 /**

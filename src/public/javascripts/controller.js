@@ -149,7 +149,7 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
     $scope.image = '/code/'+id;
   }
 
-  $scope.showRecaptcha = function(){
+  $scope.init = function(){
     Recaptcha.create("6Lf1UuESAAAAAM2rzsN4cHNqzloSBVrjCLkVm8BB", 'recaptcha_div', { theme: "red", callback: Recaptcha.focus_response_field });
   }
 
@@ -173,6 +173,9 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
       $scope.error = "Sending request to server, wait...";
       $scope.alertStyle = 'alert-success';
       $scope.isError = true;
+
+      user.recaptcha_challenge_field = Recaptcha.get_challenge();
+      user.recaptcha_response_field = Recaptcha.get_response();
 
       $scope.$http.post('/forgot', user).
       success(function(data, status, headers, config){

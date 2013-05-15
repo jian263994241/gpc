@@ -12,6 +12,7 @@
     "underscore": "1.4.x",
     "mongodb": "1.2.x",
     "emailjs": "0.3.x",
-    "node-xlsx": "0.2.x"
+    "node-xlsx": "0.2.x",
+    "simple-recaptcha": "0.0.3"
   }
 }

@@ -1,4 +1,4 @@
-<article class="container register-panel" ng-init="getId()">
+<article class="container register-panel" ng-init="init()">
   <header class="row">
     <a href="/login" class="btn btn-success btn-right">Login</a>
   </header>
@@ -25,7 +25,6 @@
           </div>
           <div class="input-prepend">
             <div id="recaptcha_div"></div>
-            <input type="button" value="Show reCAPTCHA" ng-click="showRecaptcha()"></input>
           </div>
           <button type="submit" class="btn btn-primary register-btn" ng-click="submit(user)">Submit</button>
 
