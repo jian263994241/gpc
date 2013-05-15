@@ -147,11 +147,9 @@ UserOperation.requestVerifiedCode = function(req, res){
  * @api public
  */
 UserOperation.requestResetPassword = function(req, res){
-  var id = req.body['id'];
   var email = req.body['email'];
-  var code = req.body['code'];
   if (!email) return res.json({error: 'Empty email'});
-  if (!id || id.length != 8) return res.json({error: 'Error id'});
+  // if (!id || id.length != 8) return res.json({error: 'Error id'});
 
   // var records = _.filter(UserOperation.resetQueue, function(item){
   //   return item.id == id;
