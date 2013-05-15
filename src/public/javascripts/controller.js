@@ -143,28 +143,14 @@ var UserFindPasswordCtrl = function($scope, $location, $http){
     return (num*100000000).toFixed(0);
   }
 
-  $scope.getId = function(){
-    var id  = generateCode();
-    $scope.id = id;
-    $scope.image = '/code/'+id;
-  }
-
   $scope.init = function(){
     Recaptcha.create("6Lf1UuESAAAAAM2rzsN4cHNqzloSBVrjCLkVm8BB", 'recaptcha_div', { theme: "red", callback: Recaptcha.focus_response_field });
   }
 
   $scope.submit = function(user){
     if (user && user.email) {
-      user.id = $scope.id;
       if (!util.checkEmailInput(user.email)) {
         $scope.error = 'Email format error';
-        $scope.alertStyle = 'alert-error';
-        $scope.isError = true;
-        return;
-      };
-
-      if (!user.id || !user.code) {
-        $scope.error = 'Verified code input error';
         $scope.alertStyle = 'alert-error';
         $scope.isError = true;
         return;
