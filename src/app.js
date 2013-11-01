@@ -30,23 +30,27 @@ app.map = function(a, route){
   }
 };
 
-app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
-  app.use(express.favicon());
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser({uploadDir:'./public/uploads'}));
-  app.use(express.methodOverride());
-  app.use(express.cookieParser('leobrunett_gpc'));
-  app.use(express.session());
-  app.use(app.router);
-  app.use(express.static(path.join(__dirname, 'public')));
-});
 
-app.configure('development', function(){
-  app.use(express.errorHandler());
-});
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+//app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser({uploadDir:'./public/uploads'}));
+app.use(express.methodOverride());
+app.use(express.cookieParser('leobrunett_gpc'));
+app.use(express.session());
+app.use(app.router);
+
+app.use(require('less-middleware')({ src: path.join(__dirname, 'public'),compress: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
+// development only
+if ('development' == app.get('env')) {
+    app.use(express.errorHandler());
+};
 
 // Route map
 app.map({
