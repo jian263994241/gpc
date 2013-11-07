@@ -196,7 +196,7 @@ VoteOperation.exec = function(req, res){
       console.log('****************************');
       console.log('DirectorAction.query');
       var voted = req.body['voted'];
-      if (director.status != DirectorAction.start_vote) VoteOperation.endVotedRequest(director);
+      if (director.status != DirectorAction.startVote) VoteOperation.endVotedRequest(director);  //fix start_Vote
       if (!director.marker || voted == director.marker.marks.length) {
         return director.operator = res;
       }else{
@@ -265,11 +265,16 @@ VoteOperation.query = function(req, res){
 
   if (!director) return res.json({error: true, redirect: '/home'});
 
-  console.log('candidate: '+candidate);
+  console.log('candidate: '+JSON.stringify(candidate));
   console.log('status: '+status);
 
-  if (!candidate || !status) return res.json({status: director.status, candidate: director.curCandidate});
+  if (!candidate || !status  ) return res.json({status: director.status, candidate: director.curCandidate});
 
+  try{//keep lastest
+       if(candidate._id != director.curCandidate._id) return res.json({status: director.status, candidate: director.curCandidate});
+  }catch(e){
+    console.log(e);
+  }
   console.log('director.status: '+director.status);
   console.log('director.curCandidate: '+director.curCandidate);
 

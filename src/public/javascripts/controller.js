@@ -731,11 +731,13 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
   $scope.query = function(){
     $scope.$http.post('/director/exec', {action: 'query', voted: $scope.voted}, {timeout: 9999999999}).
     success(function(data, status, headers, config){
+      console.log('.....query......');
+      console.log(data);
+      $scope.open = true;
       if (data.redirect) {
         return $scope.$location.path(data.redirect);
       }else if (data.error) return;
       else if(data.close) return;
-
       if (data.voted) {
         $scope.voted = data.voted;
         $scope.users = data.list;
@@ -752,6 +754,9 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
   $scope.request = function(action){
     $scope.$http.post('/director/exec', {action: action}).
     success(function(data, status, headers, config){
+      console.log('****request****');
+      console.log(data);
+
       if (data.error) return;
       switch(action){
         case 'init':
@@ -911,6 +916,8 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
       }else if (res.error) return;
 
       $scope.status = res.status;
+      console.log(res.status);
+       console.log(res.candidate);
       switch(res.status){
         case 'show':
           $scope.candidate = res.candidate;
