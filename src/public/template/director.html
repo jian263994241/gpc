@@ -36,9 +36,14 @@
       </div>
     </nav>
     <div class="span9">
-      <h2 class="page-header">
-        <em class="vote-name">{{project.name}}</em>
-      </h2>
+      <div class="row-fluid page-header">
+        <h2 class="span11">
+          <em class="vote-name">{{project.name}}</em>
+        </h2>
+        <div class="span1" style="padding-top: 20px;">
+          <a href="#" ng-click="logout()" class="btn btn-small pull-right">Logout</a>
+        </div>
+      </div>
       <h3>
         <span>Candidate - </span>{{candidate.title}}</span>
       </h3>

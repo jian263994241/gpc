@@ -695,10 +695,12 @@ var DirectorLoginCtrl = function($scope, $location, $http){
   $scope.clean = function(){
     $scope.isError = false;
     $scope.error = '';
-  }
+  };
+  util.manageLogout($scope, '/director/logout');
+
 }
 
-var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
+var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie){
   $scope.$location = $location;
   $scope.$http = $http;
 
@@ -725,6 +727,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
   $scope.timer = function(){
     if ($scope.isStart == false) return;
     $scope.time ++;
+    $cookie.set('vote_start_time',$scope.time,0.0001);
     $timeout($scope.timer, 1000);
   }
 
@@ -733,6 +736,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
     success(function(data, status, headers, config){
       console.log('.....query......');
       console.log(data);
+        console.log($scope.voted);
       $scope.open = true;
       if (data.redirect) {
         return $scope.$location.path(data.redirect);
@@ -763,10 +767,21 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
         case 'prev':
         case 'next':
           if (data.status == 'end') $scope.isEnd = true;
-          else $scope.isEnd = false;
-          $scope.lock = false;
+          else if(data.status == 'process'){
+              $scope.voted = data.people || 0;
+              $scope.isStart = true;
+              $scope.time = $cookie.get('vote_start_time');
+              $scope.users = [];
+              $timeout($scope.timer, 1000);
+              $scope.isEnd = false;
+              $scope.lock = true;
+              $scope.query();
+          }else{
+              $scope.isEnd = false;
+              $scope.lock = false;
+              $scope.voted = 0;
+          }
           $scope.setCandidate(data);
-          $scope.voted = 0;
           return;
         case 'start_vote':
           $scope.voted = 0;
@@ -833,6 +848,8 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout){
       $scope.$location.path('/director/result/'+$scope.project.id);
     };
   }
+
+  util.manageLogout($scope, '/director/logout');
 }
 
 var DirectorResultCtrl = function($scope, $route, $location, $routeParams, $http){
@@ -872,7 +889,6 @@ var DirectorResultCtrl = function($scope, $route, $location, $routeParams, $http
     $scope.$location.path('/director');
   }
 
-  util.manageLogout($scope, '/director/logout');
 }
 
 var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
@@ -954,6 +970,7 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
     var projectId = $scope.$routeParams.projectId;
     $scope.$http.post('/director/vote', {candidate: $scope.candidate, mark: {score: $scope.mark.score.score, comment: $scope.mark.comment}, projectId: projectId}).
     success(function(data, status, headers, config){
+            console.log({candidate: $scope.candidate, mark: {score: $scope.mark.score.score, comment: $scope.mark.comment}});
       if (data.success) {
         $scope.isStart = false;
         $scope.isForbidden = true;

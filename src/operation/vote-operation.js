@@ -141,10 +141,15 @@ VoteOperation.exec = function(req, res){
   var director = getDirector(req.session.project);
 
   if (!director) return res.json({success: true, redirect: '/director/login'});
-
+    console.log('..............1.................');
+    console.log(director.status);
   switch(action){
     case DirectorAction.init:
-      return res.json({candidate: director.curCandidate, project: director.project, status: director.status});
+      if(director.marker){
+          return res.json({candidate: director.curCandidate, project: director.project, status: director.status,people:director.marker.marks.length});
+      }else{
+          return res.json({candidate: director.curCandidate, project: director.project, status: director.status});
+      };
     case DirectorAction.prev:
       return director.previous(function(err){
         if (err) return res.json({error: true});
@@ -192,10 +197,11 @@ VoteOperation.exec = function(req, res){
         console.log(data);
         res.json(data);
       });
-    case DirectorAction.query:
+      case DirectorAction.query:
       console.log('****************************');
       console.log('DirectorAction.query');
       var voted = req.body['voted'];
+
       if (director.status != DirectorAction.startVote) VoteOperation.endVotedRequest(director);  //fix start_Vote
       if (!director.marker || voted == director.marker.marks.length) {
         return director.operator = res;
@@ -267,10 +273,12 @@ VoteOperation.query = function(req, res){
 
   console.log('candidate: '+JSON.stringify(candidate));
   console.log('status: '+status);
+    console.log('..............2.................');
+    console.log(director.status);
 
   if (!candidate || !status  ) return res.json({status: director.status, candidate: director.curCandidate});
 
-  try{//keep lastest
+  try{
        if(candidate._id != director.curCandidate._id) return res.json({status: director.status, candidate: director.curCandidate});
   }catch(e){
     console.log(e);
