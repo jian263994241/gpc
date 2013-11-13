@@ -35,7 +35,11 @@ var getDirector = function(project){
   if (project) director = projectMgr.getDirector(project);
   return director;
 }
-
+var filter_id  = function(origin,origin_id,b_id){
+    return _.filter(origin,function(m){
+        return String(b_id) == String(m[origin_id]);
+    })[0]
+}
 /**
  * Director and Submit page view controller
  *
@@ -139,26 +143,54 @@ VoteOperation.exec = function(req, res){
   var action = req.body['action'];
 
   var director = getDirector(req.session.project);
-
   if (!director) return res.json({success: true, redirect: '/director/login'});
     console.log('..............1.................');
     console.log(director.status);
   switch(action){
     case DirectorAction.init:
-      if(director.marker){
-          return res.json({candidate: director.curCandidate, project: director.project, status: director.status,people:director.marker.marks.length});
-      }else{
-          return res.json({candidate: director.curCandidate, project: director.project, status: director.status});
-      };
+        return director.result(function(data){
+            console.log('****************************');
+            console.log('DirectorAction.init');
+            var _res_data = {
+                candidate: director.curCandidate,
+                project: director.project,
+                status: director.status,
+                marks:filter_id(data.marks,'candidate',director.curCandidate._id)
+            };
+            if(director.marker){
+                return res.json(_.extend(_res_data,{people:director.marker.marks.length}));
+            }else{
+                return res.json(_res_data);
+            };
+        });
+
     case DirectorAction.prev:
+        console.log('****************************');
+        console.log('DirectorAction.prev');
       return director.previous(function(err){
         if (err) return res.json({error: true});
-        res.json({candidate: director.curCandidate, project: director.project, status: director.status});
+          director.result(function(data){
+              res.json({
+                  candidate: director.curCandidate,
+                  project: director.project,
+                  status: director.status,
+                  marks:filter_id(data.marks,'candidate',director.curCandidate._id)}
+              );
+          })
       });
     case DirectorAction.next:
+        console.log('****************************');
+        console.log('DirectorAction.next');
       return director.next(function(err){
         if (err) return res.json({error: true});
-        res.json({candidate: director.curCandidate, project: director.project, status: director.status});
+          director.result(function(data){
+              res.json({
+                  candidate: director.curCandidate,
+                  project: director.project,
+                  status: director.status,
+                  marks:filter_id(data.marks,'candidate',director.curCandidate._id)
+              });
+          })
       });
     case DirectorAction.startVote:
       return director.startVote(function(err) {
@@ -203,7 +235,7 @@ VoteOperation.exec = function(req, res){
       var voted = req.body['voted'];
 
       if (director.status != DirectorAction.startVote) VoteOperation.endVotedRequest(director);  //fix start_Vote
-      if (!director.marker || voted == director.marker.marks.length) {
+      if (!director.marker || voted <= director.marker.marks.length) {
         return director.operator = res;
       }else{
         return VoteOperation.syncVoted(director);

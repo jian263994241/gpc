@@ -766,8 +766,9 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie)
         case 'init':
         case 'prev':
         case 'next':
-          if (data.status == 'end') $scope.isEnd = true;
-          else if(data.status == 'process'){
+          if (data.status == 'end') {
+              $scope.isEnd = true;
+          }else if(data.status == 'process'){
               $scope.voted = data.people || 0;
               $scope.isStart = true;
               $scope.time = $cookie.get('vote_start_time');
@@ -777,10 +778,11 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie)
               $scope.lock = true;
               $scope.query();
           }else{
-              $scope.isEnd = false;
+              $scope.isEnd = true;
               $scope.lock = false;
               $scope.voted = 0;
           }
+          $scope.marksLength = data.marks.marks.length;
           $scope.setCandidate(data);
           return;
         case 'start_vote':
@@ -797,6 +799,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie)
           $scope.isStart = false;
           $scope.isEnd = true;
           $scope.lock = false;
+          $scope.marksLength = $scope.voted;
           if ($scope.handle)
             clearTimeout($scope.handle);
           return;
@@ -830,7 +833,13 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie)
   }
 
   $scope.start = function(){
-    $scope.request('start_vote');
+    if($scope.marksLength==0){
+        $scope.request('start_vote');
+    }else{
+        if(confirm('Re-polling data will be cleared')){
+            $scope.request('start_vote');
+        }
+    }
   }
 
   $scope.end = function(){
