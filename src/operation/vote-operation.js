@@ -49,6 +49,9 @@ var filter_id  = function(origin,origin_id,b_id){
  * @api public
  */
 VoteOperation.render = function(req, res){
+    console.log(req.session);
+    console.log(getDirector(req.session.project));
+
   switch(req.route.path){
     case '/director':
     case '/director/result/:project':
@@ -63,6 +66,8 @@ VoteOperation.render = function(req, res){
         else if(req.session.user) return res.render('main');
         else if(req.session.project) return res.render('/director');
       else return res.redirect('/');
+    case '/director/login':
+      if(req.session.project) return res.redirect('/director');
     default:
       return res.render('main');
   }
@@ -99,36 +104,46 @@ VoteOperation.accessedProject = function(req, res){
  *
  * @api public
  */
+
 VoteOperation.login = function(req, res) {
   var id = req.body['id'];
   var key = req.body['key'];
 
-  projectMgr.register({id:id, key: key}, function(err, director){
-    if(!err && director){
-      var regenerateCallback = function(){
-        req.session.project = director.project;
-        res.json({success:true, redirect:'/director'});
-      }
+  register();
 
-      var callback = function(err){
-        if (err) {
-          console.error(err.stack);
-          return res.json({error:'Authentication failed, please check project id and key'});
-        } else {
-          req.session.regenerate(regenerateCallback);
-        }
-      }
-      director.init(callback);
-    }
-    else if (err && err instanceof ProjectExistError){
-      console.error(err.stack);
-      return res.json({error: 'Authentication failed. Project is running!'});
-    }else{
-      console.error(err.stack);
-      return res.json({error:'Authentication failed, please check project id and key'});
-    }
-      
-  });
+  function register(){
+      projectMgr.register({id:id, key: key}, function(err, director){
+          if(!err && director){
+              var regenerateCallback = function(){
+                  req.session.project = director.project;
+                  req.session.timelog = director.timelog;
+                  res.json({success:true, redirect:'/director'});
+              }
+
+              var callback = function(err){
+                  if (err) {
+                      console.error(err);
+                      return res.json({error:'Authentication failed, please check project id and key'});
+                  } else {
+                      req.session.regenerate(regenerateCallback);
+                  }
+              }
+              director.init(callback);
+          }
+          else if (err && err instanceof ProjectExistError){
+              console.error(err);
+
+              projectMgr.unregister(getDirector({id:id, key: key}), register);
+
+//              return res.json({error: 'Authentication failed. Project is running!'});
+          }else{
+              console.error(err);
+              return res.json({error:'Authentication failed, please check project id and key'});
+          }
+
+      });
+  }
+
 }
 
 /**
@@ -143,9 +158,8 @@ VoteOperation.exec = function(req, res){
   var action = req.body['action'];
 
   var director = getDirector(req.session.project);
-  if (!director) return res.json({success: true, redirect: '/director/login'});
-    console.log('..............1.................');
-    console.log(director.status);
+
+  if (!director || director.timelog != req.session.timelog) return res.json({success: true, redirect: '/director/login'});
   switch(action){
     case DirectorAction.init:
         return director.result(function(data){

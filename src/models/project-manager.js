@@ -46,6 +46,7 @@ ProjectMgr.register = function(project, fn){
     }else{
       var director = new Director(p);
       ProjectMgr.accessQueue.push(director);
+        director.timelog = Date.now();
       return fn(null, director);
     }
   });
