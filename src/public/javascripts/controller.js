@@ -735,8 +735,6 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie)
     $scope.$http.post('/director/exec', {action: 'query', voted: $scope.voted}, {timeout: 9999999999}).
     success(function(data, status, headers, config){
       console.log('.....query......');
-      console.log(data);
-        console.log($scope.voted);
       $scope.open = true;
       if (data.redirect) {
         return $scope.$location.path(data.redirect);
@@ -759,9 +757,9 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie)
     $scope.$http.post('/director/exec', {action: action}).
     success(function(data, status, headers, config){
       console.log('****request****');
-      console.log(data);
-
-      if (data.error) return;
+        if (data.redirect) {
+            return $scope.$location.path(data.redirect);
+        }else if (data.error) return;
       switch(action){
         case 'init':
         case 'prev':

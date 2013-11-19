@@ -159,7 +159,11 @@ VoteOperation.exec = function(req, res){
 
   var director = getDirector(req.session.project);
 
-  if (!director || director.timelog != req.session.timelog) return res.json({success: true, redirect: '/director/login'});
+  if(director&&director.timelog != req.session.timelog){
+      req.session = null
+      res.json({error:'Login out',redirect: '/director/login'});
+  }
+  if (!director) return res.json({success: true, redirect: '/director/login'});
   switch(action){
     case DirectorAction.init:
         return director.result(function(data){
