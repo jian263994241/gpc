@@ -757,6 +757,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie)
     $scope.$http.post('/director/exec', {action: action}).
     success(function(data, status, headers, config){
       console.log('****request****');
+            console.log(data);
         if (data.redirect) {
             return $scope.$location.path(data.redirect);
         }else if (data.error) return;
@@ -780,7 +781,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie)
               $scope.lock = false;
               $scope.voted = 0;
           }
-          $scope.marksLength = data.marks.marks.length;
+          $scope.marksLength = data.marks?data.marks.marks.length:0;
           $scope.setCandidate(data);
           return;
         case 'start_vote':

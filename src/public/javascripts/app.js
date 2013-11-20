@@ -1,4 +1,4 @@
-angular.module('lb-gpc.service',[]).factory('$cookie',['$window',function(win){
+angular.module('cookie',[]).factory('$cookie',['$window',function(win){
     return {
         get : function(name){
             var cookieStr = "; "+ document.cookie+"; ";
@@ -26,8 +26,8 @@ angular.module('lb-gpc.service',[]).factory('$cookie',['$window',function(win){
     }
 }]);
 
-angular.module('lb-gpc', ['lb-gpc.service']).
-  config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
+angular.module('lb-gpc',['ngRoute','cookie'])
+    .config(function($routeProvider, $locationProvider){
     $routeProvider.
       when('/', {templateUrl: '/template/login.html', controller: UserLoginCtrl}).
       when('/login',  {redirectTo: '/'}).
@@ -46,6 +46,5 @@ angular.module('lb-gpc', ['lb-gpc.service']).
       when('/forgot/:id', {templateUrl: '/template/reset.html', controller: UserResetPasswordCtrl}).
       otherwise({redirectTo: '/'});
     $locationProvider.html5Mode(true);
-  }]);
-
+  });
 

@@ -1,6 +1,1 @@
-.register-panel{margin:50px auto 10px auto}.register-panel .btn-right{float:right}
-.register-panel .register-main{margin:10px auto;min-height:470px}
-.register-panel .register-error{width:200px}
-.register-panel .register-btn{margin:20px auto}
-.register-panel .register-footer{width:250px;margin:40px auto 0 auto}
-@media (max-height:767px){.register-form{width:250px;margin:auto}}@media (min-width:768px){}
+.register-panel{margin:50px auto 10px auto}.register-panel .btn-right{float:right}.register-panel .register-main{margin:10px auto;min-height:470px}.register-panel .register-error{width:200px}.register-panel .register-btn{margin:20px auto}.register-panel .register-footer{width:250px;margin:40px auto 0 auto}@media (max-height:767px){.register-form{width:250px;margin:auto}}
