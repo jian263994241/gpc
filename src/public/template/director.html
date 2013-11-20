@@ -1,6 +1,6 @@
 <article class="container" ng-init="init()">
   <section class="row">
-    <nav class="span3">
+    <nav class="col-md-3">
       <div class="logo logo-brand">
         <h2 class="logo-title">GPC</h2>
         <p class="logo-desc">Vote your favorates</p>
@@ -14,8 +14,8 @@
         <li><a href="#" ng-click="showResult()">Show Result</a></li>
       </ul>
       <div>
-        <a href="#" class="btn" ng-click="start()" ng-show="!isStart">Start Voting</a>
-        <a href="#" class="btn" ng-click="end()" ng-show="isStart">End Voting</a>
+        <a href="#" class="btn btn-primary" ng-click="start()" ng-show="!isStart">Start Voting</a>
+        <a href="#" class="btn btn-warning" ng-click="end()" ng-show="isStart">End Voting</a>
         <span class="label label-info" ng-show="isEnd">{{marksLength}} people Voted</span>
         <!-- <a href="#" class="btn" ng-click="save()" ng-show="!isStart && isEnd">Save</a> -->
       </div>
@@ -36,13 +36,13 @@
         </h6>
       </div>
     </nav>
-    <div class="span9">
-      <div class="row-fluid page-header">
-        <h2 class="span11">
+    <div class="col-md-9">
+      <div class="row page-header">
+        <h2 class="col-md-11">
           <em class="vote-name">{{project.name}}</em>
         </h2>
-        <div class="span1" style="padding-top: 20px;">
-          <a href="#" ng-click="logout()" class="btn btn-small pull-right">Logout</a>
+        <div class="col-md-1" style="padding-top: 20px;">
+          <a href="#" ng-click="logout()" class="btn btn-default btn-sm pull-right">Logout</a>
         </div>
       </div>
       <h3>
@@ -55,7 +55,7 @@
       <div>
         <p><strong>Product</strong></p>
         <img src="" alt="" ng-show="isImage" ng-src="{{candidate.source}}">
-        <video src="" alt="" ng-show="isVideo" ng-src="{{candidate.source}}" controls="controls" class="span8">
+        <video src="" alt="" ng-show="isVideo" ng-src="{{candidate.source}}" controls="controls" class="col-md-8">
       </div>
       <p><strong>Introduction</strong></p>
 <pre>{{candidate.intro}}</pre>

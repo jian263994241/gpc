@@ -4,25 +4,25 @@
   </header>
 
   <section class="row login-main">
-    <div class="span3"></div>
+    <div class="col-md-3"></div>
 
-    <nav class="span3 logo">
+    <nav class="col-md-3 logo">
       <h2 class="logo-title">GPC</h2>
       <p class="logo-desc">Vote your favorates</p>
     </nav>
-    <div class="span4">
+    <div class="col-md-4">
       <form class="login-form">
         <fieldset>
           <legend>{{config.title}}</legend>
           <label>{{config.account}}</label>
           <div class="input-prepend">
             <span class="add-on"><i class="icon-user"></i></span>
-            <input type="text" ng-model="user.username" ng-mousedown="clean()">
+            <input type="text" class="form-control" ng-model="user.username" ng-mousedown="clean()">
           </div>
           <label>{{config.key}}</label>
           <div class="input-prepend">
             <span class="add-on"><i class="icon-lock"></i></span>
-            <input type="password" ng-model="user.password" ng-mousedown="clean()">
+            <input type="password" class="form-control" ng-model="user.password" ng-mousedown="clean()">
           </div>
           <div class="control-group">
             <div class="controls">
@@ -39,7 +39,7 @@
       </form>
     </div>
 
-    <div class="span2"></div>
+    <div class="col-md-2"></div>
   </section>
   <footer class="login-footer">
     <span>@2013 Leo Burnett</span>
