@@ -3,28 +3,29 @@
     <a href="/login" class="btn btn-success btn-right">Login</a>
   </header>
   <section class="row register-main">
-    <div class="span3"></div>
+    <div class="col-md-3"></div>
 
-    <nav class="span3 logo">
+    <nav class="col-md-3 logo">
       <h2 class="logo-title">GPC</h2>
       <p class="logo-desc">Vote your favorates</p>
     </nav>
 
-    <div class="span4 register-main">
+    <div class="col-md-4 register-main">
       <form class="register-form">
         <fieldset>
           <legend>Find Password</legend>
           <label>Email</label>
           <div class="input-prepend">
             <span class="add-on"><i class="icon-envelope"></i></span>
-            <input type="text" ng-model="user.email" ng-mousedown="clean()">
+            <input type="text" class="form-control" ng-model="user.email" ng-mousedown="clean()">
           </div>
           <div class="input-prepend">
-            <div id="recaptcha_div"></div>
+            <style type="text/css">.recaptchatable #recaptcha_response_field{ line-height: 2;}</style>
+            <div id="recaptcha_div" style="padding-top: 20px;"></div>
           </div>
           <button type="submit" class="btn btn-primary register-btn" ng-click="submit(user)">Submit</button>
 
-          <label class="alert register-error" ng-class="alertStyle" ng-show="isError">{{error}}</label>
+          <label class="alert alert-danger register-error" ng-class="alertStyle" ng-show="isError">{{error}}</label>
         </fieldset>
       </form>
     </div>

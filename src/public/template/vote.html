@@ -1,28 +1,37 @@
 <article class="container" ng-init="request()">
   <section class="row">
-    <nav class="span3">
+    <nav class="col-md-3">
       <div class="logo logo-brand">
         <h2 class="logo-title">GPC</h2>
         <p class="logo-desc">Vote your favorates</p>
       </div>
     </nav>
-    <div class="span9">
+    <div class="col-md-9">
       <div class="page-header">
         <span class="vote-name">{{candidate.title}}</span>
         <!--<a href="/home" class="btn btn-small pull-right">Home</a>-->
-        <a href="#" ng-click="logout()" class="btn btn-small pull-right">Logout</a>
+        <a href="#" ng-click="logout()" class="btn btn-default btn-sm pull-right">Logout</a>
       </div>
       <p>
         <strong>Author - </strong><span>{{candidate.author}}</span>
       </p>
-      <form action="" >
+      <form action="" class="form-horizontal" role="form">
         <label class="alert alert-error login-error" ng-show="isError">{{error}}</label>
-        <label for="inputScore">Score:</label>
+        <div class="form-group">
+          <label class="control-label col-md-2">Score:</label>
+          <div class="col-md-10">
+            <select class="form-control" ng-model="mark.score" ng-options="score.express for score in choices"></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-2">Comment:</label>
+          <div class="col-md-10">
+            <textarea name="inputComment" id="" cols="30" rows="5" class="vote-comment form-control" ng-disabled="isForbidden" ng-model="mark.comment" ng-mousedown="clean()"></textarea>
+          </div>
+        </div>
         <!-- <input type="number" name="inputScore" val="0" max="10" min="0" ng-disabled="isForbidden" ng-model="mark.score" ng-mousedown="clean()"> -->
-        <select ng-model="mark.score" ng-options="score.express for score in choices"></select>
-        <label for="inputComment">Comment:</label>
-        <label for=""><textarea name="inputComment" id="" cols="30" rows="5" class="vote-comment" ng-disabled="isForbidden" ng-model="mark.comment" ng-mousedown="clean()"></textarea></label>
-        <button type="submit" class="btn btn-primary" ng-disabled="!isStart" ng-click="submit()">Submit</button>
+
+        <button type="submit" class="btn btn-primary btn-block" ng-disabled="!isStart" ng-click="submit()">Submit</button>
       </form>
     </div>
   </section>

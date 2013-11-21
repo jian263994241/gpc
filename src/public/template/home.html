@@ -1,21 +1,21 @@
 <article class="container login-panel" ng-init="init()">
   <section class="row login-main">
-    <div class="span3"></div>
-    <nav class="span3 logo">
+    <div class="col-md-3"></div>
+    <nav class="col-md-3 logo">
       <h2 class="logo-title">GPC</h2>
       <p class="logo-desc">Vote your favorates</p>
     </nav>
-    <div class="span4">
+    <div class="col-md-4">
       <div class="page-header">
         <span>Select project</span>
-        <a href="#" ng-click="logout()" class="btn btn-small pull-right">Logout</a>
-        <a href="#" ng-click="refresh()" class="btn btn-small pull-right">Refresh</a>
+        <a href="#" ng-click="logout()" class="btn btn-default btn-sm pull-right">Logout</a>
+        <a href="#" ng-click="refresh()" class="btn btn-default btn-sm pull-right">Refresh</a>
       </div>
-      <ul>
+      <ol>
         <li ng-repeat="project in projects">
           <a href="/director/vote/{{project.id}}" class="btn">{{project.name}}</a>
         </li>
-      </ul>
+      </ol>
     </div>
   </section>
   <footer class="login-footer">

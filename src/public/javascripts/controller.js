@@ -537,6 +537,7 @@ var ManageUserCtrl = function($scope, $route, $location, $http){
   }
 
   $scope.delete = function(user){
+    if(!confirm('Confirm to delete?')) return;
     $scope.$http.delete('/management/user/'+user._id).
       success(function(data, status, headers, config){
         if (data.success) {

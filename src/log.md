@@ -1,5 +1,14 @@
 #修改记录
 ------------------
+##management
+###修复
+1.ie10 project下 增删 candidate 无效
+2.ie10 candidate  new candidate 无效
+
+###增加
+1.user管理,增加删除确认警告(2013.11.21)
+2.优化整体页面结构(2013.11.21)
+
 ##director
 
 ###修复

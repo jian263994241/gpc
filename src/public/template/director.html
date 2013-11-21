@@ -1,28 +1,28 @@
 <article class="container" ng-init="init()">
   <section class="row">
-    <nav class="col-md-3">
+    <nav class="col-md-3 col-lg-3">
       <div class="logo logo-brand">
         <h2 class="logo-title">GPC</h2>
         <p class="logo-desc">Vote your favorates</p>
       </div>
       
-      <img ng-src="{{qrcode}}" alt="">
+      <img ng-src="{{qrcode}}" alt="" class="col-xs-12">
 
-      <ul class="nav nav-tabs nav-stacked">
-        <li><a href="#" ng-click="prev()">Previous</a></li>
-        <li><a href="#" ng-click="next()">Next</a></li>
-        <li><a href="#" ng-click="showResult()">Show Result</a></li>
-      </ul>
-      <div>
+      <div class="list-group">
+        <a href="#" class="list-group-item" ng-click="prev()">Previous</a>
+        <a href="#" class="list-group-item" ng-click="next()">Next</a>
+        <a href="#" class="list-group-item" ng-click="showResult()">Show Result</a>
+      </div>
+      <div class="btn-toolbar">
         <a href="#" class="btn btn-primary" ng-click="start()" ng-show="!isStart">Start Voting</a>
         <a href="#" class="btn btn-warning" ng-click="end()" ng-show="isStart">End Voting</a>
-        <span class="label label-info" ng-show="isEnd">{{marksLength}} people Voted</span>
+        <p ng-show="isEnd" class="btn btn-link disabled"> Voted <span class="badge">{{marksLength}}</span></p>
         <!-- <a href="#" class="btn" ng-click="save()" ng-show="!isStart && isEnd">Save</a> -->
       </div>
       
-      <div ng-show="isStart">
+      <div ng-show="isStart" class="col-md-12">
         <h4>Voted People</h4>
-        <h6 class="timer">{{voted}} people</h6>
+        <h6 class="timer"> <span class="badge">{{voted}}</span>people</h6>
         <h4>Timer</h4>
         <h6 class="timer">{{time}}s</h6>
         <h4>People Voting Status</h4>
@@ -36,7 +36,7 @@
         </h6>
       </div>
     </nav>
-    <div class="col-md-9">
+    <div class="col-md-9 col-lg-9">
       <div class="row page-header">
         <h2 class="col-md-11">
           <em class="vote-name">{{project.name}}</em>
@@ -54,8 +54,8 @@
       </p>
       <div>
         <p><strong>Product</strong></p>
-        <img src="" alt="" ng-show="isImage" ng-src="{{candidate.source}}">
-        <video src="" alt="" ng-show="isVideo" ng-src="{{candidate.source}}" controls="controls" class="col-md-8">
+        <img src="" alt="" ng-show="isImage" ng-src="{{candidate.source}}" width="100%">
+        <video src="" alt="" ng-show="isVideo" ng-src="{{candidate.source}}" controls="controls">
       </div>
       <p><strong>Introduction</strong></p>
 <pre>{{candidate.intro}}</pre>
