@@ -301,8 +301,9 @@ var ManageProjectCtrl = function($scope, $route, $location, $http){
   $scope.projects = new Array();
 
   $scope.init = function(){
-    $scope.$http.get('/management/project/all').
+    $scope.$http.get('/management/project/all?'+Date.now()).
       success(function(data, status, headers, config){
+            console.log(data.records.length);
         if (!data.error) $scope.projects = data.records;
       }).
       error(function(data, status, headers, config){
@@ -392,7 +393,7 @@ var ManageCandidateCtrl = function($scope, $route, $location, $http){
   $scope.candidates = new Array();
 
   $scope.init = function(){
-    $scope.$http.get('/management/candidate/all').
+    $scope.$http.get('/management/candidate/all?'+Date.now()).
       success(function(data, status, headers, config){
         if (!data.error) $scope.candidates = data.records;
       }).
@@ -527,7 +528,7 @@ var ManageUserCtrl = function($scope, $route, $location, $http){
   $scope.users = new Array();
 
   $scope.init = function(){
-    $scope.$http.get('/management/user/all').
+    $scope.$http.get('/management/user/all?'+Date.now()).
       success(function(data, status, headers, config){
         if (!data.error) $scope.users = data.records;
       }).
