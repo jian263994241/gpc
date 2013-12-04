@@ -253,10 +253,14 @@ Director.prototype.result = function(fn) {
 
     var callback = function(err, r){
 
+    var r = _.indexBy(r,'candidate');
+
       _.each(records, function(el, index, list){
+
         var check = _.find(r, function(ef){
           return el._id.toString(16) == ef.candidate.toString(16);
         });
+          console.log('check',check);
         if (check && !check.length) {
           el.marks = check.marks;
           el.average = check.average;
