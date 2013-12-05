@@ -152,7 +152,9 @@ app.map({
     }
   }
 });
-
+process.on('uncaughtException', function(err) {
+    console.log("Uncaught exception!", err);
+});
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
