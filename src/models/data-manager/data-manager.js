@@ -176,7 +176,7 @@ DataManager.prototype.update = function(custom_event, old_data, new_data, fn) {
 };
 
 DataManager.prototype.remove = function(custom_event, params, fn) {
-  var that = this
+  var that = this;
   var cListener = function(err){
     console.error(err.stack);
     fn(err);
@@ -189,11 +189,16 @@ DataManager.prototype.remove = function(custom_event, params, fn) {
   }
 
   if (!this.key) return trigger(new Error());
+
+  console.log('remove');
+    console.log(this.key);
+    console.log(params);
+
   this.connectDbServer(this.key, trigger, function(collection){
+
     collection.remove(params, false, function(err){
       if (err) trigger(err);
-
-      fn(err);
+      fn&&fn(err);
       emitter.removeListener(custom_event, cListener);
       that.closeDbServer();
       return;

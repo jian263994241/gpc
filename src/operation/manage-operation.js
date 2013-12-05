@@ -243,9 +243,17 @@ ManageOperation.remove = function(req, res){
   var _id = req.params.id;
 
   obj = {_id: new ObjectID(_id)};
+
   mgr[module].remove(obj, function(err){
     if (err)  res.json({error: 'Remove '+module+' failed'});
-    else  res.json({success: true});
+    else {
+        if(module=='project'){
+            markDataMgr.remove({project:obj._id});
+        }else if(module=='candidate'){
+            markDataMgr.remove({candidate:obj._id});
+        }
+        res.json({success: true});
+    }
   });
 }
 

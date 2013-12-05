@@ -127,7 +127,7 @@ Director.prototype.getData = function(project, fn) {
 
       var queryCallback = function(err, records){
         that.source = records;
-        fn(err);
+        fn&&fn(err);
       }
       candidateDataMgr.query({$or: sen}, queryCallback);
     };
@@ -146,8 +146,10 @@ Director.prototype.init = function(fn) {
   this.statusEvent(Status.prepare, function(err){
     if (err) return fn(err);
     var callback = function(err){
-      that.setCandidate(0);
-      that.statusEvent(Status.show);
+      if(!err){
+          that.setCandidate(0);
+          that.statusEvent(Status.show);
+      }
       fn(err);
     }
     that.getData(that.project, callback);

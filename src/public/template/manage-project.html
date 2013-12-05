@@ -34,7 +34,7 @@
             <td>
               <a href="" class="btn btn-danger btn-xs" ng-click="delete(project)"><i class="glyphicon glyphicon-remove"></i>&nbsp;Delete</a>
               <a href="/management/project/candidates/{{project._id}}" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-folder-open"></i>&nbsp; Open</a>
-              <a href="" class="btn btn-xs btn-success" ng-click="release(project)"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Release</a>
+              <!--<a href="" class="btn btn-xs btn-success" ng-click="release(project)"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;Release</a>-->
             </td>
           </tr>
         </tbody>
@@ -49,21 +49,21 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="project-modal-label">New Project</h3>
       </div>
-      <div class="modal-body">
-        <form role="form">
-          <label for="">Project id</label>
-          <input type="text" class="form-control" ng-model="project.id" ng-mousedown="clean()" required>
-          <label for="">Project name</label>
-          <input type="text" class="form-control" ng-model="project.name" ng-mousedown="clean()" required>
-          <label for="">Access Key</label>
-          <input type="password" class="form-control" ng-model="project.key" ng-mousedown="clean()" required>
-          <label class="alert alert-danger" ng-show="isError">{{error}}</label>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" type="submit" ng-click="save()">Save</button>
-        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
-      </div>
+      <form role="form">
+        <div class="modal-body">
+            <label for="">Project id</label>
+            <input type="text" class="form-control" ng-model="project.id" ng-mousedown="clean()" required>
+            <label for="">Project name</label>
+            <input type="text" class="form-control" ng-model="project.name" ng-mousedown="clean()" required>
+            <label for="">Access Key</label>
+            <input type="password" class="form-control" ng-model="project.key" ng-mousedown="clean()" required>
+            <label class="alert alert-danger" ng-show="isError">{{error}}</label>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" type="submit" ng-click="save()">Save</button>
+          <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

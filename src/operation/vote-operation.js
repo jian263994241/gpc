@@ -113,16 +113,17 @@ VoteOperation.login = function(req, res) {
 
   function register(){
       projectMgr.register({id:id, key: key}, function(err, director){
+
+
           if(!err && director){
+
               var regenerateCallback = function(){
                   req.session.project = director.project;
                   req.session.timelog = director.timelog;
                   res.json({success:true, redirect:'/director'});
               }
-
               var callback = function(err){
                   if (err) {
-                      console.error(err);
                       return res.json({error:'Authentication failed, please check project id and key'});
                   } else {
                       req.session.regenerate(regenerateCallback);
@@ -131,7 +132,7 @@ VoteOperation.login = function(req, res) {
               director.init(callback);
           }
           else if (err && err instanceof ProjectExistError){
-              console.error(err);
+
 
               projectMgr.unregister(getDirector({id:id, key: key}), register);
 
@@ -253,7 +254,8 @@ VoteOperation.exec = function(req, res){
       var voted = req.body['voted'];
 
       if (director.status != DirectorAction.startVote) VoteOperation.endVotedRequest(director);  //fix start_Vote
-      if (!director.marker || voted <= director.marker.marks.length) {
+
+      if (!director.marker || voted == director.marker.marks.length) {
         return director.operator = res;
       }else{
         return VoteOperation.syncVoted(director);

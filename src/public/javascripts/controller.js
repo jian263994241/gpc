@@ -737,6 +737,7 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie)
     $scope.$http.post('/director/exec', {action: 'query', voted: $scope.voted}, {timeout: 9999999999}).
     success(function(data, status, headers, config){
       console.log('.....query......');
+            console.log(data);
       $scope.open = true;
       if (data.redirect) {
         return $scope.$location.path(data.redirect);
