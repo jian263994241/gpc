@@ -247,22 +247,20 @@ Director.prototype.result = function(fn) {
   var that = this;
   var queryCallback = function(err, records){
     if (err) return fn({error: 'error'});
-    
+
     sen = new Array();
     _.each(records, function(el, index, list){
-      sen.push({candidate: el._id});
+        sen.push({candidate: el._id,project:that.project._id});
     });
 
     var callback = function(err, r){
-
-    var r = _.indexBy(r,'candidate');
 
       _.each(records, function(el, index, list){
 
         var check = _.find(r, function(ef){
           return el._id.toString(16) == ef.candidate.toString(16);
         });
-          console.log('check',check);
+
         if (check && !check.length) {
           el.marks = check.marks;
           el.average = check.average;
@@ -272,7 +270,7 @@ Director.prototype.result = function(fn) {
       if (!err && r) return fn({candidates: records, marks: r});
       else return fn({error: 'error'});
     }
-
+//    console.log(sen);
     markDataMgr.query({$or: sen}, callback);
   }
 
