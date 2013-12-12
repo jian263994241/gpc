@@ -117,9 +117,8 @@ UserOperation.login = function(req, res){
  * @api public
  */
 UserOperation.logout = function(req, res){
-  req.session.destroy(function(){
+    req.session.destroy();
     res.json({success: true, redirect:'/'});
-  });
 }
 
 UserOperation.requestVerifiedCode = function(req, res){

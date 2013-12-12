@@ -18,7 +18,8 @@ var DirectorAction = {
   endVote: 'end_vote',
   save: 'save',
   result: 'result',
-  query: 'query'
+  query: 'query',
+  process:'process'
 }
 
 var VoteOperation = exports = module.exports = {};
@@ -49,9 +50,6 @@ var filter_id  = function(origin,origin_id,b_id){
  * @api public
  */
 VoteOperation.render = function(req, res){
-    console.log(req.session);
-    console.log(getDirector(req.session.project));
-
   switch(req.route.path){
     case '/director':
     case '/director/result/:project':
@@ -161,7 +159,7 @@ VoteOperation.exec = function(req, res){
   var director = getDirector(req.session.project);
 
   if(director&&director.timelog != req.session.timelog){
-      req.session = null
+      req.session.destroy();
       res.json({error:'Login out',redirect: '/director/login'});
   }
   if (!director) return res.json({success: true, redirect: '/director/login'});
@@ -245,7 +243,7 @@ VoteOperation.exec = function(req, res){
       return director.result(function(data){
         console.log('****************************');
         console.log('DirectorAction.result');
-        console.log(data);
+//        console.log(data);
         res.json(data);
       });
       case DirectorAction.query:
@@ -253,12 +251,19 @@ VoteOperation.exec = function(req, res){
       console.log('DirectorAction.query');
       var voted = req.body['voted'];
 
-      if (director.status != DirectorAction.startVote) VoteOperation.endVotedRequest(director);  //fix start_Vote
+      if (director.status != DirectorAction.startVote && director.status !=DirectorAction.process) VoteOperation.endVotedRequest(director);  //fix start_Vote
+//      console.log(director.status);
 
-      if (!director.marker || voted == director.marker.marks.length) {
+      if (!director.marker) {
         return director.operator = res;
       }else{
-        return VoteOperation.syncVoted(director);
+//        console.log('vote,marks');
+//        console.log(voted,director.marker.marks.length);
+        if(voted == director.marker.marks.length){
+            return director.operator = res;
+        }else{
+            return VoteOperation.syncVoted(director);
+        }
       };
     default:
       return res.json({error: 'Authentication Failed'});
@@ -320,13 +325,13 @@ VoteOperation.query = function(req, res){
   var candidate = req.body['candidate'];
   var projectId = req.body['projectId'];
   var director = projectMgr.getDirector({id: projectId});
-
-  if (!director) return res.json({error: true, redirect: '/home'});
+  if (!director)  {
+      req.session.destroy();
+      return res.json({error: true, redirect: '/login'});
+  };
 
   console.log('candidate: '+JSON.stringify(candidate));
   console.log('status: '+status);
-    console.log('..............2.................');
-    console.log(director.status);
 
   if (!candidate || !status  ) return res.json({status: director.status, candidate: director.curCandidate});
 
@@ -381,10 +386,11 @@ VoteOperation.collect = function(req, res){
 }
 
 VoteOperation.syncVoted = function(director){
+    console.log('********syncVoted*****');
   if (director.operator) {
     var people = director.marker ? director.marker.marks.length: 0;
     var users = [];
-
+    console.log(people);
     _.each(director.queue, function(res){
       var user = res.req.session.user;
       users.push({

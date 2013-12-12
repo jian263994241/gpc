@@ -983,7 +983,6 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
     var projectId = $scope.$routeParams.projectId;
     $scope.$http.post('/director/vote', {candidate: $scope.candidate, mark: {score: $scope.mark.score.score, comment: $scope.mark.comment}, projectId: projectId}).
     success(function(data, status, headers, config){
-            console.log({candidate: $scope.candidate, mark: {score: $scope.mark.score.score, comment: $scope.mark.comment}});
       if (data.success) {
         $scope.isStart = false;
         $scope.isForbidden = true;

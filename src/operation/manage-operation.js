@@ -292,8 +292,7 @@ ManageOperation.exportDataToFile = function(req, res){
   }
 
   var queryMarksCallback = function(err, records){
-    console.log(data.candidates);
-    console.log(records);
+
     _.each(records, function(el){
       var found = _.find(data.candidates, function(element){
         return element._id.toString() == el.candidate.toString();
@@ -355,7 +354,7 @@ ManageOperation.queryProjectCandidates = function(req, res){
   var callback = function(err, records){
     if (!err && records && records.length) {
       var candidateArr = records[0].candidates;
-      console.log(candidateArr);
+
       var sen = new Array();
       _.each(candidateArr, function(el, index, list){
         sen.push({_id: new ObjectID(el)});
@@ -416,7 +415,6 @@ ManageOperation.removeCandidateFromProject = function(req, res){
 
   if (candidateId && project) {
     projectDataMgr.removeCandidate(project, candidateId, function(err){
-      console.log(err);
       if (err)  res.json({error: 'Remove candidate failed'});
       else  res.json({success: true});
     });
@@ -464,7 +462,7 @@ ManageOperation.upload = function(req, res){
   if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
 
   var uploadFile = req.files.files
-  console.log(uploadFile);
+
   if (req.files.length > 0) {
     uploadFile = req.files.files[0];
   };

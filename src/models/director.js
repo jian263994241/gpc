@@ -270,7 +270,6 @@ Director.prototype.result = function(fn) {
       if (!err && r) return fn({candidates: records, marks: r});
       else return fn({error: 'error'});
     }
-//    console.log(sen);
     markDataMgr.query({$or: sen}, callback);
   }
 

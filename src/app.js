@@ -42,6 +42,7 @@ app.use(express.cookieParser('leobrunett_gpc'));
 app.use(express.session());
 app.use(app.router);
 
+app.use(express.directory(path.join(__dirname, 'public')));
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public'),compress: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 

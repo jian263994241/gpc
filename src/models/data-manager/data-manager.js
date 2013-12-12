@@ -190,10 +190,6 @@ DataManager.prototype.remove = function(custom_event, params, fn) {
 
   if (!this.key) return trigger(new Error());
 
-  console.log('remove');
-    console.log(this.key);
-    console.log(params);
-
   this.connectDbServer(this.key, trigger, function(collection){
 
     collection.remove(params, false, function(err){
