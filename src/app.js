@@ -43,7 +43,7 @@ app.use(express.session());
 app.use(app.router);
 
 app.use(express.directory(path.join(__dirname, 'public')));
-app.use(require('less-middleware')({ src: path.join(__dirname, 'public'),compress: true }));
+app.use(require('less-middleware')({ src: path.join(__dirname, 'public','less'),compress: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
