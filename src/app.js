@@ -36,7 +36,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 //app.use(express.favicon());
 app.use(express.logger('dev'));
-app.use(express.bodyParser({uploadDir:'./public/uploads'}));
+app.use(express.bodyParser({uploadDir:path.join(__dirname, 'public/uploads')}));
 app.use(express.methodOverride());
 app.use(express.cookieParser('leobrunett_gpc'));
 app.use(express.session());
@@ -45,7 +45,6 @@ app.use(app.router);
 app.use(express.directory(path.join(__dirname, 'public')));
 app.use(require('less-middleware')({ src: path.join(__dirname, 'public','less'),compress: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 
 // development only
