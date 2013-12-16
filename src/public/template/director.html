@@ -25,15 +25,15 @@
         <h6 class="timer"> <span class="badge">{{voted}}</span>people</h6>
         <h4>Timer</h4>
         <h6 class="timer">{{time}}s</h6>
-        <h4>People Voting Status</h4>
+        <!--<h4>People Voting Status</h4>-->
         <style type="text/css">
           .vote-false{
             color: red;
           }
         </style>
-        <h6 ng-repeat="user in users">
-          <span class="vote-{{user.status}}">{{user.username}}</span>
-        </h6>
+        <!--<h6 ng-repeat="user in users">-->
+          <!--<span class="vote-{{user.status}}">{{user.username}}</span>-->
+        <!--</h6>-->
       </div>
     </nav>
     <div class="col-md-9 col-lg-9">
@@ -55,7 +55,7 @@
       <div>
         <p><strong>Product</strong></p>
         <img src="" alt="" ng-show="isImage" ng-src="{{candidate.source}}" width="100%">
-        <video src="" alt="" ng-show="isVideo" ng-src="{{candidate.source}}" controls="controls">
+        <video src="" ng-src="{{candidate.source}}" alt="" ng-show="isVideo"  controls="controls"></video>
       </div>
       <p><strong>Introduction</strong></p>
 <pre>{{candidate.intro}}</pre>

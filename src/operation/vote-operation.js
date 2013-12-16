@@ -252,19 +252,22 @@ VoteOperation.exec = function(req, res){
       var voted = req.body['voted'];
 
       if (director.status != DirectorAction.startVote && director.status !=DirectorAction.process) VoteOperation.endVotedRequest(director);  //fix start_Vote
-//      console.log(director.status);
+//          console.log('++++++++++++++++++++director.marker++++++++++');
+//          console.log(director.marker);
 
-      if (!director.marker) {
-        return director.operator = res;
-      }else{
-//        console.log('vote,marks');
-//        console.log(voted,director.marker.marks.length);
+      if (!director.marker) return director.operator = res;
+//          console.log('vote,marks');
+//          console.log(voted,director.marker.marks.length);
+
         if(voted == director.marker.marks.length){
             return director.operator = res;
+        }else if(voted <= director.marker.marks.length){
+            director.operator = res;
+            return VoteOperation.syncVoted(director);
         }else{
             return VoteOperation.syncVoted(director);
         }
-      };
+
     default:
       return res.json({error: 'Authentication Failed'});
   }

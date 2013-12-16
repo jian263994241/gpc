@@ -7,12 +7,13 @@
       </div>
     </nav>
     <div class="col-md-9">
-      <div class="page-header">
-        <span class="vote-name">{{candidate.title}}</span>
-        <!--<a href="/home" class="btn btn-small pull-right">Home</a>-->
-        <a href="#" ng-click="logout()" class="btn btn-default btn-sm pull-right">Logout</a>
-      </div>
+      <ul class="pager">
+        <li class="previous"><a href="/home">&larr; Home</a></li>
+        <li class="next"><a href="#">Logout</a></li>
+      </ul>
+      <h1 class="vote-name">{{candidate.title}}</h1>
       <p>
+
         <strong>Author - </strong><span>{{candidate.author}}</span>
       </p>
       <form action="" class="form-horizontal" role="form">
@@ -26,7 +27,7 @@
         <div class="form-group">
           <label class="control-label col-md-2">Comment:</label>
           <div class="col-md-10">
-            <textarea name="inputComment" id="" cols="30" rows="5" class="vote-comment form-control" ng-disabled="isForbidden" ng-model="mark.comment" ng-mousedown="clean()"></textarea>
+            <textarea name="inputComment" id="" cols="30" rows="5" class="vote-comment form-control"  ng-disabled="isForbidden||!isStart" ng-model="mark.comment" ng-mousedown="clean()"></textarea>
           </div>
         </div>
         <!-- <input type="number" name="inputScore" val="0" max="10" min="0" ng-disabled="isForbidden" ng-model="mark.score" ng-mousedown="clean()"> -->

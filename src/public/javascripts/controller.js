@@ -702,7 +702,7 @@ var DirectorLoginCtrl = function($scope, $location, $http){
 
 }
 
-var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie){
+var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie,$sce){
   $scope.$location = $location;
   $scope.$http = $http;
 
@@ -718,7 +718,8 @@ var DirectorCtrl = function($scope, $location, $http, $window, $timeout,$cookie)
   $scope.setCandidate = function(data){
     $scope.project = data.project;
     $scope.candidate = data.candidate;
-    
+    $scope.candidate.source =  $sce.trustAsResourceUrl($scope.candidate.source);
+
     if ($scope.candidate && $scope.candidate.type == 'image') $scope.isImage = true;
     else $scope.isImage = false;
 
@@ -952,6 +953,7 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
           $scope.candidate = res.candidate;
           $scope.isStart = false;
           $scope.isForbidden = false;
+          $scope.mark.comment = null;
           break;
         case 'process':
           if (res.candidate) {$scope.candidate = res.candidate;};
