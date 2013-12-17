@@ -5,11 +5,34 @@ var express = require('express')
   , http = require('http')
   , path = require('path');
 
+var log4js = require('log4js') ;
+
 var userOperator    = require('./operation/user-operation');
 var manageOperator  = require('./operation/manage-operation');
 var voteOperator    = require('./operation/vote-operation');
 
 var app = module.exports = express();
+
+log4js.configure({
+    appenders: [
+        { type: 'console' }, //控制台输出
+        {
+            type: 'file', //文件输出
+            filename: path.join(__dirname,'../logs/access.log'),
+            maxLogSize: 1024,
+            backups:4,
+            category: 'normal'
+        }
+    ],
+    replaceConsole: true
+});
+app.logger=function(name){
+    var logger = log4js.getLogger(name);
+    logger.setLevel('INFO');
+    return logger;
+}
+app.use(log4js.connectLogger(app.logger('normal'), {level:'auto', format:':method :url'}));
+
 
 /**
  * Define map function to process api

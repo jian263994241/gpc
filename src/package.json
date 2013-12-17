@@ -14,7 +14,8 @@
     "emailjs": "0.3.x",
     "node-xlsx": "0.2.x",
     "simple-recaptcha": "0.0.3",
-    "less-middleware": "*"
+    "less-middleware": "*",
+    "log4js":"*"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
