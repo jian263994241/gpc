@@ -11,6 +11,7 @@ var _                 = require('underscore');
 var userCenter        = require('../models/user-center');
 var UserExistError    = require('../models/error/user-exist-error');
 
+
 var UserOperation = exports = module.exports = {};
 
 UserOperation.resetQueue = [];
@@ -23,11 +24,11 @@ UserOperation.resetQueue = [];
  *
  * @api public
  */
+
 UserOperation.render = function(req, res){
   if (req.session)
     if (req.session.project) return res.redirect('/director');
     else if(req.session.admin) return res.redirect('/management');
-
   switch(req.route.path){
     case '/':
     case '/login':
@@ -87,25 +88,29 @@ UserOperation.register = function(req, res){
 UserOperation.login = function(req, res){
   var username = req.body['username'];
   var password = req.body['password'];
-
+  var clientIp = req.connection.remoteAddress;
   var callback = function(err, user){
     if (!err && user) {
       var regenerateCallback = function(){
         req.session.user = user;
-
-        // ajax post is able to process redirect
-        // res.redirect('/home ');
         res.json({success:true, redirect:'home'});
       }
       req.session.regenerate(regenerateCallback);
     }else{
-      if(err) console.error(err.stack);
+      if(err){
+          if(err.stack){console.error(err.stack)}
+          else{
+              console.log(err);
+              req.session.user = null;
+              return res.json({error:err});
+          }
+      };
       req.session.user = null;
       res.json({error:'Authentication failed, please check username and password'});
     }
   }
 
-  userCenter.login(username, password, callback);
+  userCenter.login(username, password,clientIp,callback);
 }
 
 /**

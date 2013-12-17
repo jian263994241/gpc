@@ -21,6 +21,7 @@ var DataManager = module.exports = function(){
   this.COLLECTION_CANDIDATE = 'candidates';
   this.COLLECTION_PROJECT   = 'projects';
   this.COLLECTION_MARK      = 'marks';
+  this.COLLECTION_IP       = 'userIp';
   this.key = null;
 
   var that = this;
@@ -30,7 +31,8 @@ var DataManager = module.exports = function(){
       that.ERROR_SIGN           = conf.error_mark;
       that.DB_NAME              = conf.db_name;
       that.DB_SERVER_HOST       = conf.db_server_host;
-      that.DB_SERVER_PORT       = conf.db_server_port; 
+      that.DB_SERVER_PORT       = conf.db_server_port;
+      that.IP_LOCK             = conf.ip_lock;
     }else{
       console.error(err.stack);
     }

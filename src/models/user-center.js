@@ -23,11 +23,11 @@ var UserDataMgr = require('./data-manager/user-data-manager');
 
 var InvalidPasswordError  = require('./error/invalid-password-error');
 var NoUserError           = require('./error/no-user-error');
-
+var UserIp           = require('./user-ip.js');
 // Declare namespace UserCenter
 var UserCenter = exports = module.exports = {};
 var userDataMgr = new UserDataMgr();
-
+var userIp = new UserIp();
 /**
  * Hashes a password with optional `salt`, otherwise
  * generate a salt for `pass` and invoke `fn(err, salt, hash)`.
@@ -81,15 +81,24 @@ UserCenter.authenticate = function(input, pass, salt, fn){
  * @param {Function} callback fn(err, user)
  * @api public
  */
-UserCenter.login = function(username, password, fn){
-  
+UserCenter.login = function(username, password,clientIp,fn){
   var callback = function(err, data){
     if (err) return fn(err);
     var user = data[0];
     if (user) {
       var authCallback = function(err, success){
         if (err) return fn(err);
-        else return fn(null, {username:username, password:user.password, salt:user.salt});
+        else {
+            //check mac
+            userIp.make(username,clientIp,function(err){
+                if(err){
+                    fn(err);
+                }else{
+                    fn(null, {username:username, password:user.password, salt:user.salt});
+                }
+
+            });
+        }
       }
       
       UserCenter.authenticate(password, user.password, user.salt, authCallback);
