@@ -59,9 +59,13 @@ DataManager.prototype.createDbServer = function() {
  *
  * @api public
  */
-DataManager.prototype.closeDbServer = function() {
-  var mongoServer = this._db;
-  if (mongoServer) mongoServer.close();
+DataManager.prototype.closeDbServer = function(mongoServer) {
+//    console.log('closeBD',mongoServer);
+//  if (mongoServer) mongoServer.close();
+    if(this._db){
+        this._db.close();
+        this._db = null ;
+    }
 };
 
 /**
