@@ -919,7 +919,7 @@ var DirectorResultCtrl = function($scope, $route, $location, $routeParams, $http
 
 }
 
-var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
+var VoteCtrl = function($scope, $http, $location, $route, $routeParams,$sce){
   $scope.$http = $http;
   $scope.$location = $location;
   $scope.$route = $route;
@@ -959,23 +959,26 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
         return $scope.$location.path(res.redirect);
       }else if (res.error) return;
 
+
       $scope.status = res.status;
-      console.log(res.status);
-       console.log(res.candidate);
+      console.log(res);
+      if(res.candidate){
+          $scope.candidate = res.candidate;
+          $scope.candidate.source =  $sce.trustAsResourceUrl(res.candidate.source);
+          $scope.isImage = res.candidate.type === "image" ;
+      }
       switch(res.status){
         case 'show':
-          $scope.candidate = res.candidate;
           $scope.isStart = false;
           $scope.isForbidden = false;
           $scope.mark.comment = null;
+
           break;
         case 'process':
-          if (res.candidate) {$scope.candidate = res.candidate;};
           $scope.isStart = true;
           $scope.isForbidden = false;
           break;
         case 'end':
-          if (res.candidate) {$scope.candidate = res.candidate;};
           $scope.isStart = false;
           $scope.isForbidden = true;
         default:
@@ -1002,6 +1005,7 @@ var VoteCtrl = function($scope, $http, $location, $route, $routeParams){
       if (data.success) {
         $scope.isStart = false;
         $scope.isForbidden = true;
+        alert('Submitted Successfully!');
       };
     }).
     error(function(data, status, headers, config){

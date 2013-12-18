@@ -54,10 +54,10 @@
       </p>
       <div>
         <p><strong>Product</strong></p>
-        <img src="" alt="" ng-show="isImage" ng-src="{{candidate.source}}" width="100%">
-        <video src="" ng-src="{{candidate.source}}" alt="" ng-show="isVideo"  controls="controls"></video>
+        <img src="" alt="" ng-if="isImage" ng-src="{{candidate.source}}" width="100%">
+        <video src="" ng-src="{{candidate.source}}" alt="" ng-if="isVideo"  controls="controls"></video>
       </div>
-      <div class="" ng-show="candidate.intro">
+      <div class="" ng-if="candidate.intro">
         <p><strong>Introduction</strong></p>
         <pre>{{candidate.intro}}</pre>
       </div>
