@@ -136,7 +136,7 @@ VoteOperation.login = function(req, res) {
 
 //              return res.json({error: 'Authentication failed. Project is running!'});
           }else{
-              console.error(err);
+              console.error('vote-operation-file-139',err);
               return res.json({error:'Authentication failed, please check project id and key'});
           }
 

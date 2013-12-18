@@ -6,8 +6,12 @@ var path    = require("path");
 var fs      = require('fs');
 var mongodb = require('mongodb');
 var events  = require('events');
+
+var MongoClient = mongodb.MongoClient;
 var emitter = new events.EventEmitter();
+
 emitter.setMaxListeners(0);
+
 function readFile(fn) {
   var filename = path.resolve(__dirname, '../../conf.json');
   path.exists(filename, function(exists){
@@ -78,14 +82,19 @@ DataManager.prototype.createDbConnector = function(mongoServer) {
  * @api public
  */
 DataManager.prototype.connectDbServer = function(key, trigger, fn){
-  var mongoServer = this.createDbServer();
-  var dbConnector = this.createDbConnector(mongoServer);
+//  var mongoServer = this.createDbServer();
+//  var dbConnector = this.createDbConnector(mongoServer);
+//
+    var that = this;
+//  dbConnector.open(function(err, db){
+//    if(err || !db) return trigger(err);
+//    else return that.fetchCollection(db, key, trigger, fn);
+//  });
 
-  var that = this;
-  dbConnector.open(function(err, db){
-    if(err || !db) return trigger(err);
-    else return that.fetchCollection(db, key, trigger, fn);
-  });
+    MongoClient.connect(['mongodb://',this.DB_SERVER_HOST,':',this.DB_SERVER_PORT,'/',this.DB_NAME].join(''),function(err,db){
+        if(err||!db) return trigger(err);
+        that.fetchCollection(db, key, trigger, fn);
+    });
 }
 
 /**
@@ -97,10 +106,13 @@ DataManager.prototype.connectDbServer = function(key, trigger, fn){
  * @api public
  */
 DataManager.prototype.fetchCollection = function(db, key, trigger, fn){
-  db.collection(key, function(err, collection){
-    if (err) return trigger(err);
-    else return fn(collection);
-  });
+//  db.collection(key, function(err, collection){
+//    if (err) return trigger(err);
+//    else return fn(collection);
+//  });
+
+    var collection = db.collection(key);
+    fn(collection);
 }
 
 DataManager.prototype.exportFile = function(path, fn) {
@@ -139,7 +151,6 @@ DataManager.prototype.query = function(custom_event, params, fn) {
   this.connectDbServer(this.key, trigger, function(collection){
     collection.find(params).toArray(function(err, data){
       if (err) return trigger(err);
-      
       fn(err, data.concat());
       emitter.removeListener(custom_event, cListener);
       that.closeDbServer();
