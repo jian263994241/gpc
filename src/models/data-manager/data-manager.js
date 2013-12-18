@@ -59,7 +59,8 @@ DataManager.prototype.createDbServer = function() {
  *
  * @api public
  */
-DataManager.prototype.closeDbServer = function(mongoServer) {
+DataManager.prototype.closeDbServer = function() {
+  var mongoServer = this._db;
   if (mongoServer) mongoServer.close();
 };
 
@@ -93,6 +94,7 @@ DataManager.prototype.connectDbServer = function(key, trigger, fn){
 
     MongoClient.connect(['mongodb://',this.DB_SERVER_HOST,':',this.DB_SERVER_PORT,'/',this.DB_NAME].join(''),function(err,db){
         if(err||!db) return trigger(err);
+        that._db = db;
         that.fetchCollection(db, key, trigger, fn);
     });
 }
