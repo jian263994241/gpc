@@ -38,7 +38,7 @@ IpDataManager.prototype.query = function(ip, fn) {
  */
 IpDataManager.prototype.add = function(ip, fn){
     var that = this;
-    var cEvent = 'userIp.data.add.error';
+    var cEvent = 'user.ip.data.add.error';
     var cListener = function(err){
         console.error(err.stack);
         fn(err);
@@ -53,7 +53,6 @@ IpDataManager.prototype.add = function(ip, fn){
     this.connectDbServer(this.COLLECTION_IP, trigger, function(collection){
         var saveCallback = function(err){
             if (err) return trigger(err);
-
             fn(err);
             emitter.removeListener(cEvent, cListener);
             that.closeDbServer();
@@ -61,13 +60,12 @@ IpDataManager.prototype.add = function(ip, fn){
 
         var insertCallback = function(err){
             if (err) return trigger(err);
-
             fn(err);
             emitter.removeListener(cEvent, cListener);
             that.closeDbServer();
         }
 
-        collection.find({user: ip.user}).toArray(function(err, data){
+        collection.find({username: ip.username}).toArray(function(err, data){
             if (err) return trigger(err);
             else if(data.concat().length>0){
                 ip._id = data[0]._id;

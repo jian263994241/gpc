@@ -15,6 +15,7 @@ var ProjectDataMgr = require('../models/data-manager/project-data-manager');
 var CandidateDataMgr = require('../models/data-manager/candidate-data-manager');
 var UserDataMgr = require('../models/data-manager/user-data-manager');
 var MarkDataMgr = require('../models/data-manager/mark-data-manager');
+var IpDataMgr   = require('../models/data-manager/ip-data-manager');
 var DataExistError = require('../models/error/data-exist-error');
 
 var ManageOperation = exports = module.exports = {};
@@ -23,10 +24,12 @@ var projectDataMgr    = new ProjectDataMgr();
 var candidateDataMgr  = new CandidateDataMgr();
 var userDataMgr       = new UserDataMgr();
 var markDataMgr       = new MarkDataMgr();
+var ipDataMgr         = new IpDataMgr();
 var mgr = {
   'project': projectDataMgr,
   'candidate': candidateDataMgr,
-  'user': userDataMgr
+  'user': userDataMgr,
+  'ip' : ipDataMgr
 }
 
 var admin, passwd;
@@ -186,9 +189,29 @@ ManageOperation.queryAll = function(req, res){
 
   var module = req.params.module;
   var operator = mgr[module];
+
   operator.query({}, function(err, records){
-    if (!err && records) res.json({records: records});
-    else res.json({error: true});
+    if (!err && records){
+        if(module==="user") {
+            var data = [];
+            mgr['ip'].query({},function(err, user_ip){
+                if(!err){
+                    _.each(records,function(s,i){
+                        var _a = _.findWhere(user_ip,{username:s.username});
+                        data.push({
+                            username :s.username,
+                            _id: s._id,
+                            ip : _a?_a.address:null,
+                            _aid : _a?_a._id:null
+                        });
+                    });
+                    res.json({records: data});
+                }
+            });
+        }else{
+            res.json({records: records});
+        }
+    } else res.json({error: true});
   });
 }
 
@@ -238,10 +261,9 @@ ManageOperation.add = function(req, res){
  */
 ManageOperation.remove = function(req, res){
   if(!isAuth(req)) return res.json({error: 'Authentication Failed'});
-
   var module = req.params.module;
   var _id = req.params.id;
-
+  if(!_id) return ;
   obj = {_id: new ObjectID(_id)};
 
   mgr[module].remove(obj, function(err){

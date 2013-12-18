@@ -57,8 +57,10 @@
         <img src="" alt="" ng-show="isImage" ng-src="{{candidate.source}}" width="100%">
         <video src="" ng-src="{{candidate.source}}" alt="" ng-show="isVideo"  controls="controls"></video>
       </div>
-      <p><strong>Introduction</strong></p>
-<pre>{{candidate.intro}}</pre>
+      <div class="" ng-show="candidate.intro">
+        <p><strong>Introduction</strong></p>
+        <pre>{{candidate.intro}}</pre>
+      </div>
     </div>
   </section>
 </article>

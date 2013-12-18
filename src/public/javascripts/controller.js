@@ -303,7 +303,6 @@ var ManageProjectCtrl = function($scope, $route, $location, $http){
   $scope.init = function(){
     $scope.$http.get('/management/project/all?'+Date.now()).
       success(function(data, status, headers, config){
-            console.log(data.records.length);
         if (!data.error) $scope.projects = data.records;
       }).
       error(function(data, status, headers, config){
@@ -530,6 +529,7 @@ var ManageUserCtrl = function($scope, $route, $location, $http){
   $scope.init = function(){
     $scope.$http.get('/management/user/all?'+Date.now()).
       success(function(data, status, headers, config){
+            console.log(data);
         if (!data.error) $scope.users = data.records;
       }).
       error(function(data, status, headers, config){
@@ -538,6 +538,8 @@ var ManageUserCtrl = function($scope, $route, $location, $http){
   }
 
   $scope.delete = function(user){
+      // 禁用 删除user
+      return;
     if(!confirm('Confirm to delete?')) return;
     $scope.$http.delete('/management/user/'+user._id).
       success(function(data, status, headers, config){
@@ -550,8 +552,20 @@ var ManageUserCtrl = function($scope, $route, $location, $http){
       error(function(data, status, headers, config){
 
       });
-  }
+  };
+  $scope.delete_ip = function(user){
+      $scope.$http.delete('/management/ip/'+user._aid).
+          success(function(data, status, headers, config){
+              if (data.success) {
+                  $scope.$route.reload();
+              }else{
+                  alert('error');
+              }
+          }).
+          error(function(data, status, headers, config){
 
+          });
+  };
   util.manageLogout($scope, '/management/logout');
 }
 

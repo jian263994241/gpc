@@ -22,15 +22,30 @@
       <table class="table table-hover table-responsive">
         <thead>
           <tr>
-            <th>username</th>
-            <th>option</th>
+            <th class="col-md-2 col-xs-2 col-lg-2">username</th>
+            <th class="col-md-4 col-xs-4 col-lg-4">login IP</th>
+            <th>
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  option
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a href="#" class=""><i class="glyphicon glyphicon-minus-sign"></i>&nbsp;Clean all IP</a></li>
+                </ul>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="user in users">
             <td>{{user.username}}</td>
+            <td>{{user.ip}}</td>
             <td>
-              <a href="#" class="btn btn-danger btn-sm" ng-click="delete(user)"><i class="glyphicon glyphicon-remove"></i>&nbsp;Delete</a>
+              <div class="btn-group-xs">
+                <a href="#" class="btn btn-primary" ng-click="delete_ip(user)"><i class="glyphicon glyphicon-minus-sign"></i>&nbsp;Clean IP</a>
+                <a href="#" class="btn btn-danger btn-xs disabled" ng-click="delete(user)"><i class="glyphicon glyphicon-remove"></i>&nbsp;Delete</a>
+              </div>
             </td>
           </tr>
         </tbody>

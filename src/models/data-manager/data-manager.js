@@ -21,7 +21,7 @@ var DataManager = module.exports = function(){
   this.COLLECTION_CANDIDATE = 'candidates';
   this.COLLECTION_PROJECT   = 'projects';
   this.COLLECTION_MARK      = 'marks';
-  this.COLLECTION_IP       = 'userIp';
+  this.COLLECTION_IP       = 'user_ip';
   this.key = null;
 
   var that = this;
