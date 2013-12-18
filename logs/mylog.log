@@ -1,0 +1,19 @@
+Express server listening on port 3000
+VoteOperation.accessedProject
+[90mGET /home [36m302 [90m5ms - 68[0m
+[90mGET /login [32m200 [90m8ms - 1.52kb[0m
+[90mGET /bootstrap3/css/bootstrap.min.css [36m304 [90m25ms[0m
+[90mGET /bootstrap3/css/bootstrap-theme.min.css [36m304 [90m2ms[0m
+[90mGET /less/login.css [32m200 [90m22ms - 374[0m
+[90mGET /less/logo.css [32m200 [90m6ms - 391[0m
+[90mGET /less/register.css [32m200 [90m5ms - 360[0m
+[90mGET /javascripts/lib/angular.min.js [36m304 [90m1ms[0m
+[90mGET /javascripts/lib/angular-route.min.js [36m304 [90m1ms[0m
+[90mGET /javascripts/lib/jquery-latest.min.js [36m304 [90m2ms[0m
+[90mGET /bootstrap3/js/bootstrap.min.js [36m304 [90m1ms[0m
+[90mGET /javascripts/lib/underscore-min.js [36m304 [90m2ms[0m
+[90mGET /javascripts/app.js [36m304 [90m2ms[0m
+[90mGET /javascripts/controller.js [36m304 [90m3ms[0m
+[90mGET /template/login.html [36m304 [90m10ms[0m
+[90mGET /image/ico_128X128_1383288453.ico [36m304 [90m7ms[0m
+[90mGET /image/logo.png [36m304 [90m2ms[0m
