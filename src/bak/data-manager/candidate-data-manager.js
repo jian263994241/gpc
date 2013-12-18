@@ -45,7 +45,7 @@ CandidateDataManager.prototype.add = function(candidate, fn){
     emitter.removeListener(cEvent, cListener);
     that.closeDbServer();
   }
-  emitter.once(cEvent, cListener);
+  emitter.addListener(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }

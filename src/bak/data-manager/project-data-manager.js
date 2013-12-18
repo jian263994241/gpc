@@ -3,7 +3,7 @@
  * @version Beta 1.1
  */
 
-var DataMgr         = require('./data-manager');
+var DataMgr         = require('./');
 var DataExistError  = require('../error/data-exist-error');
 var ObjectID        = require('mongodb').ObjectID;
 var events          = require('events');
@@ -46,7 +46,7 @@ ProjectDataManager.prototype.add = function(project, fn){
     emitter.removeListener(cEvent, cListener);
     that.closeDbServer();
   }
-  emitter.once(cEvent, cListener);
+  emitter.addListener(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }
@@ -108,7 +108,7 @@ ProjectDataManager.prototype.insertCandidate = function(project, candidateId, fn
     emitter.removeListener(cEvent, cListener);
     that.closeDbServer();
   }
-  emitter.once(cEvent, cListener);
+  emitter.addListener(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }
@@ -144,7 +144,7 @@ ProjectDataManager.prototype.removeCandidate = function(project, candidateId, fn
     emitter.removeListener(cEvent, cListener);
     that.closeDbServer();
   }
-  emitter.once(cEvent, cListener);
+  emitter.addListener(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }

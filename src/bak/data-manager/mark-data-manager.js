@@ -3,7 +3,7 @@
  * @version Beta 1.1
  */
 
-var DataMgr   = require('./data-manager');
+var DataMgr   = require('./');
 var ObjectID  = require('mongodb').ObjectID;
 var events    = require('events');
 var emitter   = new events.EventEmitter();
@@ -45,7 +45,7 @@ MarkDataManager.prototype.add = function(mark, fn){
     emitter.removeListener(cEvent, cListener);
     that.closeDbServer();
   }
-  emitter.once(cEvent, cListener);
+  emitter.addListener(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }

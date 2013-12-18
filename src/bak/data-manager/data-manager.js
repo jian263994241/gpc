@@ -130,7 +130,7 @@ DataManager.prototype.query = function(custom_event, params, fn) {
     emitter.removeListener(custom_event, cListener);
     that.closeDbServer();
   }
-  emitter.once(custom_event, cListener);
+  emitter.addListener(custom_event, cListener);
   var trigger = function(err){
     emitter.emit(custom_event, err);
   }
@@ -159,7 +159,7 @@ DataManager.prototype.update = function(custom_event, old_data, new_data, fn) {
     emitter.removeListener(custom_event, cListener);
     that.closeDbServer();
   }
-  emitter.once(custom_event, cListener);
+  emitter.addListener(custom_event, cListener);
   var trigger = function(err){
     emitter.emit(custom_event, err);
   }
@@ -185,7 +185,7 @@ DataManager.prototype.remove = function(custom_event, params, fn) {
     emitter.removeListener(custom_event, cListener);
     that.closeDbServer();
   }
-  emitter.once(custom_event, cListener);
+  emitter.addListener(custom_event, cListener);
   var trigger = function(err){
     emitter.emit(custom_event, err);
   }

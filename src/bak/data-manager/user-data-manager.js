@@ -2,7 +2,7 @@
  * @author Michael.Lee(leewind19841209@gamil.com)
  * @version Beta 1.1
  */
-var DataMgr         = require('./data-manager');
+var DataMgr         = require('./');
 var UserExistError  = require('../error/user-exist-error');
 var events          = require('events');
 var emitter         = new events.EventEmitter();
@@ -44,7 +44,7 @@ UserDataManager.prototype.add = function(user, fn){
     emitter.removeListener(cEvent, cListener);
     that.closeDbServer();
   }
-  emitter.once(cEvent, cListener);
+  emitter.addListener(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }

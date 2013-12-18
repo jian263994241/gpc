@@ -2,7 +2,7 @@
  @author ukey
  */
 
-var DataMgr   = require('./data-manager');
+var DataMgr   = require('./');
 var ObjectID  = require('mongodb').ObjectID;
 var events    = require('events');
 var emitter   = new events.EventEmitter();
@@ -45,7 +45,7 @@ IpDataManager.prototype.add = function(ip, fn){
         emitter.removeListener(cEvent, cListener);
         that.closeDbServer();
     }
-    emitter.once(cEvent, cListener);
+    emitter.addListener(cEvent, cListener);
     var trigger = function(err){
         emitter.emit(cEvent, err);
     }
