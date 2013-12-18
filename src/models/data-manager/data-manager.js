@@ -7,7 +7,7 @@ var fs      = require('fs');
 var mongodb = require('mongodb');
 var events  = require('events');
 var emitter = new events.EventEmitter();
-
+emitter.setMaxListeners(0);
 function readFile(fn) {
   var filename = path.resolve(__dirname, '../../conf.json');
   path.exists(filename, function(exists){
