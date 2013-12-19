@@ -21,7 +21,7 @@
         </thead>
         <tbody>
         <tr ng-repeat="candidate in candidates">
-          <td>{{$index}}</td>
+          <td>{{$index+1}}</td>
           <td title="{{candidate.title}}">{{candidate.title|truncate:40}}</td>
           <td title="{{candidate.author}}">{{candidate.author|truncate:36}}</td>
           <td><span class="label label-danger">{{candidate.average}}</span></td>
@@ -63,9 +63,10 @@
                   {{mark.username|truncate:30}}
                 </a>
                 <span class="label label-danger">{{mark.score}}</span>
+                <span ng-if="!mark.comment" class="label label-default">No Comment!</span>
               </h4>
             </div>
-            <div id="detail{{$index}}" class="panel-collapse collapse ">
+            <div id="detail{{$index}}" class="panel-collapse collapse" ng-if="mark.comment">
               <div class="panel-body">
                 {{mark.comment}}
               </div>
