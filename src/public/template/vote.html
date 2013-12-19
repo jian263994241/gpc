@@ -12,18 +12,23 @@
         <!--<li class="next"><a href="#">Logout</a></li>-->
       </ul>
       <h1 class="vote-name">{{candidate.title}}</h1>
-      <p>
-        <strong>Author - </strong><span>{{candidate.author}}</span>
-      </p>
-      <p>
-        <strong>Source - </strong>
-        <a href="{{candidate.source}}" target="_blank" ng-if="isImage">
-          <img ng-src="{{candidate.source}}" alt="..." class="img-thumbnail" width="140">
-        </a>
-        <video src="" ng-src="{{candidate.source}}" alt="" ng-if="!isImage"  controls="controls" width="300"></video>
-      </p>
       <form action="" class="form-horizontal" role="form">
         <label class="alert alert-error login-error" ng-show="isError">{{error}}</label>
+        <div class="form-group">
+          <label class="control-label col-md-2">Client:</label>
+          <div class="col-md-10">
+            <p class="form-control-static">{{candidate.author}}</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-2">Product:</label>
+          <div class="col-md-10">
+            <a href="{{candidate.source}}" target="_blank" ng-if="isImage">
+              <img ng-src="{{candidate.source}}" alt="..." class="img-thumbnail" width="140">
+            </a>
+            <video src="" ng-src="{{candidate.source}}" alt="" ng-if="!isImage"  controls="controls" width="300"></video>
+          </div>
+        </div>
         <div class="form-group">
           <label class="control-label col-md-2">Score:</label>
           <div class="col-md-10">
@@ -38,7 +43,7 @@
         </div>
         <!-- <input type="number" name="inputScore" val="0" max="10" min="0" ng-disabled="isForbidden" ng-model="mark.score" ng-mousedown="clean()"> -->
 
-        <button type="submit" class="btn btn-primary btn-block" ng-disabled="!isStart" ng-click="submit()">Submit</button>
+        <button type="submit" class="btn btn-block" ng-class="{'btn-danger':!isStart,'btn-success':isStart}" ng-disabled="!isStart" ng-click="submit()">Submit</button>
       </form>
     </div>
   </section>

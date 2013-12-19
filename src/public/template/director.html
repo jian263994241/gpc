@@ -3,7 +3,7 @@
     <nav class="col-md-3 col-lg-3">
       <div class="logo logo-brand">
         <h2 class="logo-title">GPC</h2>
-        <p class="logo-desc">Vote your favorates</p>
+        <p class="logo-desc"></p>
       </div>
       
       <img ng-src="{{qrcode}}" alt="" class="">
@@ -26,11 +26,11 @@
         <h4>Timer</h4>
         <h6 class="timer">{{time}}s</h6>
         <!--<h4>People Voting Status</h4>-->
-        <style type="text/css">
-          .vote-false{
-            color: red;
-          }
-        </style>
+        <!--<style type="text/css">-->
+          <!--.vote-false{-->
+            <!--color: red;-->
+          <!--}-->
+        <!--</style>-->
         <!--<h6 ng-repeat="user in users">-->
           <!--<span class="vote-{{user.status}}">{{user.username}}</span>-->
         <!--</h6>-->
@@ -46,19 +46,19 @@
         </div>
       </div>
       <h3>
-        <span>Candidate - </span>{{candidate.title}}</span>
+        {{candidate.title}}
       </h3>
       <p>
-        <strong>Author - </strong>
+        <strong>Client : </strong>
         <span>{{candidate.author}}</span>
       </p>
       <div>
-        <p><strong>Product</strong></p>
+        <p><strong>Product : </strong></p>
         <img src="" alt="" ng-if="isImage" ng-src="{{candidate.source}}" width="100%">
         <video src="" ng-src="{{candidate.source}}" alt="" ng-if="isVideo"  controls="controls"></video>
       </div>
       <div class="" ng-if="candidate.intro">
-        <p><strong>Introduction</strong></p>
+        <p><strong>Introduction : </strong></p>
         <pre>{{candidate.intro}}</pre>
       </div>
     </div>

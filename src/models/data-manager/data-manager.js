@@ -157,7 +157,7 @@ DataManager.prototype.query = function(custom_event, params, fn) {
   this.connectDbServer(this.key, trigger, function(collection){
     collection.find(params).toArray(function(err, data){
       if (err) return trigger(err);
-      fn(err, data.concat());
+      fn(err, data);
       emitter.removeListener(custom_event, cListener);
       that.closeDbServer();
     });
