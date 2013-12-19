@@ -59,7 +59,7 @@ IpDataManager.prototype.add = function(ip, fn){
         }
 
         var insertCallback = function(err){
-            if (err) return trigger(err);
+            if (err) trigger(err);
             fn(err);
             emitter.removeListener(cEvent, cListener);
             that.closeDbServer(db);

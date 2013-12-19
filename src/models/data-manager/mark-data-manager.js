@@ -52,8 +52,7 @@ MarkDataManager.prototype.add = function(mark, fn){
 
   this.connectDbServer(this.COLLECTION_MARK, trigger, function(collection,db){
     var saveCallback = function(err){
-      if (err) return trigger(err);
-      
+      if (err) trigger(err);
       fn(err);
       emitter.removeListener(cEvent, cListener);
       that.closeDbServer(db);
@@ -61,14 +60,13 @@ MarkDataManager.prototype.add = function(mark, fn){
 
     var insertCallback = function(err){
       if (err) return trigger(err);
-      
       fn(err);
       emitter.removeListener(cEvent, cListener);
       that.closeDbServer(db);
     }
 
     collection.find({candidate: mark.candidate, project: mark.project}).toArray(function(err, data){
-      if (err) return trigger(err);
+      if (err) trigger(err);
       else if(data.concat().length>0){
         mark._id = data[0]._id;
         collection.save(mark, {safe: true}, saveCallback);

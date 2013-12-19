@@ -52,7 +52,7 @@ CandidateDataManager.prototype.add = function(candidate, fn){
 
   this.connectDbServer(this.COLLECTION_CANDIDATE, trigger, function(collection,db){
     collection.find({source: candidate.source}).toArray(function(err, data){
-      if (err) return trigger(err);
+      if (err) trigger(err);
       else if(data.concat().length>0)
         return trigger(new DataExistError());
       else{

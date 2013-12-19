@@ -51,14 +51,13 @@ UserDataManager.prototype.add = function(user, fn){
 
   this.connectDbServer(this.COLLECTION_USER, trigger, function(collection,db){
     collection.find({username: user.username}).toArray(function(err, data){
-      if (err) return trigger(err);
+      if (err) trigger(err);
       else if(data.concat().length>0)
         return trigger(new UserExistError());
       else{
         user.candidates = new Array();
         var insertCallback = function(err, records){
-          if (err) return trigger(err);
-
+          if (err) trigger(err);
           fn(err, records);
           emitter.removeListener(cEvent, cListener);
           that.closeDbServer(db);

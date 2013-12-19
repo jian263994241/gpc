@@ -151,8 +151,7 @@ ProjectDataManager.prototype.removeCandidate = function(project, candidateId, fn
 
   this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection,db){
     collection.update(project, {$pull: {candidates: candidateId}}, {upsert: true}, function(err){
-      if (err) return trigger(err);
-
+      if (err) trigger(err);
       fn(err);
       emitter.removeListener(cEvent, cListener);
       that.closeDbServer(db);

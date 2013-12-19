@@ -150,7 +150,7 @@ DataManager.prototype.query = function(custom_event, params, fn) {
   if (!this.key) return trigger(new Error());
   this.connectDbServer(this.key, trigger, function(collection,db){
     collection.find(params).toArray(function(err, data){
-      if (err) return trigger(err);
+      if (err) trigger(err);
       fn(err, data);
       emitter.removeListener(custom_event, cListener);
       that.closeDbServer(db);
@@ -182,7 +182,6 @@ DataManager.prototype.update = function(custom_event, old_data, new_data, fn) {
       fn(err);
       emitter.removeListener(custom_event, cListener);
       that.closeDbServer(db);
-      return;
     });
   });
 };
@@ -203,7 +202,6 @@ DataManager.prototype.remove = function(custom_event, params, fn) {
   if (!this.key) return trigger(new Error());
 
   this.connectDbServer(this.key, trigger, function(collection,db){
-
     collection.remove(params, false, function(err){
       if (err) trigger(err);
       fn&&fn(err);
