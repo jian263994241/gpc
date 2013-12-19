@@ -43,14 +43,14 @@ CandidateDataManager.prototype.add = function(candidate, fn){
     console.error(err.stack);
     fn(err);
     emitter.removeListener(cEvent, cListener);
-    that.closeDbServer();
+    that.closeDbServer(db);
   }
   emitter.once(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }
 
-  this.connectDbServer(this.COLLECTION_CANDIDATE, trigger, function(collection){
+  this.connectDbServer(this.COLLECTION_CANDIDATE, trigger, function(collection,db){
     collection.find({source: candidate.source}).toArray(function(err, data){
       if (err) return trigger(err);
       else if(data.concat().length>0)
@@ -61,7 +61,7 @@ CandidateDataManager.prototype.add = function(candidate, fn){
           
           fn(err, records);
           emitter.removeListener(cEvent, cListener);
-          that.closeDbServer();
+          that.closeDbServer(db);
         }
         collection.insert(candidate, {safe: true}, insertCallback);
       }

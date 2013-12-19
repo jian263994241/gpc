@@ -44,14 +44,14 @@ ProjectDataManager.prototype.add = function(project, fn){
     console.error(err.stack);
     fn(err);
     emitter.removeListener(cEvent, cListener);
-    that.closeDbServer();
+    that.closeDbServer(db);
   }
   emitter.once(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }
 
-  this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection){
+  this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection,db){
     collection.find({id: project.id}).toArray(function(err, data){
       if (err) return trigger(err);
       else if(data.concat().length>0)
@@ -62,7 +62,7 @@ ProjectDataManager.prototype.add = function(project, fn){
           
           fn(err, records);
           emitter.removeListener(cEvent, cListener);
-          that.closeDbServer();
+          that.closeDbServer(db);
         }
         collection.insert(project, {safe: true}, insertCallback);
       }
@@ -106,20 +106,20 @@ ProjectDataManager.prototype.insertCandidate = function(project, candidateId, fn
     console.error(err.stack);
     fn(err);
     emitter.removeListener(cEvent, cListener);
-    that.closeDbServer();
+    that.closeDbServer(db);
   }
   emitter.once(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }
 
-  this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection){
+  this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection,db){
     collection.update(project, {$addToSet: {candidates: candidateId}}, {upsert: true}, function(err){
       if (err) return trigger(err);
 
       fn(err);
       emitter.removeListener(cEvent, cListener);
-      that.closeDbServer();
+      that.closeDbServer(db);
     });
   });
 }
@@ -142,20 +142,20 @@ ProjectDataManager.prototype.removeCandidate = function(project, candidateId, fn
     console.error(err.stack);
     fn(err);
     emitter.removeListener(cEvent, cListener);
-    that.closeDbServer();
+    that.closeDbServer(db);
   }
   emitter.once(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }
 
-  this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection){
+  this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection,db){
     collection.update(project, {$pull: {candidates: candidateId}}, {upsert: true}, function(err){
       if (err) return trigger(err);
 
       fn(err);
       emitter.removeListener(cEvent, cListener);
-      that.closeDbServer();
+      that.closeDbServer(db);
     });
   }); 
 }

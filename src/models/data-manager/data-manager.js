@@ -60,12 +60,7 @@ DataManager.prototype.createDbServer = function() {
  * @api public
  */
 DataManager.prototype.closeDbServer = function(mongoServer) {
-//    console.log('closeBD',mongoServer);
-//  if (mongoServer) mongoServer.close();
-    if(this._db){
-        this._db.close();
-        this._db = null ;
-    }
+  if (mongoServer) mongoServer.close();
 };
 
 /**
@@ -98,7 +93,6 @@ DataManager.prototype.connectDbServer = function(key, trigger, fn){
 
     MongoClient.connect(['mongodb://',this.DB_SERVER_HOST,':',this.DB_SERVER_PORT,'/',this.DB_NAME].join(''),function(err,db){
         if(err||!db) return trigger(err);
-        that._db = db;
         that.fetchCollection(db, key, trigger, fn);
     });
 }
@@ -118,7 +112,7 @@ DataManager.prototype.fetchCollection = function(db, key, trigger, fn){
 //  });
 
     var collection = db.collection(key);
-    fn(collection);
+    fn(collection,db);
 }
 
 DataManager.prototype.exportFile = function(path, fn) {
@@ -146,7 +140,7 @@ DataManager.prototype.query = function(custom_event, params, fn) {
     console.error(err.stack);
     fn(err);
     emitter.removeListener(custom_event, cListener);
-    that.closeDbServer();
+    that.closeDbServer(db);
   }
   emitter.once(custom_event, cListener);
   var trigger = function(err){
@@ -154,12 +148,12 @@ DataManager.prototype.query = function(custom_event, params, fn) {
   }
 
   if (!this.key) return trigger(new Error());
-  this.connectDbServer(this.key, trigger, function(collection){
+  this.connectDbServer(this.key, trigger, function(collection,db){
     collection.find(params).toArray(function(err, data){
       if (err) return trigger(err);
       fn(err, data);
       emitter.removeListener(custom_event, cListener);
-      that.closeDbServer();
+      that.closeDbServer(db);
     });
   });
 };
@@ -174,7 +168,7 @@ DataManager.prototype.update = function(custom_event, old_data, new_data, fn) {
     console.error(err.stack);
     fn(err);
     emitter.removeListener(custom_event, cListener);
-    that.closeDbServer();
+    that.closeDbServer(db);
   }
   emitter.once(custom_event, cListener);
   var trigger = function(err){
@@ -182,13 +176,12 @@ DataManager.prototype.update = function(custom_event, old_data, new_data, fn) {
   }
 
   if (!this.key) return trigger(new Error());
-  this.connectDbServer(this.key, trigger, function(collection){
+  this.connectDbServer(this.key, trigger, function(collection,db){
     collection.update(old_data, {$set: new_data}, {multi: true}, function(err){
       if (err) trigger(err);
-      
       fn(err);
       emitter.removeListener(custom_event, cListener);
-      that.closeDbServer();
+      that.closeDbServer(db);
       return;
     });
   });
@@ -200,7 +193,7 @@ DataManager.prototype.remove = function(custom_event, params, fn) {
     console.error(err.stack);
     fn(err);
     emitter.removeListener(custom_event, cListener);
-    that.closeDbServer();
+    that.closeDbServer(db);
   }
   emitter.once(custom_event, cListener);
   var trigger = function(err){
@@ -209,13 +202,13 @@ DataManager.prototype.remove = function(custom_event, params, fn) {
 
   if (!this.key) return trigger(new Error());
 
-  this.connectDbServer(this.key, trigger, function(collection){
+  this.connectDbServer(this.key, trigger, function(collection,db){
 
     collection.remove(params, false, function(err){
       if (err) trigger(err);
       fn&&fn(err);
       emitter.removeListener(custom_event, cListener);
-      that.closeDbServer();
+      that.closeDbServer(db);
       return;
     });
   });

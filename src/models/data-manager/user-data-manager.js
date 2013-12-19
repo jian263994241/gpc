@@ -42,14 +42,14 @@ UserDataManager.prototype.add = function(user, fn){
     console.error(err.stack);
     fn(err);
     emitter.removeListener(cEvent, cListener);
-    that.closeDbServer();
+    that.closeDbServer(db);
   }
   emitter.once(cEvent, cListener);
   var trigger = function(err){
     emitter.emit(cEvent, err);
   }
 
-  this.connectDbServer(this.COLLECTION_USER, trigger, function(collection){
+  this.connectDbServer(this.COLLECTION_USER, trigger, function(collection,db){
     collection.find({username: user.username}).toArray(function(err, data){
       if (err) return trigger(err);
       else if(data.concat().length>0)
@@ -61,7 +61,7 @@ UserDataManager.prototype.add = function(user, fn){
 
           fn(err, records);
           emitter.removeListener(cEvent, cListener);
-          that.closeDbServer();
+          that.closeDbServer(db);
           return;
         }
         collection.insert(user, {safe: true}, insertCallback);

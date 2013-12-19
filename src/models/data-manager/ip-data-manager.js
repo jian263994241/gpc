@@ -43,26 +43,26 @@ IpDataManager.prototype.add = function(ip, fn){
         console.error(err.stack);
         fn(err);
         emitter.removeListener(cEvent, cListener);
-        that.closeDbServer();
+        that.closeDbServer(db);
     }
     emitter.once(cEvent, cListener);
     var trigger = function(err){
         emitter.emit(cEvent, err);
     }
 
-    this.connectDbServer(this.COLLECTION_IP, trigger, function(collection){
+    this.connectDbServer(this.COLLECTION_IP, trigger, function(collection,db){
         var saveCallback = function(err){
             if (err) return trigger(err);
             fn(err);
             emitter.removeListener(cEvent, cListener);
-            that.closeDbServer();
+            that.closeDbServer(db);
         }
 
         var insertCallback = function(err){
             if (err) return trigger(err);
             fn(err);
             emitter.removeListener(cEvent, cListener);
-            that.closeDbServer();
+            that.closeDbServer(db);
         }
 
         collection.find({username: ip.username}).toArray(function(err, data){
