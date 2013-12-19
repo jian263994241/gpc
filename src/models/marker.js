@@ -58,6 +58,7 @@ Marker.prototype.calculateAverage = function() {
       sum += parseInt(mark.score);
     });
     this.average = sum / this.marks.length;
+    this.average = Math.floor(this.average * 100) / 100
   };
 };
 
