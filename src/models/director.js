@@ -100,7 +100,7 @@ Director.prototype.statusEvent = function(status, fn) {
     case Status.process:
     case Status.end:
       if (this.curCandidate) return this.changeStatus({status: status, candidate: this.curCandidate}, fn);
-      else return fn(new StatusError());
+      else return fn&&fn(new StatusError());
     default:
       fn(new NoStatusError());
   }
