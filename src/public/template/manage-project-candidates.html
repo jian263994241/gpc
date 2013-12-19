@@ -28,6 +28,7 @@
       <table class="table table-responsive table-hover">
         <thead>
           <tr>
+            <th>#</th>
             <th>title</th>
             <th>client</th>
             <th>type</th>
@@ -38,11 +39,12 @@
         </thead>
         <tbody>
           <tr ng-repeat="candidate in candidates">
-            <td>{{candidate.title}}</td>
-            <td>{{candidate.author}}</td>
-            <td>{{candidate.type}}</td>
-            <td>{{candidate.source}}</td>
-            <td>{{candidate.intro}}</td>
+            <td>{{$index+1}}</td>
+            <td title="{{candidate.title}}">{{candidate.title|truncate:30}}</td>
+            <td title="{{candidate.author}}">{{candidate.author|truncate:20}}</td>
+            <td>{{candidate.type |truncate}}</td>
+            <td title="{{candidate.source}}">{{candidate.source |truncate:30}}</td>
+            <td title="{{candidate.intro}}">{{candidate.intro |truncate:30}}</td>
             <td>
               <a href="" class="btn btn-danger btn-xs" ng-click="delete(candidate)"><i class="glyphicon glyphicon-remove"></i>&nbsp;Delete</a>
             </td>

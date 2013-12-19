@@ -896,10 +896,8 @@ var DirectorResultCtrl = function($scope, $route, $location, $routeParams, $http
 
     $scope.$http.post('/director/exec', {action: 'result'}).
     success(function(data, status, headers, config){
-
       if (!data.error){
         $scope.candidates = data.candidates;
-          console.log($scope.candidates[0]);
         $scope.setCandidate($scope.candidates[0]);
       }
     }).

@@ -25,8 +25,26 @@ angular.module('cookie',[]).factory('$cookie',['$window',function(win){
         }
     }
 }]);
+angular.module('filters', []).
+    filter('truncate', function () {
+        return function (text, length, end) {
+            if (isNaN(length))
+                length = 10;
 
-angular.module('lb-gpc',['ngRoute','cookie'])
+            if (end === undefined)
+                end = "...";
+
+            if (text.length <= length || text.length - end.length <= length) {
+                return text;
+            }
+            else {
+                return String(text).substring(0, length-end.length) + end;
+            }
+
+        };
+    });
+
+angular.module('lb-gpc',['ngRoute','cookie','filters'])
     .config(function($routeProvider, $locationProvider){
     $routeProvider.
       when('/', {templateUrl: '/template/login.html', controller: UserLoginCtrl}).

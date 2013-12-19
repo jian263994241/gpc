@@ -8,24 +8,32 @@
       </ul>
     </div>
     <div id="result-list" class="row">
-      <div class="col-md-2" ng-repeat="candidate in candidates">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <div class="panel-title">
-              {{candidate.title}}
-            </div>
-          </div>
-          <div class="panel-body">
-            <p>
-              <strong>Score:</strong>
-              <span class="label label-danger">{{candidate.average}}</span>
-            </p>
-            <p>Author:{{candidate.author}}</p>
-            <a href="#candidateModal" role="button" class="btn btn-info" data-toggle="modal" ng-click="setCandidate(candidate)">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Client </th>
+          <th>Average</th>
+          <th>Product</th>
+          <th>Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="candidate in candidates">
+          <td>{{$index}}</td>
+          <td title="{{candidate.title}}">{{candidate.title|truncate:40}}</td>
+          <td title="{{candidate.author}}">{{candidate.author|truncate:36}}</td>
+          <td><span class="label label-danger">{{candidate.average}}</span></td>
+          <td><a href="{{candidate.source}}" target="_blank">Link</a></td>
+          <td>
+            <a href="#candidateModal" role="button" class="btn btn-info btn-sm" data-toggle="modal" ng-click="setCandidate(candidate)">
               <i class="glyphicon glyphicon-eye-open"></i>&nbsp;Details
             </a>
-          </div>
-        </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
       </div>
     </div>
   </section>
@@ -38,15 +46,32 @@
         <h3 id="candidateModalLabel">Details</h3>
       </div>
       <div class="modal-body">
-        <div ng-repeat="mark in marks">
-          <h4>User:{{mark.username}}</h4>
-          <p>
-            <strong>Score:</strong>
-            <span class="label label-danger">{{mark.score}}</span>
-          </p>
-          <p>Comment: <pre>{{mark.comment}}</pre></p>
-          <hr>
-        </div>
+        <!--<div ng-repeat="mark in marks">-->
+          <!--<h4>User:{{mark.username}}</h4>-->
+          <!--<p>-->
+            <!--<strong>Score:</strong>-->
+            <!--<span class="label label-danger">{{mark.score}}</span>-->
+          <!--</p>-->
+          <!--<p>Comment: <pre>{{mark.comment}}</pre></p>-->
+          <!--<hr>-->
+        <!--</div>-->
+        <div class="panel-group" id="accordion">
+          <div class="panel panel-default" ng-repeat="mark in marks">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse"  data-target="#detail{{$index}}" href="javascript:;">
+                  {{mark.username|truncate:30}}
+                </a>
+                <span class="label label-danger">{{mark.score}}</span>
+              </h4>
+            </div>
+            <div id="detail{{$index}}" class="panel-collapse collapse ">
+              <div class="panel-body">
+                {{mark.comment}}
+              </div>
+            </div>
+          </div>
+      </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
