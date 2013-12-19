@@ -42,9 +42,7 @@ ProjectDataManager.prototype.add = function(project, fn){
   var cEvent = 'project.data.add.error';
   var cListener = function(err){
     console.error(err.stack);
-    fn(err);
     emitter.removeListener(cEvent, cListener);
-    that.closeDbServer(db);
   }
   emitter.once(cEvent, cListener);
   var trigger = function(err){
@@ -53,13 +51,14 @@ ProjectDataManager.prototype.add = function(project, fn){
 
   this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection,db){
     collection.find({id: project.id}).toArray(function(err, data){
-      if (err) return trigger(err);
-      else if(data.concat().length>0)
-        return trigger(new DataExistError());
-      else{
+      if (err) trigger(err);
+      if(data.length>0){
+          var err0 = new DataExistError();
+          trigger(err0);
+          fn&&fn(err0);
+      }else{
         var insertCallback = function(err, records){
-          if (err) return trigger(err);
-          
+          if (err) trigger(err);
           fn(err, records);
           emitter.removeListener(cEvent, cListener);
           that.closeDbServer(db);
@@ -104,9 +103,7 @@ ProjectDataManager.prototype.insertCandidate = function(project, candidateId, fn
   var cEvent = 'project.data.insert.candidate.error';
   var cListener = function(err){
     console.error(err.stack);
-    fn(err);
     emitter.removeListener(cEvent, cListener);
-    that.closeDbServer(db);
   }
   emitter.once(cEvent, cListener);
   var trigger = function(err){
@@ -115,9 +112,8 @@ ProjectDataManager.prototype.insertCandidate = function(project, candidateId, fn
 
   this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection,db){
     collection.update(project, {$addToSet: {candidates: candidateId}}, {upsert: true}, function(err){
-      if (err) return trigger(err);
-
-      fn(err);
+      if (err) trigger(err);
+        fn&&fn(err);
       emitter.removeListener(cEvent, cListener);
       that.closeDbServer(db);
     });
@@ -140,9 +136,7 @@ ProjectDataManager.prototype.removeCandidate = function(project, candidateId, fn
   var cEvent = 'project.data.remove.candidate.error';
   var cListener = function(err){
     console.error(err.stack);
-    fn(err);
     emitter.removeListener(cEvent, cListener);
-    that.closeDbServer(db);
   }
   emitter.once(cEvent, cListener);
   var trigger = function(err){
@@ -152,7 +146,7 @@ ProjectDataManager.prototype.removeCandidate = function(project, candidateId, fn
   this.connectDbServer(this.COLLECTION_PROJECT, trigger, function(collection,db){
     collection.update(project, {$pull: {candidates: candidateId}}, {upsert: true}, function(err){
       if (err) trigger(err);
-      fn(err);
+        fn&&fn(err);
       emitter.removeListener(cEvent, cListener);
       that.closeDbServer(db);
     });

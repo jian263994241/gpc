@@ -40,9 +40,7 @@ UserDataManager.prototype.add = function(user, fn){
   var cEvent = 'user.data.add.error';
   var cListener = function(err){
     console.error(err.stack);
-    fn(err);
     emitter.removeListener(cEvent, cListener);
-    that.closeDbServer(db);
   }
   emitter.once(cEvent, cListener);
   var trigger = function(err){
@@ -52,9 +50,11 @@ UserDataManager.prototype.add = function(user, fn){
   this.connectDbServer(this.COLLECTION_USER, trigger, function(collection,db){
     collection.find({username: user.username}).toArray(function(err, data){
       if (err) trigger(err);
-      else if(data.concat().length>0)
-        return trigger(new UserExistError());
-      else{
+      if(data.length>0){
+          var err0 = new DataExistError();
+          trigger(err0);
+          fn&&fn(err0);
+      }else{
         user.candidates = new Array();
         var insertCallback = function(err, records){
           if (err) trigger(err);

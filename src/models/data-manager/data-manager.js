@@ -112,7 +112,7 @@ DataManager.prototype.fetchCollection = function(db, key, trigger, fn){
 //  });
 
     var collection = db.collection(key);
-    fn(collection,db);
+    fn&&fn(collection,db);
 }
 
 DataManager.prototype.exportFile = function(path, fn) {
@@ -138,9 +138,7 @@ DataManager.prototype.query = function(custom_event, params, fn) {
   var that = this;
   var cListener = function(err){
     console.error(err.stack);
-    fn(err);
     emitter.removeListener(custom_event, cListener);
-    that.closeDbServer(db);
   }
   emitter.once(custom_event, cListener);
   var trigger = function(err){
@@ -151,7 +149,7 @@ DataManager.prototype.query = function(custom_event, params, fn) {
   this.connectDbServer(this.key, trigger, function(collection,db){
     collection.find(params).toArray(function(err, data){
       if (err) trigger(err);
-      fn(err, data);
+        fn&&fn(err, data);
       emitter.removeListener(custom_event, cListener);
       that.closeDbServer(db);
     });
@@ -166,9 +164,7 @@ DataManager.prototype.update = function(custom_event, old_data, new_data, fn) {
   var that = this;
   var cListener = function(err){
     console.error(err.stack);
-    fn(err);
     emitter.removeListener(custom_event, cListener);
-    that.closeDbServer(db);
   }
   emitter.once(custom_event, cListener);
   var trigger = function(err){
@@ -179,7 +175,7 @@ DataManager.prototype.update = function(custom_event, old_data, new_data, fn) {
   this.connectDbServer(this.key, trigger, function(collection,db){
     collection.update(old_data, {$set: new_data}, {multi: true}, function(err){
       if (err) trigger(err);
-      fn(err);
+        fn&&fn(err);
       emitter.removeListener(custom_event, cListener);
       that.closeDbServer(db);
     });
@@ -190,9 +186,7 @@ DataManager.prototype.remove = function(custom_event, params, fn) {
   var that = this;
   var cListener = function(err){
     console.error(err.stack);
-    fn(err);
     emitter.removeListener(custom_event, cListener);
-    that.closeDbServer(db);
   }
   emitter.once(custom_event, cListener);
   var trigger = function(err){
@@ -207,7 +201,6 @@ DataManager.prototype.remove = function(custom_event, params, fn) {
       fn&&fn(err);
       emitter.removeListener(custom_event, cListener);
       that.closeDbServer(db);
-      return;
     });
   });
 };

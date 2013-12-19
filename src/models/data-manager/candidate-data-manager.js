@@ -41,9 +41,7 @@ CandidateDataManager.prototype.add = function(candidate, fn){
   var cEvent = 'candidate.data.add.error';
   var cListener = function(err){
     console.error(err.stack);
-    fn(err);
     emitter.removeListener(cEvent, cListener);
-    that.closeDbServer(db);
   }
   emitter.once(cEvent, cListener);
   var trigger = function(err){
@@ -53,13 +51,15 @@ CandidateDataManager.prototype.add = function(candidate, fn){
   this.connectDbServer(this.COLLECTION_CANDIDATE, trigger, function(collection,db){
     collection.find({source: candidate.source}).toArray(function(err, data){
       if (err) trigger(err);
-      else if(data.concat().length>0)
-        return trigger(new DataExistError());
+      if(data.length>0){
+          var err0 = new DataExistError();
+          trigger(err0)
+          fn&&fn(err0);
+      }
       else{
         var insertCallback = function(err, records){
-          if (err) return trigger(err);
-          
-          fn(err, records);
+          if (err) trigger(err);
+            fn&&fn(err, records);
           emitter.removeListener(cEvent, cListener);
           that.closeDbServer(db);
         }

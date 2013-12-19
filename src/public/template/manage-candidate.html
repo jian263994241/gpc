@@ -82,8 +82,8 @@
           <div class="form-group">
             <label class="col-sm-3 control-label">Source</label>
             <div class="col-sm-9">
-              <div class="btn-group">
-                <a href="#" class="btn btn-default" ng-class="{active:isUploadFile}" id="btn-upload-file" ng-click="toogleUploadFileBtn()">Select file to upload</a>
+              <div class="btn-group" ng-show="candidate.type">
+                <a href="#" class="btn btn-default" ng-if="candidate.type!='video'" ng-class="{active:isUploadFile}" id="btn-upload-file" ng-click="toogleUploadFileBtn()">Select file to upload</a>
                 <a href="#" class="btn btn-default" ng-class="{active:isAddExternalFile}" id="btn-add-external-file" ng-click="toogleAddExternalFileBtn()">Add external file url</a>
               </div>
               <!--Url input-->
