@@ -172,7 +172,7 @@ VoteOperation.exec = function(req, res){
                 candidate: director.curCandidate,
                 project: director.project,
                 status: director.status,
-                marks:filter_id(data.marks,'candidate',director.curCandidate._id)||null
+                marks:filter_id(data.marks,'candidate',director.curCandidate._id?director.curCandidate._id:'')||null
             };
             if(director.marker){
                 return res.json(_.extend(_res_data,{people:director.marker.marks.length}));
